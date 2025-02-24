@@ -3,6 +3,8 @@ package shigarov.practicum.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.service.PostService;
@@ -36,6 +38,11 @@ public class PostController {
         return "posts"; // Возвращаем название шаблона — posts.html
     }
 
+    @PostMapping
+    public String save(@ModelAttribute Post post) {
+        service.save(post);
 
+        return "redirect:/posts"; // Возвращаем страницу, чтобы она перезагрузилась
+    }
 
 }

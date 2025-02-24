@@ -19,23 +19,6 @@ public class JdbcNativePostRepository implements PostRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-//    @Override
-//    public List<Post> findAll() {
-//        // Выполняем запрос с помощью JdbcTemplate
-//        // Преобразовываем ответ с помощью RowMapper
-//        return jdbcTemplate.query(
-//                "select id, title, image, text, tags, likes from posts",
-//                (rs, rowNum) -> new Post(
-//                        rs.getLong("id"),
-//                        rs.getString("title"),
-//                        rs.getString("image"),
-//                        rs.getString("text"),
-//                        rs.getString("tags"),
-//                        rs.getInt("likes"),
-//                        0
-//                ));
-//    }
-
     public List<Post> findAll() {
         // SQL-запрос
         String sql = """
@@ -87,6 +70,17 @@ public class JdbcNativePostRepository implements PostRepository {
 
         // Возвращаем список постов
         return new ArrayList<>(postMap.values());
+    }
+
+    @Override
+    public void save(Post post) {
+        final String sql = """
+                insert into posts(title, image, text, tags)
+                values(?, ?, ?, ?)
+                """;
+        // Формируем insert-запрос с параметрами
+        jdbcTemplate.update(sql,
+                post.getTitle(), post.getImage(), post.getText(), post.getTags());
     }
 
 }
