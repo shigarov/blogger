@@ -9,7 +9,7 @@ public interface PostRepository {
 
     Optional<Post> findById(long id);
 
-    List<Post> findByTag(String tag);
+    List<Post> findAllByTag(String tag);
 
     void save(Post post);
 }

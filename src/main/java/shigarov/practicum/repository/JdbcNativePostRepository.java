@@ -94,7 +94,7 @@ public class JdbcNativePostRepository implements PostRepository {
         final String sql = """
                 SELECT
                     p.id AS post_id,
-                    p.title, 
+                    p.title,
                     p.image,
                     p.text,
                     p.tags,
@@ -172,8 +172,59 @@ public class JdbcNativePostRepository implements PostRepository {
 
 
     @Override
-    public List<Post> findByTag(String tag) {
-        return null;
+    public List<Post> findAllByTag(String tag) {
+
+        final String sql = """
+                SELECT
+                    p.id AS post_id,
+                    p.title, 
+                    p.image,
+                    p.text,
+                    p.tags,
+                    p.likes,
+                    c.id AS comment_id,
+                    c.comment_text
+                FROM posts p
+                LEFT JOIN comments c ON p.id = c.post_id
+                WHERE REGEXP_LIKE(p.tags, '(^|,)' || ? || '(,|$)')
+                ORDER BY p.id, c.id
+                """;
+
+        // Словарь для хранения постов по их ID
+        final Map<Long, Post> postMap = new HashMap<>();
+
+        RowCallbackHandler handler = rs -> {
+            // Получение данных о посте
+            Long postId = rs.getLong("post_id");
+            Post post = postMap.get(postId);
+
+            // Если пост ещё не добавлен в мапу, создаем его
+            if (post == null) {
+                post = new Post();
+                post.setId(postId);
+                post.setTitle(rs.getString("title"));
+                post.setImage(rs.getString("image"));
+                post.setText(rs.getString("text"));
+                post.setTags(rs.getString("tags"));
+                post.setLikes(rs.getInt("likes"));
+                post.setComments(new ArrayList<>()); // Инициализация списка комментариев
+                postMap.put(postId, post); // Добавляем пост в мапу
+            }
+
+            // Получение данных о комментарии (если он есть)
+            Long commentId = rs.getLong("comment_id");
+            if (!rs.wasNull()) { // Проверка, есть ли комментарий
+                Comment comment = new Comment();
+                comment.setId(commentId);
+                comment.setText(rs.getString("comment_text"));
+                post.getComments().add(comment); // Добавляем комментарий к посту
+            }
+        };
+
+        jdbcTemplate.query(sql, handler, tag);
+
+        // Возвращаем список постов
+        return new ArrayList<>(postMap.values());
     }
 
     @Override

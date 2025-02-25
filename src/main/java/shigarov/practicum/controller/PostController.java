@@ -3,11 +3,9 @@ package shigarov.practicum.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import shigarov.practicum.model.Comment;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.service.PostService;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,16 +20,20 @@ public class PostController {
     }
 
     @GetMapping // GET запрос /posts
-    public String posts(Model model) {
+    public String posts(@RequestParam(name = "tag", required = false) String tag, Model model) {
         // Данные теперь получаются программно
 //        List<Post> posts = Arrays.asList(
 //                new Post(1L, "Пост 1", "image1.png", "Текст поста 1, разбитый на абзацы.", "технологии, блог", 10, 2),
 //                new Post(2L, "Пост 2", "image2.png", "Текст поста 2, разбитый на абзацы.", "программирование", 5, 3),
 //                new Post(3L, "Пост 3", "image3.png", "Текст поста 3, разбитый на абзацы.", "блог, жизнь", 15, 1)
 //        );
+        List<Post> posts;
 
-        List<Post> posts = service.findAll();
-
+        if (tag != null) {
+            posts = service.findAllByTag(tag);
+        } else {
+            posts = service.findAll();
+        }
         // Передаём данные в виде атрибута users
         model.addAttribute("posts", posts);
 
@@ -47,7 +49,7 @@ public class PostController {
 //    }
 
     @GetMapping("/{id}")
-    public String post(@PathVariable("id") long id, Model model) {
+    public String postById(@PathVariable("id") long id, Model model) {
         // Получаем пост по ID из репозитория
         Optional<Post> postOptional = service.findById(id);
 
@@ -75,6 +77,16 @@ public class PostController {
             return "error/404";  // Имя Thymeleaf шаблона для страницы 404
         }
     }
+
+//    @GetMapping
+//    public String postsByTag(@RequestParam("tag") String tag, Model model){
+//        List<Post> posts = service.findAllByTag(tag);
+//
+//        // Передаём данные в виде атрибута users
+//        model.addAttribute("posts", posts);
+//
+//        return "posts"; // Возвращаем название шаблона — posts.html
+//    }
 
     @PostMapping
     public String save(@ModelAttribute Post post) {

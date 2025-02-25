@@ -24,8 +24,8 @@ public class PostService {
         return postRepository.findById(id);
     }
 
-    public List<Post> findByTag(String tag) {
-        return postRepository.findByTag(tag);
+    public List<Post> findAllByTag(String tag) {
+        return postRepository.findAllByTag(tag);
     }
     public void save(Post post) {
         postRepository.save(post);
