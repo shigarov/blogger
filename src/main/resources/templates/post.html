@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Пост</title>
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Пост</h1>
+
+<div>
+    <strong>Название:</strong>
+    <span th:text="${post.title}"/>
+</div>
+
+<!-- Изображение поста (если есть) -->
+<div>
+    <strong>Картинка:</strong>
+    <div th:if="${post.image != null}">
+        <img th:src="@{'/images/'+${post.image}}" alt="Картинка"/>
+    </div>
+</div>
+
+<!-- Текст поста -->
+<div>
+    <strong>Текст:</strong>
+    <div th:text="${post.text}"/>
+</div>
+
+<!-- Теги поста -->
+<div>
+    <strong>Теги:</strong>
+    <span th:text="${post.tags}"/>
+</div>
+
+<!-- Количество лайков -->
+<div>
+    <strong>Количество лайков:</strong>
+    <span th:text="${post.likes}"/>
+</div>
+
+<!-- Таблица комментариев -->
+<div><strong>Комментарии:</strong></div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Текст</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="comment : ${post.comments}">
+        <td th:text="${comment.id}"/>
+        <td th:text="${comment.text}"/>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+
+</html>

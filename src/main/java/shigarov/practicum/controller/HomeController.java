@@ -10,7 +10,7 @@ public class HomeController {
     @GetMapping("/home") // Принимаем GET-запрос по адресу /home
     @ResponseBody        // Указываем, что возвращаемое значение является ответом
     public String homePage() {
-        return "<h1>z</h1>"; // Ответ
+        return "<h1>zppppp</h1>"; // Ответ
     }
 
 }

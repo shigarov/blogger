@@ -2,14 +2,14 @@ package shigarov.practicum.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import shigarov.practicum.model.Comment;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.service.PostService;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/posts") // Контроллер обрабатывает запросы /posts
@@ -36,6 +36,44 @@ public class PostController {
         model.addAttribute("posts", posts);
 
         return "posts"; // Возвращаем название шаблона — posts.html
+    }
+
+//    @GetMapping(value = "/{id}")
+//    public String post(Model model, @PathVariable(name = "id") Long id) {
+//        Optional<Post> post = service.findById(id);
+//        // Передаём данные в виде атрибута users
+//        model.addAttribute("post", post);
+//        return "post"; // Возвращаем название шаблона — post.html
+//    }
+
+    @GetMapping("/{id}")
+    public String post(@PathVariable("id") long id, Model model) {
+        // Получаем пост по ID из репозитория
+        Optional<Post> postOptional = service.findById(id);
+
+//        Post post = new Post();
+//        post.setId(100L);
+//        post.setTitle("Мой пост");
+//        post.setImage("image1.png");
+//        post.setText("бла бла бла бла");
+//        post.setTags("технологии, жизнь");
+//        post.setLikes(1000);
+//
+//        List<Comment> comments = Arrays.asList(
+//                new Comment(1L, "Вах вах!"),
+//                new Comment(2L, "ням ням!")
+//        );
+//        post.setComments(comments);
+//        Optional<Post> postOptional = Optional.ofNullable(post);
+
+        // Если пост найден, добавляем его в модель
+        if (postOptional.isPresent()) {
+            model.addAttribute("post", postOptional.get());
+            return "post";  // Имя Thymeleaf шаблона для отображения поста
+        } else {
+            // Если пост не найден, возвращаем страницу с ошибкой
+            return "error/404";  // Имя Thymeleaf шаблона для страницы 404
+        }
     }
 
     @PostMapping
