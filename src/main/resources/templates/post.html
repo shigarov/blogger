@@ -32,7 +32,8 @@
 <!-- Текст поста -->
 <div>
     <strong>Текст:</strong>
-    <div th:text="${post.text}"/>
+    <!--Вывод текста с абзацами и строками-->
+    <div th:utext="${#strings.replace(post.text, '\r\n', '<br>')}"/>
 </div>
 
 <!-- Теги поста -->

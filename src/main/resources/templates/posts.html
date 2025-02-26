@@ -13,11 +13,86 @@
         border-collapse: collapse;
         }
     </style>
+    <script>
+        // Функция для отправки формы при изменении страницы
+        function changePage() {
+            document.getElementById("pageForm").submit();
+        }
+
+        // Функция для отправки формы при изменении размера страницы
+        function changeSize() {
+            document.getElementById("sizeForm").submit();
+        }
+    </script>
 </head>
 
 <body>
 
 <h1>Посты</h1>
+<!--
+<div>
+    <strong>Страница:</strong>
+    <span th:text="${page.number + 1}"/>
+    <strong>из</strong>
+    <span th:text="${page.totalPages}"/>
+</div>
+<div>
+    <strong>Количество постов на странице (не более):</strong>
+    <span th:text="${page.size}"/>
+</div>
+-->
+
+<!-- Форма для выбора страницы и размера страницы -->
+<!--
+<form th:action="@{/posts}" method="get">
+    <label for="page">Страница:</label>
+    <select id="page" name="page">
+        <option th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:value="${i}"
+                th:text="${i + 1}"
+                th:selected="${i == page.number}">
+        </option>
+    </select>
+
+    <label for="size">Количество постов на странице (не более):</label>
+    <select id="size" name="size">
+        <option value="10" th:selected="${page.size == 10}">10</option>
+        <option value="20" th:selected="${page.size == 20}">20</option>
+        <option value="50" th:selected="${page.size == 50}">50</option>
+    </select>
+
+    <button type="submit">Вперед</button>
+</form>
+-->
+
+<!-- Форма для выбора страницы -->
+<form id="pageForm" th:action="@{/posts}" method="get">
+    <label for="page">Страница:</label>
+    <select id="page" name="page" onchange="changePage()">
+        <!-- Генерация списка страниц -->
+        <option th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:value="${i}"
+                th:text="${i + 1}"
+                th:selected="${i == page.number}">
+        </option>
+    </select>
+
+    <!-- Скрытое поле для сохранения текущего размера страницы -->
+    <input type="hidden" name="size" th:value="${page.size}">
+</form>
+
+<!-- Форма для выбора размера страницы -->
+<form id="sizeForm" th:action="@{/posts}" method="get">
+    <label for="size">Количество постов на странице (не более):</label>
+    <select id="size" name="size" onchange="changeSize()">
+        <option value="10" th:selected="${page.size == 10}">10</option>
+        <option value="20" th:selected="${page.size == 20}">20</option>
+        <option value="50" th:selected="${page.size == 50}">50</option>
+    </select>
+
+    <!-- Скрытое поле для сохранения текущей страницы -->
+    <input type="hidden" name="page" th:value="0">
+</form>
 
 <button class="btn-add" onclick="toggleForm()">Добавить пост</button>
 
@@ -33,12 +108,14 @@
         <th>Количество комментариев</th>
     </tr>
     </thead>
+    <tbody>
     <!-- Цикл по пользователям из атрибута users-->
     <tr th:each="post : ${posts}">
         <td th:text="${post.id}"/>
         <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}"/></td>
         <td><img th:if="${post.image != null}" th:src="@{'/images/'+${post.image}}" alt="Картинка"/></td>
-        <td th:text="${post.text}"/>
+        <!--Вывод текста с абзацами и строками-->
+        <td th:utext="${#strings.replace(post.text, '\r\n', '<br>')}"/>
         <td th:text="${post.tags}"/>
         <td th:text="${post.likes}"/>
         <td th:text="${#lists.size(post.comments)}"/>

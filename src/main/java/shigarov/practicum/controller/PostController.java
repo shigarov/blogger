@@ -1,5 +1,8 @@
 package shigarov.practicum.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,19 +23,30 @@ public class PostController {
     }
 
     @GetMapping // GET запрос /posts
-    public String posts(@RequestParam(name = "tag", required = false) String tag, Model model) {
+    public String posts(@RequestParam(name = "tag", required = false) String tag,
+                        //Pageable pageable,
+                        @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+                        @RequestParam(name = "size", required = false, defaultValue = "10") int pageSize,
+                        Model model) {
         // Данные теперь получаются программно
 //        List<Post> posts = Arrays.asList(
 //                new Post(1L, "Пост 1", "image1.png", "Текст поста 1, разбитый на абзацы.", "технологии, блог", 10, 2),
 //                new Post(2L, "Пост 2", "image2.png", "Текст поста 2, разбитый на абзацы.", "программирование", 5, 3),
 //                new Post(3L, "Пост 3", "image3.png", "Текст поста 3, разбитый на абзацы.", "блог, жизнь", 15, 1)
 //        );
+
+        final Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
         List<Post> posts;
 
         if (tag != null) {
             posts = service.findAllByTag(tag);
         } else {
-            posts = service.findAll();
+            //posts = service.findAll();
+            //Pageable pageable = PageRequest.of(page, size);
+            Page<Post> postsPage = service.findAll(pageable);
+            posts = postsPage.stream().toList();
+            model.addAttribute("page", postsPage);
         }
         // Передаём данные в виде атрибута users
         model.addAttribute("posts", posts);

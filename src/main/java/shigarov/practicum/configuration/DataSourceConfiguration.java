@@ -39,7 +39,7 @@ public class DataSourceConfiguration {
         return new JdbcTemplate(dataSource);
     }
 
-    // После инициализации контекста выполняем наполнение схемы базы данных
+    // После инициализации контекста выполняем создание базы данных
     @EventListener
     public void populate(ContextRefreshedEvent event) {
         DataSource dataSource = event.getApplicationContext().getBean(DataSource.class);

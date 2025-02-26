@@ -1,5 +1,7 @@
 package shigarov.practicum.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.repository.PostRepository;
@@ -20,6 +22,10 @@ public class PostService {
         return postRepository.findAll();
     }
 
+    public Page<Post> findAll(Pageable pageable) {
+        return postRepository.findAll(pageable);
+    }
+
     public Optional<Post> findById(long id) {
         return postRepository.findById(id);
     }
@@ -27,6 +33,7 @@ public class PostService {
     public List<Post> findAllByTag(String tag) {
         return postRepository.findAllByTag(tag);
     }
+
     public void save(Post post) {
         postRepository.save(post);
     }

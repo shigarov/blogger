@@ -1,9 +1,10 @@
 package shigarov.practicum.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import shigarov.practicum.model.Comment;
 import shigarov.practicum.model.Post;
@@ -31,7 +32,7 @@ public class JdbcNativePostRepository implements PostRepository {
                     p.tags,
                     p.likes,
                     c.id AS comment_id,
-                    c.comment_text
+                    c.text AS comment_text
                 FROM posts p
                 LEFT JOIN comments c ON p.id = c.post_id
                 ORDER BY p.id, c.id
@@ -74,6 +75,90 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
+    public Page<Post> findAll(Pageable pageable) {
+        final String rowCountSql = "SELECT count(1) AS row_count FROM posts";
+        final long totalPosts = jdbcTemplate.queryForObject(
+                rowCountSql,
+                (rs, rowNum) -> rs.getLong(1)
+        );
+
+//        final String sql = """
+//                SELECT
+//                    p.id AS post_id,
+//                    p.title,
+//                    p.image,
+//                    p.text,
+//                    p.tags,
+//                    p.likes,
+//                    c.id AS comment_id,
+//                    c.comment_text
+//                FROM posts p
+//                LEFT JOIN comments c ON p.id = c.post_id
+//                ORDER BY p.id, c.id
+//                """;
+//                //+ " LIMIT " + pageable.getPageSize()
+//                //+ " OFFSET " + pageable.getOffset();
+        final String sql = """
+                SELECT
+                    p.id AS post_id,
+                    p.title,
+                    p.image,
+                    p.text,
+                    p.tags,
+                    p.likes,
+                    c.id AS comment_id,
+                    c.text AS comment_text
+                FROM (
+                    SELECT *
+                    FROM posts
+                    ORDER BY id
+                    LIMIT ? OFFSET ?
+                ) p
+                LEFT JOIN comments c ON p.id = c.post_id
+                ORDER BY p.id, c.id;
+                """;
+
+        // Словарь для хранения постов по их ID
+        final Map<Long, Post> postMap = new HashMap<>();
+
+        // Выполнение запроса и обработка результата
+        jdbcTemplate.query(sql, rs -> {
+            // Получение данных о посте
+            Long postId = rs.getLong("post_id");
+            Post post = postMap.get(postId);
+
+            // Если пост ещё не добавлен в словарь, создаем его
+            if (post == null) {
+                post = new Post();
+                post.setId(postId);
+                post.setTitle(rs.getString("title"));
+                post.setImage(rs.getString("image"));
+                post.setText(rs.getString("text"));
+                post.setTags(rs.getString("tags"));
+                post.setLikes(rs.getInt("likes"));
+                post.setComments(new ArrayList<>()); // Инициализация списка комментариев
+                postMap.put(postId, post); // Добавляем пост в словарь
+            }
+
+            // Получение данных о комментарии (если он есть)
+            Long commentId = rs.getLong("comment_id");
+            if (!rs.wasNull()) { // Проверка, есть ли комментарий
+                Comment comment = new Comment();
+                comment.setId(commentId);
+                comment.setText(rs.getString("comment_text"));
+                post.getComments().add(comment); // Добавляем комментарий к посту
+            }
+        }, pageable.getPageSize(), pageable.getOffset());
+
+        // Возвращаем список постов
+        List<Post> posts = new ArrayList<>(postMap.values());
+
+        //return new PageImpl<>(posts, pageable, total);
+        return new PageImpl<>(posts, pageable, totalPosts);
+    }
+
+
+    @Override
     public Optional<Post> findById(long id) {
 //        Post post = new Post();
 //        post.setId(100L);
@@ -100,7 +185,7 @@ public class JdbcNativePostRepository implements PostRepository {
                     p.tags,
                     p.likes,
                     c.id AS comment_id,
-                    c.comment_text
+                    c.text AS comment_text
                 FROM posts p
                 LEFT JOIN comments c ON p.id = c.post_id
                 WHERE p.id = ?
@@ -177,13 +262,13 @@ public class JdbcNativePostRepository implements PostRepository {
         final String sql = """
                 SELECT
                     p.id AS post_id,
-                    p.title, 
+                    p.title,
                     p.image,
                     p.text,
                     p.tags,
                     p.likes,
                     c.id AS comment_id,
-                    c.comment_text
+                    c.text AS comment_text
                 FROM posts p
                 LEFT JOIN comments c ON p.id = c.post_id
                 WHERE REGEXP_LIKE(p.tags, '(^|,)' || ? || '(,|$)')
