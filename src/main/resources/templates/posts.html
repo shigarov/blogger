@@ -79,6 +79,8 @@
 
     <!-- Скрытое поле для сохранения текущего размера страницы -->
     <input type="hidden" name="size" th:value="${page.size}">
+    <!-- Скрытое поле для сохранения текущего тега -->
+    <input type="hidden" name="tag" th:value="${tag}">
 </form>
 
 <!-- Форма для выбора размера страницы -->
@@ -90,6 +92,20 @@
         <option value="50" th:selected="${page.size == 50}">50</option>
     </select>
 
+    <!-- Скрытое поле для сохранения текущей страницы -->
+    <input type="hidden" name="page" th:value="0">
+    <!-- Скрытое поле для сохранения текущего тега -->
+    <input type="hidden" name="tag" th:value="${tag}">
+</form>
+
+<!-- Форма для ввода тега -->
+<form th:action="@{/posts}" method="get">
+    <label for="tag">Введите тег:</label>
+    <input type="text" id="tag" name="tag" th:value="${tag}">
+    <button type="submit">Искать</button>
+
+    <!-- Скрытое поле для сохранения текущего размера страницы -->
+    <input type="hidden" name="size" th:value="${page.size}">
     <!-- Скрытое поле для сохранения текущей страницы -->
     <input type="hidden" name="page" th:value="0">
 </form>

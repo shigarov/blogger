@@ -26,6 +26,10 @@ public class PostService {
         return postRepository.findAll(pageable);
     }
 
+    public Page<Post> findAllByPageAndTag(Pageable pageable, String tag) {
+        return postRepository.findAllByPageAndTag(pageable, tag);
+    }
+
     public Optional<Post> findById(long id) {
         return postRepository.findById(id);
     }

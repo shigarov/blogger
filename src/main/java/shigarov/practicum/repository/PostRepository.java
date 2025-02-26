@@ -11,6 +11,8 @@ public interface PostRepository {
 
     Page<Post> findAll(Pageable pageable);
 
+    Page<Post> findAllByPageAndTag(Pageable pageable, String tag);
+
     Optional<Post> findById(long id);
 
     List<Post> findAllByTag(String tag);
