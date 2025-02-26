@@ -12,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import shigarov.practicum.configuration.DataSourceConfiguration;
 import shigarov.practicum.model.Comment;
 import shigarov.practicum.model.Post;
+import shigarov.practicum.model.Tag;
 
 import java.util.List;
 
@@ -29,25 +30,62 @@ public class JdbcNativePostRepositoryTest {
     @BeforeEach
     void setUp() {
         // Очистка базы данных
+        jdbcTemplate.execute("DELETE FROM posts_tags");
+        jdbcTemplate.execute("DELETE FROM tags");
         jdbcTemplate.execute("DELETE FROM comments");
         jdbcTemplate.execute("DELETE FROM posts");
 
-        // Добавление тестовых данных
+        // Добавление тестовых данных в таблицу тегов
+        final String sqlCreateTags = """
+                INSERT INTO tags (id, name) VALUES 
+                (1, 'технологии'),
+                (2, 'блог'),
+                (3, 'программирование'),
+                (4, 'жизнь'),
+                (5, 'тест'),
+                (6, 'котики');
+                """;
+        jdbcTemplate.execute(sqlCreateTags);
+
+        // Добавление тестовых данных в таблицу постов
         final String sqlCreatePosts = """
-                INSERT INTO posts (id, title, image, text, tags, likes) VALUES
-                (1, 'Пост 1', 'image1.png', 'Текст поста 1, разбитый на абзацы.', 'технологии, блог', 10),
-                (2, 'Пост 2', 'image2.png', 'Текст поста 2, разбитый на абзацы.', 'программирование', 5),
-                (3, 'Пост 3', 'image3.png', 'Текст поста 3, разбитый на абзацы.', 'блог, жизнь', 15),
-                (4, 'Пост 4', NULL, 'Текст поста 4, разбитый на абзацы.', 'тест, блог', 20),
-                (5, 'Пост 5', NULL, 'Текст поста 5, разбитый на абзацы.', 'технологии, программирование', 8),
-                (6, 'Пост 6', NULL, 'Текст поста 6, разбитый на абзацы.', 'блог, тест', 12),
-                (7, 'Пост 7', NULL, 'Текст поста 7, разбитый на абзацы.', 'жизнь, блог', 7),
-                (8, 'Пост 8', NULL, 'Текст поста 8, разбитый на абзацы.', 'технологии', 30),
-                (9, 'Пост 9', NULL, 'Текст поста 9, разбитый на абзацы.', 'программирование, тест', 25),
-                (10, 'Пост 10', NULL, 'Текст поста 10, разбитый на абзацы.', 'блог, технологии', 18);
+                INSERT INTO posts (id, title, image, text, likes) VALUES
+                (1, 'Пост 1', 'image1.png', 'Текст поста 1, разбитый на абзацы.', 10),
+                (2, 'Пост 2', 'image2.png', 'Текст поста 2, разбитый на абзацы.', 5),
+                (3, 'Пост 3', 'image3.png', 'Текст поста 3, разбитый на абзацы.', 15),
+                (4, 'Пост 4', NULL, 'Текст поста 4, разбитый на абзацы.', 20),
+                (5, 'Пост 5', NULL, 'Текст поста 5, разбитый на абзацы.', 8),
+                (6, 'Пост 6', NULL, 'Текст поста 6, разбитый на абзацы.', 12),
+                (7, 'Пост 7', NULL, 'Текст поста 7, разбитый на абзацы.', 7),
+                (8, 'Пост 8', NULL, 'Текст поста 8, разбитый на абзацы.', 30),
+                (9, 'Пост 9', NULL, 'Текст поста 9, разбитый на абзацы.', 25),
+                (10, 'Пост 10', NULL, 'Текст поста 10, разбитый на абзацы.', 18);
                 """;
         jdbcTemplate.execute(sqlCreatePosts);
 
+        // Добавление тестовых данных в таблицу комментариев
+        final String sqlCreatePostsTags = """
+                INSERT INTO posts_tags (post_id, tag_id) VALUES
+                (1, 1),
+                (1, 3),
+                (2, 3),
+                (2, 4),
+                (2, 6),
+                (4, 1),
+                (4, 2),
+                (5, 3),
+                (5, 5),
+                (5, 6),
+                (6, 4),
+                (7, 3),
+                (7, 5),
+                (9, 1),
+                (10, 1),
+                (10, 2);
+                """;
+        jdbcTemplate.execute(sqlCreatePostsTags);
+
+        // Добавление тестовых данных в таблицу комментариев
         final String sqlCreateComments = """
                 INSERT INTO comments (id, text, post_id) VALUES
                 (1, 'Отличный пост!', 1),
@@ -93,12 +131,15 @@ public class JdbcNativePostRepositoryTest {
     }
 
     @Test
-    void findAll_shouldReturnAllPosts() {
-        List<Post> posts = postRepository.findAll();
+    void findAll_shouldReturnAllPostsForPageable() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Post> page = postRepository.findAll(pageable);
 
+        List<Post> posts = page.getContent();
         assertNotNull(posts);
         assertEquals(10, posts.size());
 
+        // (1, 'Пост 1', 'image1.png', 'Текст поста 1, разбитый на абзацы.', 10),
         Post post = posts.getFirst();
         assertEquals(1L, post.getId());
         assertEquals("Пост 1", post.getTitle());
@@ -106,34 +147,41 @@ public class JdbcNativePostRepositoryTest {
         List<Comment> comments = post.getComments();
         assertNotNull(comments);
         assertEquals(2, comments.size());
-
         Comment comment = comments.getFirst();
         assertEquals(1L, comment.getId());
-        assertEquals("Отличный пост!", comment.getText());
+
+        List<Tag> tags = post.getTags();
+        assertNotNull(tags);
+        assertEquals(2, tags.size());
+        Tag tag = tags.getFirst();
+        assertEquals(1L, tag.getId());
     }
 
     @Test
-    void findAllByPage_shouldReturnAllPostsByPage() {
-        Pageable pageable = PageRequest.of(1, 5);
-        Page<Post> page = postRepository.findAll(pageable);
+    void findAllByTags_shouldReturnAllPostsByTagsForPageable() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Post> page = postRepository.findAllByTag(pageable, 1L);
 
         List<Post> posts = page.getContent();
         assertNotNull(posts);
-        assertEquals(5, posts.size());
+        assertEquals(4, posts.size());
 
-        // (6, 'Пост 6', NULL, 'Текст поста 6, разбитый на абзацы.', 'блог, тест', 12),
+        // (1, 'Пост 1', 'image1.png', 'Текст поста 1, разбитый на абзацы.', 10),
         Post post = posts.getFirst();
-        assertEquals(6L, post.getId());
-        assertEquals("Пост 6", post.getTitle());
+        assertEquals(1L, post.getId());
+        assertEquals("Пост 1", post.getTitle());
 
         List<Comment> comments = post.getComments();
         assertNotNull(comments);
-        assertEquals(1, comments.size());
-
-        // (12, 'Отлично написано!', 6),
+        assertEquals(2, comments.size());
         Comment comment = comments.getFirst();
-        assertEquals(12L, comment.getId());
-        assertEquals("Отлично написано!", comment.getText());
+        assertEquals(1L, comment.getId());
+
+        List<Tag> tags = post.getTags();
+        assertNotNull(tags);
+        assertEquals(2, tags.size());
+        Tag tag = tags.getFirst();
+        assertEquals(1L, tag.getId());
     }
 
     @Test

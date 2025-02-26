@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.repository.PostRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,24 +17,16 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public List<Post> findAll() {
-        return postRepository.findAll();
-    }
-
     public Page<Post> findAll(Pageable pageable) {
         return postRepository.findAll(pageable);
     }
 
-    public Page<Post> findAllByPageAndTag(Pageable pageable, String tag) {
-        return postRepository.findAllByPageAndTag(pageable, tag);
+    public Page<Post> findAllByTag(Pageable pageable, Long tagId) {
+        return postRepository.findAllByTag(pageable, tagId);
     }
 
     public Optional<Post> findById(long id) {
         return postRepository.findById(id);
-    }
-
-    public List<Post> findAllByTag(String tag) {
-        return postRepository.findAllByTag(tag);
     }
 
     public void save(Post post) {

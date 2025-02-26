@@ -23,7 +23,7 @@ public class PostController {
     }
 
     @GetMapping // GET запрос /posts
-    public String posts(@RequestParam(name = "tag", required = false, defaultValue = "") String tag,
+    public String posts(@RequestParam(name = "tagId", required = false, defaultValue = "0") Long tagId,
                         //Pageable pageable,
                         @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
                         @RequestParam(name = "size", required = false, defaultValue = "10") int pageSize,
@@ -39,8 +39,8 @@ public class PostController {
 
         List<Post> posts;
 
-        if (tag != null && !tag.isBlank()) {
-            Page<Post> postsPage = service.findAllByPageAndTag(pageable, tag);
+        if (tagId != null && tagId > 0) {
+            Page<Post> postsPage = service.findAllByTag(pageable, tagId);
             posts = postsPage.stream().toList();
             model.addAttribute("page", postsPage);
         } else {
@@ -52,7 +52,7 @@ public class PostController {
         }
         // Передаём данные в виде атрибута users
         model.addAttribute("posts", posts);
-        model.addAttribute("tag", tag);
+        model.addAttribute("tag", tagId);
 
         return "posts"; // Возвращаем название шаблона — posts.html
     }

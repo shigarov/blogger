@@ -1,6 +1,9 @@
 package shigarov.practicum.model;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Post {
 
@@ -8,23 +11,23 @@ public class Post {
     private String title;
     private String image;
     private String text;
-    private String tags;
+    private Map<Long, Tag> tags = new LinkedHashMap<>();
     private int likes;
-    private List<Comment> comments;
+    private Map<Long, Comment> comments = new LinkedHashMap<>();
 
     // Конструктор без аргументов
     public Post() {}
 
     // Конструктор с аргументами для удобства использования
-    public Post(Long id, String title, String image, String text, String tags, int likes, List<Comment> comments) {
-        this.id = id;
-        this.title = title;
-        this.image = image;
-        this.text = text;
-        this.tags = tags;
-        this.likes = likes;
-        this.comments = comments;
-    }
+//    public Post(Long id, String title, String image, String text, List<Tag> tags, int likes, List<Comment> comments) {
+//        this.id = id;
+//        this.title = title;
+//        this.image = image;
+//        this.text = text;
+//        this.tags = tags;
+//        this.likes = likes;
+//        this.comments = comments;
+//    }
 
     // Геттеры и сеттеры ...
 
@@ -60,12 +63,12 @@ public class Post {
         this.text = text;
     }
 
-    public String getTags() {
-        return tags;
+    public List<Tag> getTags() {
+        return new ArrayList<>(tags.values());
     }
 
-    public void setTags(String tags) {
-        this.tags = tags;
+    public void addTag(Tag tag) {
+        tags.put(tag.getId(), tag);
     }
 
     public int getLikes() {
@@ -77,11 +80,11 @@ public class Post {
     }
 
     public List<Comment> getComments() {
-        return comments;
+        return new ArrayList<>(comments.values());
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    public void addComment(Comment comment) {
+        comments.put(comment.getId(), comment);
     }
 
 //    public int numOfComments() {
