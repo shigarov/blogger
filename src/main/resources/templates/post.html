@@ -40,6 +40,7 @@
 <div>
     <strong>Теги:</strong>
     <!--<span th:text="${post.tags}"/>-->
+    <div><ul><li th:each="tag : ${post.tags}" th:text="${tag.name}"></li></ul></div>
 </div>
 
 <!-- Количество лайков -->

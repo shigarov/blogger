@@ -23,6 +23,11 @@
         function changeSize() {
             document.getElementById("sizeForm").submit();
         }
+
+        // Функция для отправки формы при изменении тега
+        function changeTag() {
+            document.getElementById("tagForm").submit();
+        }
     </script>
 </head>
 
@@ -80,7 +85,7 @@
     <!-- Скрытое поле для сохранения текущего размера страницы -->
     <input type="hidden" name="size" th:value="${page.size}">
     <!-- Скрытое поле для сохранения текущего тега -->
-    <input type="hidden" name="tag" th:value="${tag}">
+    <input type="hidden" name="tagId" th:value="${tagId}">
 </form>
 
 <!-- Форма для выбора размера страницы -->
@@ -95,20 +100,34 @@
     <!-- Скрытое поле для сохранения текущей страницы -->
     <input type="hidden" name="page" th:value="0">
     <!-- Скрытое поле для сохранения текущего тега -->
-    <input type="hidden" name="tag" th:value="${tag}">
+    <input type="hidden" name="tagId" th:value="${tagId}">
 </form>
 
-<!-- Форма для ввода тега -->
-<form th:action="@{/posts}" method="get">
-    <label for="tag">Выберите тег:</label>
-    <input type="text" id="tag" name="tag" th:value="${tag}">
-    <button type="submit">Искать</button>
+<!-- Форма для выбора тега -->
+<form id="tagForm" th:action="@{/posts}" method="get">
+    <label for="tagId">Фильтр по тегу:</label>
+    <select id="tagId" name="tagId" onchange="changeTag()">
+        <option th:value="0">Не выбрано</option>
+        <option th:each="tag : ${tags}" th:value="${tag.id}" th:text="${tag.name}" th:selected="${tag.id == tagId}">
+        </option>
+    </select>
 
-    <!-- Скрытое поле для сохранения текущего размера страницы -->
-    <input type="hidden" name="size" th:value="${page.size}">
     <!-- Скрытое поле для сохранения текущей страницы -->
     <input type="hidden" name="page" th:value="0">
+    <!-- Скрытое поле для сохранения текущего размера страницы -->
+    <input type="hidden" name="size" th:value="${page.size}">
 </form>
+
+<!--<form th:action="@{/posts}" method="get">-->
+<!--    <label for="tag">Выберите тег:</label>-->
+<!--    <input type="text" id="tag" name="tag" th:value="${tag}">-->
+<!--    <button type="submit">Искать</button>-->
+
+<!--    &lt;!&ndash; Скрытое поле для сохранения текущего размера страницы &ndash;&gt;-->
+<!--    <input type="hidden" name="size" th:value="${page.size}">-->
+<!--    &lt;!&ndash; Скрытое поле для сохранения текущей страницы &ndash;&gt;-->
+<!--    <input type="hidden" name="page" th:value="0">-->
+<!--</form>-->
 
 <button class="btn-add" onclick="toggleForm()">Добавить пост</button>
 
@@ -132,8 +151,7 @@
         <td><img th:if="${post.image != null}" th:src="@{'/images/'+${post.image}}" alt="Картинка"/></td>
         <!--Вывод текста с абзацами и строками-->
         <td th:utext="${#strings.replace(post.text, '\r\n', '<br>')}"/>
-        <!--<td th:text="${post.tags}"/>-->
-        <td th:text="${post.tags}"/>
+        <td><ul><li th:each="tag : ${post.tags}" th:text="${tag.name}"></li></ul></td>
         <td th:text="${post.likes}"/>
         <td th:text="${#lists.size(post.comments)}"/>
     </tr>

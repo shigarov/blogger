@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import shigarov.practicum.model.Post;
+import shigarov.practicum.model.Tag;
 import shigarov.practicum.service.PostService;
 
 import java.util.List;
@@ -48,9 +49,13 @@ public class PostController {
             posts = postsPage.stream().toList();
             model.addAttribute("page", postsPage);
         }
+
+        List<Tag> tags = service.findAllTags();
+
         // Передаём данные в виде атрибута users
         model.addAttribute("posts", posts);
-        model.addAttribute("tag", tagId);
+        model.addAttribute("tagId", tagId);
+        model.addAttribute("tags", tags);
 
         return "posts"; // Возвращаем название шаблона — posts.html
     }
