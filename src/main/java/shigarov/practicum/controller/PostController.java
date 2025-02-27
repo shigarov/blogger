@@ -44,8 +44,6 @@ public class PostController {
             posts = postsPage.stream().toList();
             model.addAttribute("page", postsPage);
         } else {
-            //posts = service.findAll();
-            //Pageable pageable = PageRequest.of(page, size);
             Page<Post> postsPage = service.findAll(pageable);
             posts = postsPage.stream().toList();
             model.addAttribute("page", postsPage);
