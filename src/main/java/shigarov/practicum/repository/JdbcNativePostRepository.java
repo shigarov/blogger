@@ -175,21 +175,52 @@ public class JdbcNativePostRepository implements PostRepository {
     @Override
     public void createPost(Post post) {
         final String sql = """
-                INSERT INTO posts (id, title, image, text, likes)
-                VALUES (?, ?, ?, ?, ?);
-               """;
+                 INSERT INTO posts (id, title, image, text, likes)
+                 VALUES (?, ?, ?, ?, ?);
+                """;
         // Формируем insert-запрос с параметрами
         jdbcTemplate.update(sql, post.getId(), post.getTitle(), post.getImage(), post.getText(), post.getLikes());
 
         final String sqlCreatePostsTags = """
-                INSERT INTO posts_tags (post_id, tag_id)
-                VALUES (?, ?);
-               """;
+                 INSERT INTO posts_tags (post_id, tag_id)
+                 VALUES (?, ?);
+                """;
 
         List<Tag> tags = post.getTags();
-        for (Tag tag: tags) {
+        for (Tag tag : tags) {
             jdbcTemplate.update(sqlCreatePostsTags, post.getId(), tag.getId());
         }
+    }
+
+    @Override
+    public void updatePost(Post post) {
+        final String sql = """
+                UPDATE posts
+                SET
+                    title = ?,
+                    text = ?
+                WHERE id = ?;
+                """;
+
+        jdbcTemplate.update(sql, post.getTitle(), post.getText(), post.getId());
+    }
+
+    @Override
+    public void deletePost(Post post) {
+        jdbcTemplate.update("DELETE FROM comments WHERE post_id = ?;", post.getId());
+        jdbcTemplate.update("DELETE FROM posts_tags WHERE post_id = ?;", post.getId());
+        jdbcTemplate.update("DELETE FROM posts WHERE id = ?;", post.getId());
+    }
+
+    @Override
+    public void incrementLikes(Post post) {
+        final String sql = """
+                UPDATE posts
+                SET likes = likes + 1
+                WHERE id = ?;
+                """;
+
+        jdbcTemplate.update(sql, post.getId());
     }
 
     private static class PostResultSetExtractor implements ResultSetExtractor<List<Post>> {
@@ -268,9 +299,9 @@ public class JdbcNativePostRepository implements PostRepository {
     @Override
     public void createTag(Tag tag) {
         final String sql = """
-                INSERT INTO tags (id, name)
-                VALUES (?, ?);
-               """;
+                 INSERT INTO tags (id, name)
+                 VALUES (?, ?);
+                """;
         // Формируем insert-запрос с параметрами
         jdbcTemplate.update(sql, tag.getId(), tag.getName());
     }
@@ -294,27 +325,27 @@ public class JdbcNativePostRepository implements PostRepository {
 
     public Optional<Comment> findCommentById(long id) {
         String sql = """
-            SELECT 
-                c.id AS comment_id,
-                c.text AS comment_text,
-                p.id AS post_id,
-                p.title AS post_title,
-                p.image AS post_image,
-                p.text AS post_text,
-                p.likes AS post_likes,
-                t.id AS tag_id,
-                t.name AS tag_name
-            FROM 
-                comments c
-            JOIN 
-                posts p ON c.post_id = p.id
-            LEFT JOIN 
-                posts_tags pt ON p.id = pt.post_id
-            LEFT JOIN 
-                tags t ON pt.tag_id = t.id
-            WHERE 
-                c.id = ?
-            """;
+                SELECT 
+                    c.id AS comment_id,
+                    c.text AS comment_text,
+                    p.id AS post_id,
+                    p.title AS post_title,
+                    p.image AS post_image,
+                    p.text AS post_text,
+                    p.likes AS post_likes,
+                    t.id AS tag_id,
+                    t.name AS tag_name
+                FROM 
+                    comments c
+                JOIN 
+                    posts p ON c.post_id = p.id
+                LEFT JOIN 
+                    posts_tags pt ON p.id = pt.post_id
+                LEFT JOIN 
+                    tags t ON pt.tag_id = t.id
+                WHERE 
+                    c.id = ?
+                """;
 
         List<Comment> comments = jdbcTemplate.query(sql, new CommentRowMapper(), id);
         return Optional.ofNullable(comments.getFirst());

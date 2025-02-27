@@ -21,6 +21,12 @@ public interface PostRepository {
 
     void createPost(Post post);
 
+    void updatePost(Post post);
+
+    void deletePost(Post post);
+
+    void incrementLikes(Post post);
+
     List<Tag> findAllTags();
 
     Optional<Tag> findTagById(long id);

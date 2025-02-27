@@ -15,6 +15,7 @@ import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -234,18 +235,51 @@ public class JdbcNativePostRepositoryTest {
     }
 
     @Test
-    void deleteById_shouldRemoveUserFromDatabase() {
-//        userRepository.deleteById(1L);
-//
-//        List<User> users = userRepository.findAll();
-//
-//        User deletedUser = users.stream()
-//                .filter(createdUsers -> createdUsers.getId().equals(1L))
-//                .findFirst()
-//                .orElse(null);
-//        assertNull(deletedUser);
+    void updatePost_shouldUpdatePost() {
+        Post post = postRepository.findPostById(1L).orElse(null);
+        assertNotNull(post);
+        assertEquals(1L, post.getId());
+
+        post.setTitle("Новый Пост 1");
+        post.setText("Новый текст для Поста 1");
+
+        postRepository.updatePost(post);
+
+        Post updatedPost = postRepository.findPostById(1L).orElse(null);
+        assertNotNull(updatedPost);
+        assertEquals(1L, updatedPost.getId());
+        assertEquals("Новый Пост 1", updatedPost.getTitle());
+        assertEquals("Новый текст для Поста 1", updatedPost.getText());
     }
 
+    @Test
+    void deletePost_shouldRemovePostFromDatabase() {
+        Post post = postRepository.findPostById(1L).orElse(null);
+        assertNotNull(post);
+        assertEquals(1L, post.getId());
+
+        postRepository.deletePost(post);
+
+        assertThrows(
+                NoSuchElementException.class,
+                () -> postRepository.findPostById(1L)
+        );
+    }
+
+    @Test
+    void incrementLikes_shouldIncrementLikesOfPost() {
+        Post post = postRepository.findPostById(1L).orElse(null);
+        assertNotNull(post);
+        assertEquals(1L, post.getId());
+        assertEquals(10, post.getLikes());
+
+        postRepository.incrementLikes(post);
+
+        Post updatedPost = postRepository.findPostById(1L).orElse(null);
+        assertNotNull(updatedPost);
+        assertEquals(1L, updatedPost.getId());
+        assertEquals(11, updatedPost.getLikes());
+    }
 
     @Test
     void findAllTags_shouldReturnAllTags() {
