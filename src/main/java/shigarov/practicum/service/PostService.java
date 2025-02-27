@@ -18,18 +18,18 @@ public class PostService {
     }
 
     public Page<Post> findAll(Pageable pageable) {
-        return postRepository.findAll(pageable);
+        return postRepository.findAllPosts(pageable);
     }
 
     public Page<Post> findAllByTag(Pageable pageable, Long tagId) {
-        return postRepository.findAllByTag(pageable, tagId);
+        return postRepository.findAllPostsByTag(pageable, tagId);
     }
 
     public Optional<Post> findById(long id) {
-        return postRepository.findById(id);
+        return postRepository.findPostById(id);
     }
 
-    public void save(Post post) {
-        postRepository.save(post);
+    public void create(Post post) {
+        postRepository.createPost(post);
     }
 }

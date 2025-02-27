@@ -2,17 +2,34 @@ package shigarov.practicum.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import shigarov.practicum.model.Comment;
 import shigarov.practicum.model.Post;
+import shigarov.practicum.model.Tag;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository {
 
-    Page<Post> findAll(Pageable pageable);
+    List<Post> findAllPosts();
 
-    Page<Post> findAllByTag(Pageable pageable, Long tagId);
+    Page<Post> findAllPosts(Pageable pageable);
 
-    Optional<Post> findById(long id);
+    Page<Post> findAllPostsByTag(Pageable pageable, Long tagId);
 
-    void save(Post post);
+    Optional<Post> findPostById(long id);
+
+    void createPost(Post post);
+
+    List<Tag> findAllTags();
+
+    Optional<Tag> findTagById(long id);
+
+    void createTag(Tag tag);
+
+    Optional<Comment> findCommentById(long id);
+
+    void createComment(Comment comment);
+
+    void updateComment(Comment comment);
 }

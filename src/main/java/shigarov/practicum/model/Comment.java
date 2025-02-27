@@ -3,13 +3,14 @@ package shigarov.practicum.model;
 public class Comment {
     private Long id;
     private String text;
+    private Post post;
 
     public Comment() {}
 
-    public Comment(Long id, String text) {
-        this.id = id;
-        this.text = text;
-    }
+//    public Comment(Long id, String text, Post post) {
+//        this.id = id;
+//        this.text = text;
+//    }
 
     public Long getId() {
         return id;
@@ -25,5 +26,13 @@ public class Comment {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 }

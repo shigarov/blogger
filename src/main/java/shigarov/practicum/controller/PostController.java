@@ -106,8 +106,8 @@ public class PostController {
 //    }
 
     @PostMapping
-    public String save(@ModelAttribute Post post) {
-        service.save(post);
+    public String create(@ModelAttribute Post post) {
+        service.create(post);
 
         return "redirect:/posts"; // Возвращаем страницу, чтобы она перезагрузилась
     }

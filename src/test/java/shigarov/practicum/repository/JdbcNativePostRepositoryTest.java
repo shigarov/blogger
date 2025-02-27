@@ -15,6 +15,7 @@ import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,6 +27,9 @@ public class JdbcNativePostRepositoryTest {
 
     @Autowired
     private PostRepository postRepository;
+
+//    @Autowired
+//    private TagRepository tagRepository;
 
     @BeforeEach
     void setUp() {
@@ -115,25 +119,9 @@ public class JdbcNativePostRepositoryTest {
     }
 
     @Test
-    void save_shouldAddPostToDatabase() {
-//        Post post = new Post(4L, "Петр", "Васильев", 25, true);
-//
-//        postRepository.save(post);
-//
-//        User savedUser = userRepository.findAll().stream()
-//                .filter(createdUsers -> createdUsers.getId().equals(4L))
-//                .findFirst()
-//                .orElse(null);
-//
-//        assertNotNull(savedUser);
-//        assertEquals("Петр", savedUser.getFirstName());
-//        assertEquals("Васильев", savedUser.getLastName());
-    }
-
-    @Test
     void findAll_shouldReturnAllPostsForPageable() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Post> page = postRepository.findAll(pageable);
+        Page<Post> page = postRepository.findAllPosts(pageable);
 
         List<Post> posts = page.getContent();
         assertNotNull(posts);
@@ -160,7 +148,7 @@ public class JdbcNativePostRepositoryTest {
     @Test
     void findAllByTags_shouldReturnAllPostsByTagsForPageable() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Post> page = postRepository.findAllByTag(pageable, 1L);
+        Page<Post> page = postRepository.findAllPostsByTag(pageable, 1L);
 
         List<Post> posts = page.getContent();
         assertNotNull(posts);
@@ -185,6 +173,67 @@ public class JdbcNativePostRepositoryTest {
     }
 
     @Test
+    void findById_shouldReturnPostById() {
+        Optional<Post> postOptional = postRepository.findPostById(1L);
+
+        Post post = postOptional.orElse(null);
+
+        assertNotNull(post);
+
+        // (1, 'Пост 1', 'image1.png', 'Текст поста 1, разбитый на абзацы.', 10),
+        assertEquals(1L, post.getId());
+        assertEquals("Пост 1", post.getTitle());
+
+        List<Comment> comments = post.getComments();
+        assertNotNull(comments);
+        assertEquals(2, comments.size());
+        Comment comment = comments.getFirst();
+        assertEquals(1L, comment.getId());
+
+        List<Tag> tags = post.getTags();
+        assertNotNull(tags);
+        assertEquals(2, tags.size());
+        Tag tag = tags.getFirst();
+        assertEquals(1L, tag.getId());
+    }
+
+    @Test
+    void createPost_shouldAddNewPostToDatabase() {
+        Post post = new Post();
+        post.setId(11L);
+        post.setTitle("Тестовый пост");
+        post.setImage("image1.png");
+        post.setText("Текст тестового поста");
+        post.setLikes(0);
+
+        //post.addTag(new Tag(1L, "технологии"));
+        //post.addTag(new Tag(2L, "блог"));
+
+        Tag savedTag1 = postRepository.findTagById(1L).orElse(null);
+        assertNotNull(savedTag1);
+        post.addTag(savedTag1);
+
+        Tag savedTag2 = postRepository.findTagById(2L).orElse(null);
+        assertNotNull(savedTag2);
+        post.addTag(savedTag2);
+
+        postRepository.createPost(post);
+
+        Post savedPost = postRepository.findPostById(11L).orElse(null);
+
+        assertNotNull(savedPost);
+        assertEquals("Тестовый пост", savedPost.getTitle());
+        assertEquals("image1.png", savedPost.getImage());
+        assertEquals("Текст тестового поста", savedPost.getText());
+
+        List<Tag> tags = savedPost.getTags();
+        assertNotNull(tags);
+        assertEquals(2, tags.size());
+        Tag tag = tags.getFirst();
+        assertEquals(1L, tag.getId());
+    }
+
+    @Test
     void deleteById_shouldRemoveUserFromDatabase() {
 //        userRepository.deleteById(1L);
 //
@@ -195,5 +244,72 @@ public class JdbcNativePostRepositoryTest {
 //                .findFirst()
 //                .orElse(null);
 //        assertNull(deletedUser);
+    }
+
+
+    @Test
+    void findAllTags_shouldReturnAllTags() {
+        List<Tag> tags = postRepository.findAllTags();
+
+        assertNotNull(tags);
+        assertEquals(6, tags.size());
+
+        // (1, 'технологии')
+        Tag tag = tags.getFirst();
+        assertEquals(1L, tag.getId());
+        assertEquals("технологии", tag.getName());
+    }
+
+    @Test
+    void createTag_shouldAddNewTagToDatabase() {
+        Tag tag = new Tag();
+        tag.setId(7L);
+        tag.setName("Тестовый тег");
+
+        postRepository.createTag(tag);
+
+        Tag savedTag = postRepository.findTagById(7L).orElse(null);
+
+        assertNotNull(savedTag);
+        assertEquals("Тестовый тег", savedTag.getName());
+    }
+
+    @Test
+    void createComment_shouldAddNewCommentToDatabase() {
+        Comment comment = new Comment();
+        comment.setId(22L);
+        comment.setText("Тестовый комментарий");
+
+        Post savedPost = postRepository.findPostById(1L).orElse(null);
+        assertNotNull(savedPost);
+
+        comment.setPost(savedPost);
+
+        postRepository.createComment(comment);
+
+        Comment savedComment = postRepository.findCommentById(22L).orElse(null);
+
+        assertNotNull(savedComment);
+        assertEquals(22L, savedComment.getId());
+        assertEquals("Тестовый комментарий", savedComment.getText());
+    }
+
+    @Test
+    void updateComment_shouldUpdateCommentInDatabase() {
+        Comment savedComment = postRepository.findCommentById(1L).orElse(null);
+
+        assertNotNull(savedComment);
+        assertEquals(1L, savedComment.getId());
+        assertEquals("Отличный пост!", savedComment.getText());
+        assertEquals(1L, savedComment.getPost().getId());
+
+        savedComment.setText("Абсолютно новый комментарий!");
+
+        postRepository.updateComment(savedComment);
+
+        Comment updatedComment = postRepository.findCommentById(1L).orElse(null);
+        assertEquals(1L, updatedComment.getId());
+        assertEquals("Абсолютно новый комментарий!", updatedComment.getText());
+        assertEquals(1L, updatedComment.getPost().getId());
     }
 }

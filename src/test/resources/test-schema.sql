@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS post_tags;
-DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS posts;
 
 -- Таблица постов
