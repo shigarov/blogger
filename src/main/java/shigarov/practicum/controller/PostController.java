@@ -24,16 +24,9 @@ public class PostController {
 
     @GetMapping // GET запрос /posts
     public String posts(@RequestParam(name = "tagId", required = false, defaultValue = "0") Long tagId,
-                        //Pageable pageable,
                         @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
                         @RequestParam(name = "size", required = false, defaultValue = "10") int pageSize,
                         Model model) {
-        // Данные теперь получаются программно
-//        List<Post> posts = Arrays.asList(
-//                new Post(1L, "Пост 1", "image1.png", "Текст поста 1, разбитый на абзацы.", "технологии, блог", 10, 2),
-//                new Post(2L, "Пост 2", "image2.png", "Текст поста 2, разбитый на абзацы.", "программирование", 5, 3),
-//                new Post(3L, "Пост 3", "image3.png", "Текст поста 3, разбитый на абзацы.", "блог, жизнь", 15, 1)
-//        );
 
         final Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
@@ -62,60 +55,20 @@ public class PostController {
         return "posts"; // Возвращаем название шаблона — posts.html
     }
 
-//    @GetMapping(value = "/{id}")
-//    public String post(Model model, @PathVariable(name = "id") Long id) {
-//        Optional<Post> post = service.findById(id);
-//        // Передаём данные в виде атрибута users
-//        model.addAttribute("post", post);
-//        return "post"; // Возвращаем название шаблона — post.html
-//    }
-
     @GetMapping("/{id}")
     public String postById(@PathVariable("id") long id, Model model) {
         // Получаем пост по ID из репозитория
         Optional<Post> postOptional = service.findById(id);
 
-//        Post post = new Post();
-//        post.setId(100L);
-//        post.setTitle("Мой пост");
-//        post.setImage("image1.png");
-//        post.setText("бла бла бла бла");
-//        post.setTags("технологии, жизнь");
-//        post.setLikes(1000);
-//
-//        List<Comment> comments = Arrays.asList(
-//                new Comment(1L, "Вах вах!"),
-//                new Comment(2L, "ням ням!")
-//        );
-//        post.setComments(comments);
-//        Optional<Post> postOptional = Optional.ofNullable(post);
-
         // Если пост найден, добавляем его в модель
         if (postOptional.isPresent()) {
             model.addAttribute("post", postOptional.get());
-            return "post";  // Имя Thymeleaf шаблона для отображения поста
+            return "post";
         } else {
             // Если пост не найден, возвращаем страницу с ошибкой
             return "error/404";  // Имя Thymeleaf шаблона для страницы 404
         }
     }
-
-//    @GetMapping
-//    public String postsByTag(@RequestParam("tag") String tag, Model model){
-//        List<Post> posts = service.findAllByTag(tag);
-//
-//        // Передаём данные в виде атрибута users
-//        model.addAttribute("posts", posts);
-//
-//        return "posts"; // Возвращаем название шаблона — posts.html
-//    }
-
-//    @PostMapping
-//    public String addPost(@ModelAttribute Post post) {
-//        System.out.println(post);
-//        service.addPost(post);
-//        return "redirect:/posts"; // Возвращаем страницу, чтобы она перезагрузилась
-//    }
 
     @PostMapping
     public String addPost(
