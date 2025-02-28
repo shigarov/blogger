@@ -57,6 +57,9 @@ public class PostController {
         model.addAttribute("tagId", tagId);
         model.addAttribute("tags", tags);
 
+        // Создаем пустой пост для формы
+        //model.addAttribute("newPost", new Post());
+
         return "posts"; // Возвращаем название шаблона — posts.html
     }
 
@@ -109,9 +112,9 @@ public class PostController {
 //    }
 
     @PostMapping
-    public String create(@ModelAttribute Post post) {
-        //service.create(post);
-
+    public String addPost(@ModelAttribute Post post) {
+        System.out.println(post);
+        service.addPost(post);
         return "redirect:/posts"; // Возвращаем страницу, чтобы она перезагрузилась
     }
 

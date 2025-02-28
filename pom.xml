@@ -95,6 +95,14 @@
       <version>5.9.3</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- Утилиты -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.17.0</version>
+    </dependency>
+
   </dependencies>
 
   <build>

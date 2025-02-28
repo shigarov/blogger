@@ -31,9 +31,14 @@ public class PostService {
         return postRepository.findPostById(id);
     }
 
-//    public void create(Post post) {
-//        postRepository.createPost(post);
-//    }
+    public void addPost(Post post) {
+        postRepository.addPostWithTags(
+                post.getTitle(),
+                null,
+                post.getText(),
+                null
+        );
+    }
 
     public List<Tag> findAllTags() {
         return postRepository.findAllTags();

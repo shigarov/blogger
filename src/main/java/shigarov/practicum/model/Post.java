@@ -18,17 +18,6 @@ public class Post {
     // Конструктор без аргументов
     public Post() {}
 
-    // Конструктор с аргументами для удобства использования
-//    public Post(Long id, String title, String image, String text, List<Tag> tags, int likes, List<Comment> comments) {
-//        this.id = id;
-//        this.title = title;
-//        this.image = image;
-//        this.text = text;
-//        this.tags = tags;
-//        this.likes = likes;
-//        this.comments = comments;
-//    }
-
     // Геттеры и сеттеры ...
 
     public Long getId() {
@@ -87,7 +76,16 @@ public class Post {
         comments.put(comment.getId(), comment);
     }
 
-//    public int numOfComments() {
-//        return comments == null ? 0 : comments.size();
-//    }
+    @Override
+    public String toString() {
+        return new org.apache.commons.lang3.builder.ToStringBuilder(this)
+                .append("id", id)
+                .append("title", title)
+                .append("image", image)
+                .append("text", text)
+                .append("tags", tags)
+                .append("likes", likes)
+                .append("comments", comments)
+                .toString();
+    }
 }

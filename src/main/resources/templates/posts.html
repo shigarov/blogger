@@ -34,41 +34,41 @@
 <body>
 
 <h1>Посты</h1>
-<!--
-<div>
-    <strong>Страница:</strong>
-    <span th:text="${page.number + 1}"/>
-    <strong>из</strong>
-    <span th:text="${page.totalPages}"/>
+
+<!-- Скрываемая форма для добавления нового поста -->
+<div class="form-container" style="display: none;" id="newPostForm">
+    <h2>Новый пост</h2>
+    <form th:action="@{/posts}" method="POST">
+        <label for="title">Название</label>
+        <input type="text" id="title" name="title" required>
+        <br><br>
+        <label for="image">Картинка</label>
+        <input type="text" id="image" name="image">
+        <br><br>
+        <label for="text">Текст</label>
+        <textarea id="text" name="text" rows="5" required></textarea>
+        <br><br>
+        <label for="selectedTags">Выберите теги:</label>
+        <select id="selectedTags" name="selectedTags" multiple>
+            <option th:each="tag : ${tags}" th:value="${tag.id}" th:text="${tag.name}">
+            </option>
+        </select>
+        <br><br>
+        <button type="submit">Добавить</button>
+        <br><br>
+    </form>
 </div>
-<div>
-    <strong>Количество постов на странице (не более):</strong>
-    <span th:text="${page.size}"/>
-</div>
--->
 
-<!-- Форма для выбора страницы и размера страницы -->
-<!--
-<form th:action="@{/posts}" method="get">
-    <label for="page">Страница:</label>
-    <select id="page" name="page">
-        <option th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
-                th:value="${i}"
-                th:text="${i + 1}"
-                th:selected="${i == page.number}">
-        </option>
-    </select>
+<script>
+    function toggleForm() {
+        const form = document.getElementById('newPostForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
 
-    <label for="size">Количество постов на странице (не более):</label>
-    <select id="size" name="size">
-        <option value="10" th:selected="${page.size == 10}">10</option>
-        <option value="20" th:selected="${page.size == 20}">20</option>
-        <option value="50" th:selected="${page.size == 50}">50</option>
-    </select>
+<button class="btn-add" onclick="toggleForm()">Новый пост</button>
 
-    <button type="submit">Вперед</button>
-</form>
--->
+<br><br>
 
 <!-- Форма для выбора страницы -->
 <form id="pageForm" th:action="@{/posts}" method="get">
@@ -118,18 +118,7 @@
     <input type="hidden" name="size" th:value="${page.size}">
 </form>
 
-<!--<form th:action="@{/posts}" method="get">-->
-<!--    <label for="tag">Выберите тег:</label>-->
-<!--    <input type="text" id="tag" name="tag" th:value="${tag}">-->
-<!--    <button type="submit">Искать</button>-->
-
-<!--    &lt;!&ndash; Скрытое поле для сохранения текущего размера страницы &ndash;&gt;-->
-<!--    <input type="hidden" name="size" th:value="${page.size}">-->
-<!--    &lt;!&ndash; Скрытое поле для сохранения текущей страницы &ndash;&gt;-->
-<!--    <input type="hidden" name="page" th:value="0">-->
-<!--</form>-->
-
-<button class="btn-add" onclick="toggleForm()">Добавить пост</button>
+<br>
 
 <table>
     <thead>
@@ -151,36 +140,16 @@
         <td><img th:if="${post.image != null}" th:src="@{'/images/'+${post.image}}" alt="Картинка"/></td>
         <!--Вывод текста с абзацами и строками-->
         <td th:utext="${#strings.replace(post.text, '\r\n', '<br>')}"/>
-        <td><ul><li th:each="tag : ${post.tags}" th:text="${tag.name}"></li></ul></td>
+        <td>
+            <ul>
+                <li th:each="tag : ${post.tags}" th:text="${tag.name}"></li>
+            </ul>
+        </td>
         <td th:text="${post.likes}"/>
         <td th:text="${#lists.size(post.comments)}"/>
     </tr>
     </tbody>
 </table>
-
-<!-- Скрываемая форма для добавления нового пользователя -->
-<div class="form-container" style="display: none;" id="newPostForm">
-    <h2>Добавить пост</h2>
-    <form th:action="@{/posts}" method="POST">
-        <label for="title">Название</label>
-        <input type="text" id="title" name="title" required>
-        <label for="image">Картинка</label>
-        <input type="text" id="image" name="image" required>
-        <label for="text">Текст</label>
-        <!--<input type="text" id="text" name="text" required>-->
-        <textarea id="text" name="text" rows="5" required></textarea>
-        <label for="tags">Теги</label>
-        <input type="text" id="tags" name="tags">
-        <button type="submit">Добавить</button>
-    </form>
-</div>
-
-<script>
-    function toggleForm() {
-        const form = document.getElementById('newPostForm');
-        form.style.display = form.style.display === 'none' ? 'block' : 'none';
-    }
-</script>
 
 </body>
 

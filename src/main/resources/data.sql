@@ -1278,3 +1278,7 @@ INSERT INTO posts_tags (post_id, tag_id) VALUES
 (115, 2),
 (115, 5),
 (115, 6);
+
+ALTER TABLE posts ALTER COLUMN id RESTART WITH (SELECT MAX(id) + 1 FROM posts);
+ALTER TABLE tags ALTER COLUMN id RESTART WITH (SELECT MAX(id) + 1 FROM tags);
+ALTER TABLE comments ALTER COLUMN id RESTART WITH (SELECT MAX(id) + 1 FROM comments);
