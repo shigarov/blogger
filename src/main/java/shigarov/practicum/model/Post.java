@@ -56,6 +56,10 @@ public class Post {
         return new ArrayList<>(tags.values());
     }
 
+    public List<Long> getTagIds() {
+        return new ArrayList<>(tags.keySet());
+    }
+
     public void addTag(Tag tag) {
         tags.put(tag.getId(), tag);
     }

@@ -177,14 +177,13 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public void addPostWithTags (
+    public void addPost(
             @NonNull String title,
             @Nullable String image,
             @NonNull String text,
-            @Nullable List<String> tags
-    )
-    {
-        // Шаг 1: Вставляем новый пост и получаем его ID
+            @Nullable List<Long> tagIds
+    ) {
+        // Шаг 1: Вставляем новый пост
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
@@ -197,45 +196,80 @@ public class JdbcNativePostRepository implements PostRepository {
             return ps;
         }, keyHolder);
 
+        // Шаг 2: Получаем ID вставленного поста
         long postId = keyHolder.getKey().longValue();
-        // System.out.println("ID нового поста: " + postId);
 
-        if (tags == null || tags.isEmpty()) return;
-
-        // Шаг 2: Вставляем теги и получаем их ID
-        Map<String, Long> tagIds = new HashMap<>();
-        for (String tag : tags) {
-            // Вставляем тег, если он ещё не существует
-            jdbcTemplate.update("MERGE INTO tags (name) KEY (name) VALUES (?)", tag);
-
-            // Получаем ID тега
-            Long tagId = jdbcTemplate.queryForObject(
-                    "SELECT id FROM tags WHERE name = ?",
-                    Long.class,
-                    tag
-            );
-            tagIds.put(tag, tagId);
+        // Шаг 3: Если переданы tagIds, добавляем связи с тегами
+        if (tagIds != null && !tagIds.isEmpty()) {
+            for (Long tagId : tagIds) {
+                jdbcTemplate.update(
+                        "INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)",
+                        postId, tagId
+                );
+            }
         }
-
-        // Шаг 3: Вставляем связи между постом и тегами
-        for (Long tagId : tagIds.values()) {
-            jdbcTemplate.update(
-                    "INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)",
-                    postId, tagId
-            );
-        }
-
-        // System.out.println("Пост и связи с тегами успешно добавлены.");
     }
+
+
+//    @Override
+//    public void addPostWithTags (
+//            @NonNull String title,
+//            @Nullable String image,
+//            @NonNull String text,
+//            @Nullable List<String> tags
+//    )
+//    {
+//        // Шаг 1: Вставляем новый пост и получаем его ID
+//        KeyHolder keyHolder = new GeneratedKeyHolder();
+//        jdbcTemplate.update(connection -> {
+//            PreparedStatement ps = connection.prepareStatement(
+//                    "INSERT INTO posts (title, image, text) VALUES (?, ?, ?)",
+//                    Statement.RETURN_GENERATED_KEYS
+//            );
+//            ps.setString(1, title);
+//            ps.setString(2, image);
+//            ps.setString(3, text);
+//            return ps;
+//        }, keyHolder);
+//
+//        long postId = keyHolder.getKey().longValue();
+//        // System.out.println("ID нового поста: " + postId);
+//
+//        if (tags == null || tags.isEmpty()) return;
+//
+//        // Шаг 2: Вставляем теги и получаем их ID
+//        Map<String, Long> tagIds = new HashMap<>();
+//        for (String tag : tags) {
+//            // Вставляем тег, если он ещё не существует
+//            jdbcTemplate.update("MERGE INTO tags (name) KEY (name) VALUES (?)", tag);
+//
+//            // Получаем ID тега
+//            Long tagId = jdbcTemplate.queryForObject(
+//                    "SELECT id FROM tags WHERE name = ?",
+//                    Long.class,
+//                    tag
+//            );
+//            tagIds.put(tag, tagId);
+//        }
+//
+//        // Шаг 3: Вставляем связи между постом и тегами
+//        for (Long tagId : tagIds.values()) {
+//            jdbcTemplate.update(
+//                    "INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)",
+//                    postId, tagId
+//            );
+//        }
+//
+//        // System.out.println("Пост и связи с тегами успешно добавлены.");
+//    }
 
     public void updatePost(
             long postId,
             @NonNull String title,
             @Nullable String image,
             @NonNull String text,
-            @Nullable List<String> tags
-    )
-    {
+            @Nullable List<Long> tagIds
+    ) {
         // Шаг 1: Обновляем данные поста
         jdbcTemplate.update(
                 "UPDATE posts SET title = ?, image = ?, text = ? WHERE id = ?",
@@ -245,25 +279,53 @@ public class JdbcNativePostRepository implements PostRepository {
         // Шаг 2: Удаляем старые связи поста с тегами
         jdbcTemplate.update("DELETE FROM posts_tags WHERE post_id = ?", postId);
 
-        // Шаг 3: Добавляем новые связи поста с тегами
-        for (String tag : tags) {
-            // Вставляем тег, если он ещё не существует
-            jdbcTemplate.update("MERGE INTO tags (name) KEY (name) VALUES (?)", tag);
-
-            // Получаем ID тега
-            Long tagId = jdbcTemplate.queryForObject(
-                    "SELECT id FROM tags WHERE name = ?",
-                    Long.class,
-                    tag
-            );
-
-            // Вставляем связь между постом и тегом
-            jdbcTemplate.update(
-                    "INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)",
-                    postId, tagId
-            );
+        // Шаг 3: Если переданы tagIds, добавляем новые связи с тегами
+        if (tagIds != null && !tagIds.isEmpty()) {
+            for (Long tagId : tagIds) {
+                jdbcTemplate.update(
+                        "INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)",
+                        postId, tagId
+                );
+            }
         }
     }
+
+//    public void updatePost(
+//            long postId,
+//            @NonNull String title,
+//            @Nullable String image,
+//            @NonNull String text,
+//            @Nullable List<String> tags
+//    )
+//    {
+//        // Шаг 1: Обновляем данные поста
+//        jdbcTemplate.update(
+//                "UPDATE posts SET title = ?, image = ?, text = ? WHERE id = ?",
+//                title, image, text, postId
+//        );
+//
+//        // Шаг 2: Удаляем старые связи поста с тегами
+//        jdbcTemplate.update("DELETE FROM posts_tags WHERE post_id = ?", postId);
+//
+//        // Шаг 3: Добавляем новые связи поста с тегами
+//        for (String tag : tags) {
+//            // Вставляем тег, если он ещё не существует
+//            jdbcTemplate.update("MERGE INTO tags (name) KEY (name) VALUES (?)", tag);
+//
+//            // Получаем ID тега
+//            Long tagId = jdbcTemplate.queryForObject(
+//                    "SELECT id FROM tags WHERE name = ?",
+//                    Long.class,
+//                    tag
+//            );
+//
+//            // Вставляем связь между постом и тегом
+//            jdbcTemplate.update(
+//                    "INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)",
+//                    postId, tagId
+//            );
+//        }
+//    }
 
     @Override
     public void deletePost(long postId) {

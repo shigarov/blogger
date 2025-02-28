@@ -420,170 +420,165 @@ public class PostRepositoryTest {
         }
     }
 
-    @Test
-    void testAddPostWithTags() {
-        // Данные для теста
-        String title = "Новый пост";
-        String image = "https://example.com/image.jpg";
-        String text = "Это текст нового поста";
-        List<String> tags = Arrays.asList("технологии", "программирование");
-
-        // Вызов тестируемого метода
-        postRepository.addPostWithTags(title, image, text, tags);
-
-        // Проверка, что пост был добавлен
-        Long postId = jdbcTemplate.queryForObject(
-                "SELECT id FROM posts WHERE title = ?", Long.class, title);
-        assertNotNull(postId, "Пост должен быть добавлен в базу данных");
-
-        // Проверка, что теги были добавлены
-        for (String tag : tags) {
-            Long tagId = jdbcTemplate.queryForObject(
-                    "SELECT id FROM tags WHERE name = ?", Long.class, tag);
-            assertNotNull(tagId, "Тег '" + tag + "' должен быть добавлен в базу данных");
-
-            // Проверка, что связь между постом и тегом была добавлена
-            Integer count = jdbcTemplate.queryForObject(
-                    "SELECT COUNT(*) FROM posts_tags WHERE post_id = ? AND tag_id = ?",
-                    Integer.class, postId, tagId);
-            assertEquals(1, count, "Связь между постом и тегом '" + tag + "' должна быть добавлена");
+    @Nested
+    class TestPostAdds {
+        @BeforeEach
+        void setUp() {
+            // Добавляем тестовые теги
+            jdbcTemplate.update("INSERT INTO tags (id, name) VALUES (?, ?)", 1L, "технологии");
+            jdbcTemplate.update("INSERT INTO tags (id, name) VALUES (?, ?)", 2L, "программирование");
         }
 
-        // Проверка содержимого поста
-        Map<String, Object> post = jdbcTemplate.queryForMap(
-                "SELECT * FROM posts WHERE id = ?", postId);
-        assertEquals(title, post.get("title"), "Название поста должно совпадать");
-        assertEquals(image, post.get("image"), "Ссылка на картинку должна совпадать");
-        assertEquals(text, post.get("text"), "Текст поста должен совпадать");
-        assertEquals(0, post.get("likes"), "Счётчик лайков должен быть 0 по умолчанию");
-    }
+        @Test
+        void testAddPostWithTags() {
+            // Данные для нового поста
+            String title = "Новый пост";
+            String image = "https://example.com/image.jpg";
+            String text = "Это текст нового поста";
+            List<Long> tagIds = Arrays.asList(1L, 2L); // Список ID тегов
 
-    @Test
-    void testAddPostWithExistingTags() {
-        // Добавляем тег заранее
-        jdbcTemplate.update("INSERT INTO tags (name) VALUES (?)", "технологии");
+            // Добавление поста
+            postRepository.addPost(title, image, text, tagIds);
 
-        // Данные для теста
-        String title = "Пост с существующим тегом";
-        String image = "https://example.com/image.jpg";
-        String text = "Это текст поста";
-        List<String> tags = Arrays.asList("технологии", "новый тег");
+            // Проверяем, что пост был добавлен
+            Long postId = jdbcTemplate.queryForObject(
+                    "SELECT id FROM posts WHERE title = ?", Long.class, title);
+            assertNotNull(postId, "Пост должен быть добавлен в базу данных");
 
-        // Вызов тестируемого метода
-        postRepository.addPostWithTags(title, image, text, tags);
+            // Проверяем, что связи с тегами были добавлены
+            for (Long tagId : tagIds) {
+                Integer count = jdbcTemplate.queryForObject(
+                        "SELECT COUNT(*) FROM posts_tags WHERE post_id = ? AND tag_id = ?",
+                        Integer.class, postId, tagId);
+                assertEquals(1, count, "Связь между постом и тегом с ID " + tagId + " должна быть добавлена");
+            }
+        }
 
-        // Проверка, что пост был добавлен
-        Long postId = jdbcTemplate.queryForObject(
-                "SELECT id FROM posts WHERE title = ?", Long.class, title);
-        assertNotNull(postId, "Пост должен быть добавлен в базу данных");
+        @Test
+        void testAddPostWithoutTags() {
+            // Данные для нового поста
+            String title = "Пост без тегов";
+            String image = "https://example.com/image.jpg";
+            String text = "Это текст поста без тегов";
+            List<Long> tagIds = null; // Теги не переданы
 
-        // Проверка, что существующий тег не был дублирован
-        Integer tagCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM tags WHERE name = ?", Integer.class, "технологии");
-        assertEquals(1, tagCount, "Тег 'технологии' не должен быть дублирован");
+            // Добавление поста
+            postRepository.addPost(title, image, text, tagIds);
 
-        // Проверка, что новый тег был добавлен
-        Long newTagId = jdbcTemplate.queryForObject(
-                "SELECT id FROM tags WHERE name = ?", Long.class, "новый тег");
-        assertNotNull(newTagId, "Тег 'новый тег' должен быть добавлен в базу данных");
+            // Проверяем, что пост был добавлен
+            Long postId = jdbcTemplate.queryForObject(
+                    "SELECT id FROM posts WHERE title = ?", Long.class, title);
+            assertNotNull(postId, "Пост должен быть добавлен в базу данных");
 
-        // Проверка связей
-        Integer relationCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM posts_tags WHERE post_id = ?", Integer.class, postId);
-        assertEquals(2, relationCount, "Должно быть две связи между постом и тегами");
-    }
+            // Проверяем, что связи с тегами отсутствуют
+            Integer tagRelationCount = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM posts_tags WHERE post_id = ?", Integer.class, postId);
+            assertEquals(0, tagRelationCount, "Связи с тегами должны отсутствовать");
+        }
 
-    @Test
-    void testUpdatePostWithTags() {
-        // Добавляем тестовый пост и теги
-        jdbcTemplate.update(
-                "INSERT INTO posts (id, title, image, text) VALUES (?, ?, ?, ?)",
-                1L, "Старый пост", "https://example.com/old-image.jpg", "Старый текст"
-        );
-        jdbcTemplate.update("INSERT INTO tags (id, name) VALUES (?, ?)", 1L, "старый тег");
-        jdbcTemplate.update("INSERT INTO posts_tags (post_id, tag_id) VALUES (1, 1)");
+        @Test
+        void testAddPostWithInvalidTagIds() {
+            // Данные для нового поста
+            String title = "Пост с несуществующими тегами";
+            String image = "https://example.com/image.jpg";
+            String text = "Это текст поста с несуществующими тегами";
+            List<Long> tagIds = Arrays.asList(99L, 100L); // Несуществующие ID тегов
 
-        // Данные для обновления
-        long postId = 1; // ID существующего поста
-        String title = "Обновлённый пост";
-        String image = "https://example.com/new-image.jpg";
-        String text = "Это обновлённый текст поста";
-        List<String> tags = Arrays.asList("обновление", "программирование");
-
-        // Вызов тестируемого метода
-        postRepository.updatePost(postId, title, image, text, tags);
-
-        // Проверка, что пост был обновлён
-        Map<String, Object> post = jdbcTemplate.queryForMap(
-                "SELECT * FROM posts WHERE id = ?", postId);
-        assertEquals(title, post.get("title"), "Название поста должно быть обновлено");
-        assertEquals(image, post.get("image"), "Ссылка на картинку должна быть обновлена");
-        assertEquals(text, post.get("text"), "Текст поста должен быть обновлён");
-
-        // Проверка, что старые связи удалены
-        Integer oldTagRelationCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM posts_tags WHERE post_id = ? AND tag_id = 1",
-                Integer.class, postId);
-        assertEquals(0, oldTagRelationCount, "Старая связь с тегом 'старый тег' должна быть удалена");
-
-        // Проверка, что новые теги и связи добавлены
-        for (String tag : tags) {
-            Long tagId = jdbcTemplate.queryForObject(
-                    "SELECT id FROM tags WHERE name = ?", Long.class, tag);
-            assertNotNull(tagId, "Тег '" + tag + "' должен быть добавлен в базу данных");
-
-            // Проверка, что связь между постом и тегом была добавлена
-            Integer count = jdbcTemplate.queryForObject(
-                    "SELECT COUNT(*) FROM posts_tags WHERE post_id = ? AND tag_id = ?",
-                    Integer.class, postId, tagId);
-            assertEquals(1, count, "Связь между постом и тегом '" + tag + "' должна быть добавлена");
+            // Добавление поста
+            assertThrows(Exception.class, () -> {
+                postRepository.addPost(title, image, text, tagIds);
+            }, "Должно быть выброшено исключение при попытке связать пост с несуществующими тегами");
         }
     }
 
-    @Test
-    void testUpdatePostWithExistingTags() {
-        // Добавляем тестовый пост и теги
-        jdbcTemplate.update(
-                "INSERT INTO posts (id, title, image, text) VALUES (?, ?, ?, ?)",
-                1L, "Старый пост", "https://example.com/old-image.jpg", "Старый текст"
-        );
-        jdbcTemplate.update("INSERT INTO tags (id, name) VALUES (?, ?)", 1L, "старый тег");
-        jdbcTemplate.update("INSERT INTO posts_tags (post_id, tag_id) VALUES (1, 1)");
+    @Nested
+    class TestPostUpdates {
+        @BeforeEach
+        void setUp() {
+            // Добавляем тестовые данные
+            jdbcTemplate.update(
+                    "INSERT INTO posts (id, title, image, text) VALUES (?, ?, ?, ?)",
+                    1L, "Старый пост", "https://example.com/old-image.jpg", "Старый текст"
+            );
+            jdbcTemplate.update("INSERT INTO tags (id, name) VALUES (?, ?)", 1L, "старый тег");
+            jdbcTemplate.update("INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)", 1L, 1L);
 
-        // Добавляем тег заранее
-        jdbcTemplate.update("INSERT INTO tags (name) VALUES ('программирование')");
+            jdbcTemplate.update("INSERT INTO tags (id, name) VALUES (?, ?)", 2L, "новый тег");
+        }
 
-        // Данные для обновления
-        long postId = 1; // ID существующего поста
-        String title = "Обновлённый пост";
-        String image = "https://example.com/new-image.jpg";
-        String text = "Это обновлённый текст поста";
-        List<String> tags = Arrays.asList("программирование", "новый тег");
+        @Test
+        void testUpdatePostWithTags() {
+            // Данные для обновления
+            long postId = 1; // ID существующего поста
+            String title = "Обновлённый пост";
+            String image = "https://example.com/new-image.jpg";
+            String text = "Это обновлённый текст поста";
+            List<Long> tagIds = Arrays.asList(2L); // Список ID тегов
 
-        // Вызов тестируемого метода
-        postRepository.updatePost(postId, title, image, text, tags);
+            // Обновление поста
+            postRepository.updatePost(postId, title, image, text, tagIds);
 
-        // Проверка, что пост был обновлён
-        Map<String, Object> post = jdbcTemplate.queryForMap(
-                "SELECT * FROM posts WHERE id = ?", postId);
-        assertEquals(title, post.get("title"), "Название поста должно быть обновлено");
-        assertEquals(image, post.get("image"), "Ссылка на картинку должна быть обновлена");
-        assertEquals(text, post.get("text"), "Текст поста должен быть обновлён");
+            // Проверяем, что пост был обновлён
+            Map<String, Object> post = jdbcTemplate.queryForMap(
+                    "SELECT * FROM posts WHERE id = ?", postId);
+            assertEquals(title, post.get("title"), "Название поста должно быть обновлено");
+            assertEquals(image, post.get("image"), "Ссылка на картинку должна быть обновлена");
+            assertEquals(text, post.get("text"), "Текст поста должен быть обновлён");
 
-        // Проверка, что существующий тег не был дублирован
-        Integer tagCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM tags WHERE name = ?", Integer.class, "программирование");
-        assertEquals(1, tagCount, "Тег 'программирование' не должен быть дублирован");
+            // Проверяем, что старые связи удалены
+            Integer oldTagRelationCount = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM posts_tags WHERE post_id = ? AND tag_id = 1",
+                    Integer.class, postId);
+            assertEquals(0, oldTagRelationCount, "Старая связь с тегом 'старый тег' должна быть удалена");
 
-        // Проверка, что новый тег был добавлен
-        Long newTagId = jdbcTemplate.queryForObject(
-                "SELECT id FROM tags WHERE name = ?", Long.class, "новый тег");
-        assertNotNull(newTagId, "Тег 'новый тег' должен быть добавлен в базу данных");
+            // Проверяем, что новые теги и связи добавлены
+            for (Long tagId : tagIds) {
+                Integer count = jdbcTemplate.queryForObject(
+                        "SELECT COUNT(*) FROM posts_tags WHERE post_id = ? AND tag_id = ?",
+                        Integer.class, postId, tagId);
+                assertEquals(1, count, "Связь между постом и тегом с ID " + tagId + " должна быть добавлена");
+            }
+        }
 
-        // Проверка связей
-        Integer relationCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM posts_tags WHERE post_id = ?", Integer.class, postId);
-        assertEquals(2, relationCount, "Должно быть две связи между постом и тегами");
+        @Test
+        void testUpdatePostWithoutTags() {
+            // Данные для обновления
+            long postId = 1; // ID существующего поста
+            String title = "Обновлённый пост";
+            String image = "https://example.com/new-image.jpg";
+            String text = "Это обновлённый текст поста";
+            List<Long> tagIds = null; // Теги не переданы
+
+            // Обновление поста
+            postRepository.updatePost(postId, title, image, text, tagIds);
+
+            // Проверяем, что пост был обновлён
+            Map<String, Object> post = jdbcTemplate.queryForMap(
+                    "SELECT * FROM posts WHERE id = ?", postId);
+            assertEquals(title, post.get("title"), "Название поста должно быть обновлено");
+            assertEquals(image, post.get("image"), "Ссылка на картинку должна быть обновлена");
+            assertEquals(text, post.get("text"), "Текст поста должен быть обновлён");
+
+            // Проверяем, что связи с тегами отсутствуют
+            Integer tagRelationCount = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM posts_tags WHERE post_id = ?", Integer.class, postId);
+            assertEquals(0, tagRelationCount, "Связи с тегами должны отсутствовать");
+        }
+
+        @Test
+        void testUpdatePostWithInvalidTagIds() {
+            // Данные для обновления
+            long postId = 1; // ID существующего поста
+            String title = "Обновлённый пост";
+            String image = "https://example.com/new-image.jpg";
+            String text = "Это обновлённый текст поста";
+            List<Long> tagIds = Arrays.asList(99L, 100L); // Несуществующие ID тегов
+
+            // Обновление поста
+            assertThrows(Exception.class, () -> {
+                postRepository.updatePost(postId, title, image, text, tagIds);
+            }, "Должно быть выброшено исключение при попытке связать пост с несуществующими тегами");
+        }
     }
 
     @Test

@@ -10,8 +10,7 @@ import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
 import shigarov.practicum.service.PostService;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/posts") // Контроллер обрабатывает запросы /posts
@@ -50,15 +49,15 @@ public class PostController {
             model.addAttribute("page", postsPage);
         }
 
-        List<Tag> tags = service.findAllTags();
+        List<Tag> allTags = service.findAllTags();
 
         // Передаём данные в виде атрибута users
         model.addAttribute("posts", posts);
         model.addAttribute("tagId", tagId);
-        model.addAttribute("tags", tags);
+        model.addAttribute("allTags", allTags);
 
         // Создаем пустой пост для формы
-        //model.addAttribute("newPost", new Post());
+        model.addAttribute("newPost", new Post());
 
         return "posts"; // Возвращаем название шаблона — posts.html
     }
@@ -111,11 +110,31 @@ public class PostController {
 //        return "posts"; // Возвращаем название шаблона — posts.html
 //    }
 
+//    @PostMapping
+//    public String addPost(@ModelAttribute Post post) {
+//        System.out.println(post);
+//        service.addPost(post);
+//        return "redirect:/posts"; // Возвращаем страницу, чтобы она перезагрузилась
+//    }
+
     @PostMapping
-    public String addPost(@ModelAttribute Post post) {
-        System.out.println(post);
+    public String addPost(
+            @ModelAttribute Post post,
+            @RequestParam(name = "tagIds", required = false) List<Long> tagIds
+    )
+    {
+        // Получаем выбранные теги по их ID и добавляем их в пост
+        for (Long tagId : tagIds) {
+            Tag tag = service.findTagById(tagId).orElse(null);
+            if (tag != null) {
+                post.addTag(tag);
+            }
+        }
+
+        // Сохраняем пост
         service.addPost(post);
-        return "redirect:/posts"; // Возвращаем страницу, чтобы она перезагрузилась
+
+        return "redirect:/posts"; // Перенаправляем на страницу со списком постов
     }
 
 }

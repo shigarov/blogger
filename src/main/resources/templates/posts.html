@@ -38,25 +38,65 @@
 <!-- Скрываемая форма для добавления нового поста -->
 <div class="form-container" style="display: none;" id="newPostForm">
     <h2>Новый пост</h2>
-    <form th:action="@{/posts}" method="POST">
-        <label for="title">Название</label>
-        <input type="text" id="title" name="title" required>
-        <br><br>
-        <label for="image">Картинка</label>
-        <input type="text" id="image" name="image">
-        <br><br>
-        <label for="text">Текст</label>
-        <textarea id="text" name="text" rows="5" required></textarea>
-        <br><br>
-        <label for="selectedTags">Выберите теги:</label>
-        <select id="selectedTags" name="selectedTags" multiple>
-            <option th:each="tag : ${tags}" th:value="${tag.id}" th:text="${tag.name}">
-            </option>
-        </select>
-        <br><br>
-        <button type="submit">Добавить</button>
-        <br><br>
+<!--    <form th:action="@{/posts}" method="POST">-->
+<!--        <label for="title">Название</label>-->
+<!--        <input type="text" id="title" name="title" required>-->
+<!--        <br><br>-->
+<!--        <label for="image">Картинка</label>-->
+<!--        <input type="text" id="image" name="image">-->
+<!--        <br><br>-->
+<!--        <label for="text">Текст</label>-->
+<!--        <textarea id="text" name="text" rows="5" required></textarea>-->
+<!--        <br><br>-->
+<!--        <label for="selectedTags">Выберите теги:</label>-->
+<!--        <select id="selectedTags" name="selectedTags" multiple>-->
+<!--            <option th:each="tag : ${allTags}" th:value="${tag.id}" th:text="${tag.name}">-->
+<!--            </option>-->
+<!--        </select>-->
+<!--        <br><br>-->
+<!--        <button type="submit">Добавить</button>-->
+<!--        <br><br>-->
+<!--    </form>-->
+    <form th:action="@{/posts}" method="post" th:object="${newPost}">
+        <!-- Поле для заголовка -->
+        <div>
+            <label for="title">Заголовок:</label>
+            <input type="text" id="title" th:field="*{title}" required>
+        </div>
+
+        <!-- Поле для изображения -->
+        <br>
+        <div>
+            <label for="image">Ссылка на изображение:</label>
+            <input type="text" id="image" th:field="*{image}">
+        </div>
+
+        <!-- Поле для текста поста -->
+        <br>
+        <div>
+            <label for="text">Текст поста:</label>
+            <textarea id="text" th:field="*{text}" rows="5" cols="40"></textarea>
+        </div>
+
+        <!-- Список тегов с множественным выбором -->
+        <br>
+        <div>
+            <label for="tagIds">Теги:</label>
+            <select id="tagIds" name="tagIds" multiple>
+                <!-- Динамически генерируем опции для каждого тега -->
+                <option th:each="tag : ${allTags}"
+                        th:value="${tag.id}"
+                        th:text="${tag.name}">
+                </option>
+            </select>
+        </div>
+        <br>
+        <!-- Кнопка отправки формы -->
+        <div>
+            <button type="submit">Добавить</button>
+        </div>
     </form>
+    <br><br>
 </div>
 
 <script>
@@ -108,7 +148,7 @@
     <label for="tagId">Фильтр по тегу:</label>
     <select id="tagId" name="tagId" onchange="changeTag()">
         <option th:value="0">Не выбрано</option>
-        <option th:each="tag : ${tags}" th:value="${tag.id}" th:text="${tag.name}" th:selected="${tag.id == tagId}">
+        <option th:each="tag : ${allTags}" th:value="${tag.id}" th:text="${tag.name}" th:selected="${tag.id == tagId}">
         </option>
     </select>
 
