@@ -2,6 +2,8 @@ package shigarov.practicum.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import shigarov.practicum.model.Comment;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
@@ -19,23 +21,34 @@ public interface PostRepository {
 
     Optional<Post> findPostById(long id);
 
-    void createPost(Post post);
+    void addPostWithTags (
+            @NonNull String title,
+            @Nullable String image,
+            @NonNull String text,
+            @Nullable List<String> tags
+    );
 
-    void updatePost(Post post);
+    void updatePost (
+            long postId,
+            @NonNull String title,
+            @Nullable String image,
+            @NonNull String text,
+            @Nullable List<String> tags
+    );
 
-    void deletePost(Post post);
+    void deletePost(long postId);
 
-    void incrementLikes(Post post);
+    void incrementPostLikes(long postId);
 
     List<Tag> findAllTags();
 
     Optional<Tag> findTagById(long id);
 
-    void createTag(Tag tag);
+    void addTag(@NonNull String tag);
 
     Optional<Comment> findCommentById(long id);
 
-    void createComment(Comment comment);
+    void addComment(@NonNull String text, long postId);
 
-    void updateComment(Comment comment);
+    void updateComment(long id, @NonNull String text);
 }

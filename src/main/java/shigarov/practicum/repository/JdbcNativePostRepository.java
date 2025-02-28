@@ -6,13 +6,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import shigarov.practicum.model.Comment;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
 
-import java.util.*;
 import java.sql.*;
+import java.util.*;
 
 @Repository
 public class JdbcNativePostRepository implements PostRepository {
@@ -53,7 +57,7 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public Page<Post> findAllPosts(Pageable pageable) {
+    public Page<Post> findAllPosts(@NonNull Pageable pageable) {
         final String postCountSql = "SELECT count(1) AS row_count FROM posts";
         final long totalPosts = jdbcTemplate.queryForObject(
                 postCountSql,
@@ -95,7 +99,7 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public Page<Post> findAllPostsByTag(Pageable pageable, Long tagId) {
+    public Page<Post> findAllPostsByTag(@NonNull Pageable pageable, Long tagId) {
         final String postCountSql = """
                 SELECT COUNT(DISTINCT p.id) AS post_count
                 FROM posts p
@@ -173,54 +177,109 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public void createPost(Post post) {
-        final String sql = """
-                 INSERT INTO posts (id, title, image, text, likes)
-                 VALUES (?, ?, ?, ?, ?);
-                """;
-        // Формируем insert-запрос с параметрами
-        jdbcTemplate.update(sql, post.getId(), post.getTitle(), post.getImage(), post.getText(), post.getLikes());
+    public void addPostWithTags (
+            @NonNull String title,
+            @Nullable String image,
+            @NonNull String text,
+            @Nullable List<String> tags
+    )
+    {
+        // Шаг 1: Вставляем новый пост и получаем его ID
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO posts (title, image, text) VALUES (?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
+            );
+            ps.setString(1, title);
+            ps.setString(2, image);
+            ps.setString(3, text);
+            return ps;
+        }, keyHolder);
 
-        final String sqlCreatePostsTags = """
-                 INSERT INTO posts_tags (post_id, tag_id)
-                 VALUES (?, ?);
-                """;
+        long postId = keyHolder.getKey().longValue();
+        // System.out.println("ID нового поста: " + postId);
 
-        List<Tag> tags = post.getTags();
-        for (Tag tag : tags) {
-            jdbcTemplate.update(sqlCreatePostsTags, post.getId(), tag.getId());
+        if (tags == null || tags.isEmpty()) return;
+
+        // Шаг 2: Вставляем теги и получаем их ID
+        Map<String, Long> tagIds = new HashMap<>();
+        for (String tag : tags) {
+            // Вставляем тег, если он ещё не существует
+            jdbcTemplate.update("MERGE INTO tags (name) KEY (name) VALUES (?)", tag);
+
+            // Получаем ID тега
+            Long tagId = jdbcTemplate.queryForObject(
+                    "SELECT id FROM tags WHERE name = ?",
+                    Long.class,
+                    tag
+            );
+            tagIds.put(tag, tagId);
+        }
+
+        // Шаг 3: Вставляем связи между постом и тегами
+        for (Long tagId : tagIds.values()) {
+            jdbcTemplate.update(
+                    "INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)",
+                    postId, tagId
+            );
+        }
+
+        // System.out.println("Пост и связи с тегами успешно добавлены.");
+    }
+
+    public void updatePost(
+            long postId,
+            @NonNull String title,
+            @Nullable String image,
+            @NonNull String text,
+            @Nullable List<String> tags
+    )
+    {
+        // Шаг 1: Обновляем данные поста
+        jdbcTemplate.update(
+                "UPDATE posts SET title = ?, image = ?, text = ? WHERE id = ?",
+                title, image, text, postId
+        );
+
+        // Шаг 2: Удаляем старые связи поста с тегами
+        jdbcTemplate.update("DELETE FROM posts_tags WHERE post_id = ?", postId);
+
+        // Шаг 3: Добавляем новые связи поста с тегами
+        for (String tag : tags) {
+            // Вставляем тег, если он ещё не существует
+            jdbcTemplate.update("MERGE INTO tags (name) KEY (name) VALUES (?)", tag);
+
+            // Получаем ID тега
+            Long tagId = jdbcTemplate.queryForObject(
+                    "SELECT id FROM tags WHERE name = ?",
+                    Long.class,
+                    tag
+            );
+
+            // Вставляем связь между постом и тегом
+            jdbcTemplate.update(
+                    "INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)",
+                    postId, tagId
+            );
         }
     }
 
     @Override
-    public void updatePost(Post post) {
-        final String sql = """
-                UPDATE posts
-                SET
-                    title = ?,
-                    text = ?
-                WHERE id = ?;
-                """;
+    public void deletePost(long postId) {
+        // Удаляем связанные комментарии
+        jdbcTemplate.update("DELETE FROM comments WHERE post_id = ?", postId);
 
-        jdbcTemplate.update(sql, post.getTitle(), post.getText(), post.getId());
+        // Удаляем связанные теги
+        jdbcTemplate.update("DELETE FROM posts_tags WHERE post_id = ?", postId);
+
+        // Удаляем сам пост
+        jdbcTemplate.update("DELETE FROM posts WHERE id = ?", postId);
     }
 
     @Override
-    public void deletePost(Post post) {
-        jdbcTemplate.update("DELETE FROM comments WHERE post_id = ?;", post.getId());
-        jdbcTemplate.update("DELETE FROM posts_tags WHERE post_id = ?;", post.getId());
-        jdbcTemplate.update("DELETE FROM posts WHERE id = ?;", post.getId());
-    }
-
-    @Override
-    public void incrementLikes(Post post) {
-        final String sql = """
-                UPDATE posts
-                SET likes = likes + 1
-                WHERE id = ?;
-                """;
-
-        jdbcTemplate.update(sql, post.getId());
+    public void incrementPostLikes(long postId) {
+        jdbcTemplate.update("UPDATE posts SET likes = likes + 1 WHERE id = ?", postId);
     }
 
     private static class PostResultSetExtractor implements ResultSetExtractor<List<Post>> {
@@ -297,15 +356,9 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public void createTag(Tag tag) {
-        final String sql = """
-                 INSERT INTO tags (id, name)
-                 VALUES (?, ?);
-                """;
-        // Формируем insert-запрос с параметрами
-        jdbcTemplate.update(sql, tag.getId(), tag.getName());
+    public void addTag(@NonNull String tag) {
+        jdbcTemplate.update("INSERT INTO tags (name) VALUES (?)", tag);
     }
-
 
     private static class TagResultSetExtractor implements ResultSetExtractor<List<Tag>> {
         @Override
@@ -352,24 +405,16 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public void createComment(Comment comment) {
-        final String sql = """
-                 INSERT INTO comments (id, text, post_id)
-                 VALUES (?, ?, ?);
-                """;
-        // Формируем insert-запрос с параметрами
-        jdbcTemplate.update(sql, comment.getId(), comment.getText(), comment.getPost().getId());
+    public void addComment(@NonNull String text, long postId) {
+        jdbcTemplate.update(
+                "INSERT INTO comments (text, post_id) VALUES (?, ?)",
+                text, postId
+        );
     }
 
     @Override
-    public void updateComment(Comment comment) {
-        final String sql = """
-                UPDATE comments
-                SET text = ?
-                WHERE id = ?;
-                """;
-        // Формируем insert-запрос с параметрами
-        jdbcTemplate.update(sql, comment.getText(), comment.getId());
+    public void updateComment(long id, @NonNull String text) {
+        jdbcTemplate.update("UPDATE comments SET text = ? WHERE id = ?", text, id);
     }
 
     private static class CommentRowMapper implements RowMapper<Comment> {

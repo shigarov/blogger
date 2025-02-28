@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS post_tags;
 DROP TABLE IF EXISTS comments;
-DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS posts;
 
 -- Таблица постов
 CREATE TABLE posts (
@@ -17,7 +17,7 @@ CREATE TABLE comments (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,          -- Уникальный идентификатор комментария
     text CLOB NOT NULL,                            -- Текст комментария
     post_id BIGINT NOT NULL,                       -- ID поста, к которому относится комментарий
-    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE; -- Внешний ключ на таблицу posts
+    FOREIGN KEY (post_id) REFERENCES posts(id)     -- Внешний ключ на таблицу posts
 );
 
 -- Таблица уникальных тегов
