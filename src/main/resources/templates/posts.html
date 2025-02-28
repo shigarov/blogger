@@ -35,40 +35,72 @@
 
 <h1>Посты</h1>
 
+<h1>Загрузите изображение</h1>
+
+<form th:action="@{/upload}" method="post" enctype="multipart/form-data">
+    <div>
+        <label for="file">Выберите файл:</label>
+        <input type="file" id="file" name="image" accept="image/*" required>
+    </div>
+    <div>
+        <button type="submit">Загрузить</button>
+    </div>
+</form>
+
 <!-- Скрываемая форма для добавления нового поста -->
 <div class="form-container" style="display: none;" id="newPostForm">
     <h2>Новый пост</h2>
-<!--    <form th:action="@{/posts}" method="POST">-->
-<!--        <label for="title">Название</label>-->
-<!--        <input type="text" id="title" name="title" required>-->
-<!--        <br><br>-->
-<!--        <label for="image">Картинка</label>-->
-<!--        <input type="text" id="image" name="image">-->
-<!--        <br><br>-->
-<!--        <label for="text">Текст</label>-->
-<!--        <textarea id="text" name="text" rows="5" required></textarea>-->
-<!--        <br><br>-->
-<!--        <label for="selectedTags">Выберите теги:</label>-->
-<!--        <select id="selectedTags" name="selectedTags" multiple>-->
-<!--            <option th:each="tag : ${allTags}" th:value="${tag.id}" th:text="${tag.name}">-->
-<!--            </option>-->
-<!--        </select>-->
-<!--        <br><br>-->
-<!--        <button type="submit">Добавить</button>-->
-<!--        <br><br>-->
+<!--    <form th:action="@{/posts}" method="post" th:object="${newPost}">-->
+<!--        &lt;!&ndash; Поле для заголовка &ndash;&gt;-->
+<!--        <div>-->
+<!--            <label for="title">Заголовок:</label>-->
+<!--            <input type="text" id="title" th:field="*{title}" required>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Поле для изображения &ndash;&gt;-->
+<!--        <br>-->
+<!--        <div>-->
+<!--            <label for="image">Ссылка на изображение:</label>-->
+<!--            <input type="text" id="image" th:field="*{image}">-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Поле для текста поста &ndash;&gt;-->
+<!--        <br>-->
+<!--        <div>-->
+<!--            <label for="text">Текст поста:</label>-->
+<!--            <textarea id="text" th:field="*{text}" rows="5" cols="40"></textarea>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Список тегов с множественным выбором &ndash;&gt;-->
+<!--        <br>-->
+<!--        <div>-->
+<!--            <label for="tagIds">Теги:</label>-->
+<!--            <select id="tagIds" name="tagIds" multiple>-->
+<!--                <option th:each="tag : ${allTags}"-->
+<!--                        th:value="${tag.id}"-->
+<!--                        th:text="${tag.name}">-->
+<!--                </option>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--        <br>-->
+<!--        &lt;!&ndash; Кнопка отправки формы &ndash;&gt;-->
+<!--        <div>-->
+<!--            <button type="submit">Добавить</button>-->
+<!--        </div>-->
 <!--    </form>-->
-    <form th:action="@{/posts}" method="post" th:object="${newPost}">
+    <!--<form th:action="@{/posts}" method="post" th:object="${newPost}" enctype="multipart/form-data">-->
+    <form th:action="@{/posts}" method="post" enctype="multipart/form-data" th:object="${newPost}">
         <!-- Поле для заголовка -->
         <div>
             <label for="title">Заголовок:</label>
             <input type="text" id="title" th:field="*{title}" required>
         </div>
 
-        <!-- Поле для изображения -->
+        <!-- Поле для загрузки изображения -->
         <br>
         <div>
-            <label for="image">Ссылка на изображение:</label>
-            <input type="text" id="image" th:field="*{image}">
+            <label for="imageFile">Изображение:</label>
+            <input type="file" id="imageFile" name="imageFile" accept="image/*">
         </div>
 
         <!-- Поле для текста поста -->
@@ -83,17 +115,17 @@
         <div>
             <label for="tagIds">Теги:</label>
             <select id="tagIds" name="tagIds" multiple>
-                <!-- Динамически генерируем опции для каждого тега -->
                 <option th:each="tag : ${allTags}"
                         th:value="${tag.id}"
                         th:text="${tag.name}">
                 </option>
             </select>
         </div>
-        <br>
+
         <!-- Кнопка отправки формы -->
+        <br>
         <div>
-            <button type="submit">Добавить</button>
+            <button type="submit">Добавить пост</button>
         </div>
     </form>
     <br><br>

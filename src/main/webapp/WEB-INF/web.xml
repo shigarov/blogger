@@ -18,7 +18,15 @@
       <param-name>contextConfigLocation</param-name>
       <param-value>shigarov.practicum.configuration.WebConfiguration</param-value>
     </init-param>
+
     <load-on-startup>1</load-on-startup>
+
+    <!-- Настройка для поддержки загрузки файлов -->
+    <multipart-config>
+      <max-file-size>10485760</max-file-size> <!-- Максимальный размер файла (10 MB) -->
+      <max-request-size>20971520</max-request-size> <!-- Максимальный размер запроса (20 MB) -->
+      <file-size-threshold>5242880</file-size-threshold> <!-- Порог для сохранения файла на диск (5 MB) -->
+    </multipart-config>
   </servlet>
 
   <!-- DispatcherServlet обрабатывает все запросы -->

@@ -6,10 +6,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
 import shigarov.practicum.service.PostService;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Controller
@@ -70,12 +76,52 @@ public class PostController {
         }
     }
 
+//    @PostMapping
+//    public String addPost(
+//            @ModelAttribute Post post,
+//            @RequestParam(name = "tagIds", required = false) List<Long> tagIds
+//    )
+//    {
+//        // Получаем выбранные теги по их ID и добавляем их в пост
+//        for (Long tagId : tagIds) {
+//            Tag tag = service.findTagById(tagId).orElse(null);
+//            if (tag != null) {
+//                post.addTag(tag);
+//            }
+//        }
+//
+//        // Сохраняем пост
+//        service.addPost(post);
+//
+//        return "redirect:/posts"; // Перенаправляем на страницу со списком постов
+//    }
+
+    private static final String UPLOAD_DIR = "classpath:/images"; //"uploads"; // Директория для сохранения файлов
+
     @PostMapping
-    public String addPost(
-            @ModelAttribute Post post,
-            @RequestParam(name = "tagIds", required = false) List<Long> tagIds
+    public String addPost(@ModelAttribute Post post,
+                          @RequestParam(name = "tagIds", required = false) List<Long> tagIds,
+                          @RequestParam(name = "imageFile", required = false) MultipartFile file
     )
     {
+        // Обработка загрузки файла
+        if (file != null && !file.isEmpty()) {
+            try {
+                // Создаем директорию, если она не существует
+                Files.createDirectories(Paths.get(UPLOAD_DIR));
+
+                // Сохраняем файл
+                String fileName = file.getOriginalFilename();
+                Path path = Paths.get(UPLOAD_DIR + File.separator + fileName);
+                Files.write(path, file.getBytes());
+
+                // Устанавливаем имя файла в объект Post
+                post.setImage(fileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         // Получаем выбранные теги по их ID и добавляем их в пост
         for (Long tagId : tagIds) {
             Tag tag = service.findTagById(tagId).orElse(null);
