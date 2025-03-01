@@ -130,11 +130,13 @@ public class PostController {
             }
         }
 
-        // Получаем выбранные теги по их ID и добавляем их в пост
-        for (Long tagId : tagIds) {
-            Tag tag = service.findTagById(tagId).orElse(null);
-            if (tag != null) {
-                post.addTag(tag);
+        if (tagIds != null) {
+            // Получаем выбранные теги по их ID и добавляем их в пост
+            for (Long tagId : tagIds) {
+                Tag tag = service.findTagById(tagId).orElse(null);
+                if (tag != null) {
+                    post.addTag(tag);
+                }
             }
         }
 
