@@ -209,7 +209,8 @@
     <tr th:each="post : ${posts}">
         <td th:text="${post.id}"/>
         <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}"/></td>
-        <td><img th:if="${post.image != null}" th:src="@{'/images/'+${post.image}}" alt="Картинка"/></td>
+<!--        <td><img th:if="${post.image != null}" th:src="@{'/images/'+${post.image}}" alt="Картинка"/></td>-->
+        <td><img th:if="${post.image != null}" th:src="@{'/'+${uploadDir}+'/'+${post.image}}" alt="Картинка"/></td>
         <!--Вывод текста с абзацами и строками-->
         <td th:utext="${#strings.replace(post.text, '\r\n', '<br>')}"/>
         <td>

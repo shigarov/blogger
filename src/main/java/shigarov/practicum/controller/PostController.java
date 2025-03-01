@@ -29,10 +29,13 @@ public class PostController {
     }
 
     @GetMapping // GET запрос /posts
-    public String posts(@RequestParam(name = "tagId", required = false, defaultValue = "0") Long tagId,
-                        @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
-                        @RequestParam(name = "size", required = false, defaultValue = "10") int pageSize,
-                        Model model) {
+    public String posts(
+            @RequestParam(name = "tagId", required = false, defaultValue = "0") Long tagId,
+            @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(name = "size", required = false, defaultValue = "10") int pageSize,
+            Model model
+    )
+    {
 
         final Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
@@ -52,6 +55,7 @@ public class PostController {
 
         // Передаём данные в виде атрибута users
         model.addAttribute("posts", posts);
+        model.addAttribute("uploadDir", UPLOAD_DIR);
         model.addAttribute("tagId", tagId);
         model.addAttribute("allTags", allTags);
 
@@ -96,12 +100,13 @@ public class PostController {
 //        return "redirect:/posts"; // Перенаправляем на страницу со списком постов
 //    }
 
-    private static final String UPLOAD_DIR = "classpath:/images"; //"uploads"; // Директория для сохранения файлов
+    private static final String UPLOAD_DIR = "upload"; //"uploads"; // Директория для сохранения файлов
 
     @PostMapping
-    public String addPost(@ModelAttribute Post post,
-                          @RequestParam(name = "tagIds", required = false) List<Long> tagIds,
-                          @RequestParam(name = "imageFile", required = false) MultipartFile file
+    public String addPost(
+            @ModelAttribute Post post,
+            @RequestParam(name = "tagIds", required = false) List<Long> tagIds,
+            @RequestParam(name = "imageFile", required = false) MultipartFile file
     )
     {
         // Обработка загрузки файла

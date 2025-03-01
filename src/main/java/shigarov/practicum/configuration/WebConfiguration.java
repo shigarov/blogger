@@ -23,8 +23,10 @@ public class WebConfiguration implements WebMvcConfigurer {
     // Дать доступ к папке resource/images с картинками
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/images/**")
-                .addResourceLocations("classpath:/images/");
+//        registry.addResourceHandler("/images/**")
+//                .addResourceLocations("classpath:/images/");
+        registry.addResourceHandler("/upload/**")
+                .addResourceLocations("file:/C:/Tomcat/Tomcat-11.0/upload/");
     }
     // Для поддержки GET-запросов с параметром типа Pageable
     @Override

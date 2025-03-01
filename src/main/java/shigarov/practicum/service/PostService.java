@@ -34,7 +34,7 @@ public class PostService {
     public void addPost(Post post) {
         postRepository.addPost(
                 post.getTitle(),
-                null,
+                post.getImage(),
                 post.getText(),
                 post.getTagIds()
         );
