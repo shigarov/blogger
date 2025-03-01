@@ -1,5 +1,6 @@
 package shigarov.practicum.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,11 @@ import java.util.*;
 @Controller
 @RequestMapping("/posts") // Контроллер обрабатывает запросы /posts
 public class PostController {
+    @Value("${upload.path}") // Относительный путь
+    private String uploadPath;
+
+    @Value("${upload.dir}") // Относительный путь
+    private String uploadDir;
 
     private final PostService service;
 
@@ -55,7 +61,7 @@ public class PostController {
 
         // Передаём данные в виде атрибута users
         model.addAttribute("posts", posts);
-        model.addAttribute("uploadDir", UPLOAD_DIR);
+        model.addAttribute("uploadDir", uploadDir);
         model.addAttribute("tagId", tagId);
         model.addAttribute("allTags", allTags);
 
@@ -100,7 +106,7 @@ public class PostController {
 //        return "redirect:/posts"; // Перенаправляем на страницу со списком постов
 //    }
 
-    private static final String UPLOAD_DIR = "upload"; //"uploads"; // Директория для сохранения файлов
+    //private static final String UPLOAD_DIR = "upload"; //"uploads"; // Директория для сохранения файлов
 
     @PostMapping
     public String addPost(
@@ -112,12 +118,13 @@ public class PostController {
         // Обработка загрузки файла
         if (file != null && !file.isEmpty()) {
             try {
+                //String path = uploadPath + File.separator + uploadDir;
                 // Создаем директорию, если она не существует
-                Files.createDirectories(Paths.get(UPLOAD_DIR));
+                Files.createDirectories(Paths.get(uploadPath, uploadDir));
 
                 // Сохраняем файл
                 String fileName = file.getOriginalFilename();
-                Path path = Paths.get(UPLOAD_DIR + File.separator + fileName);
+                Path path = Paths.get(uploadPath, uploadDir, fileName);
                 Files.write(path, file.getBytes());
 
                 // Устанавливаем имя файла в объект Post
