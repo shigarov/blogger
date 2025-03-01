@@ -106,7 +106,7 @@ public class PostController {
 //        return "redirect:/posts"; // Перенаправляем на страницу со списком постов
 //    }
 
-    //private static final String UPLOAD_DIR = "upload"; //"uploads"; // Директория для сохранения файлов
+    //private static final String UPLOAD_DIR = "webapps/blogger/upload"; // Директория для сохранения файлов
 
     @PostMapping
     public String addPost(
@@ -118,10 +118,6 @@ public class PostController {
         // Обработка загрузки файла
         if (file != null && !file.isEmpty()) {
             try {
-                //String path = uploadPath + File.separator + uploadDir;
-                // Создаем директорию, если она не существует
-                Files.createDirectories(Paths.get(uploadPath, uploadDir));
-
                 // Сохраняем файл
                 String fileName = file.getOriginalFilename();
                 Path path = Paths.get(uploadPath, uploadDir, fileName);

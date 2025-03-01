@@ -27,54 +27,29 @@ import java.util.List;
 @PropertySource("classpath:application.properties") // Для считывания application.properties
 @EnableSpringDataWebSupport // Для поддержки GET-запросов с параметром типа Pageable
 public class WebConfiguration implements WebMvcConfigurer {
-    //@Value("${upload.path}") // Относительный путь
-    //private String uploadPath;
+    @Value("${upload.path}")
+    private String uploadPath;
 
-    private final String uploadPath;
-    private final String uploadDir;
-
-    @Autowired
-    private ServletContext servletContext;
-
-    public WebConfiguration(
-            @Value("${upload.path}") String uploadPath,
-            @Value("${upload.dir}") String uploadDir
-    ) {
-        this.uploadPath = uploadPath;
-        this.uploadDir = uploadDir;
-    }
+    @Value("${upload.dir}")
+    private String uploadDir;
 
     // Дать доступ к папке upload с картинками
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//        registry.addResourceHandler("/images/**")
-//                .addResourceLocations("classpath:/images/");
-        String pathPatterns = File.separator + uploadDir + File.separator + "**";
-        //String pathPatterns = "/upload/**";
-        String locations = "file:" + uploadPath + File.separator + uploadDir + File.separator;
-
-        // Получаем абсолютный путь к папке upload
-        String realPath = servletContext.getRealPath(uploadPath + File.separator + uploadDir);
         try {
-            Files.createDirectories(Paths.get("webapps/blogger/upload"));
+            Files.createDirectories(Paths.get(uploadPath, uploadDir));
+            registry.addResourceHandler("/" + uploadDir + "/**")
+                    .addResourceLocations("file:" + uploadPath + "/" + uploadDir + "/");
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        registry.addResourceHandler("/upload/**")
-                .addResourceLocations("file:webapps/blogger/upload/");
-                //.addResourceLocations("file:" + realPath + "/");
-
-        //        registry.addResourceHandler("/upload/**")
-//                .addResourceLocations("file:" + uploadPath);//("file:/C:/Tomcat/Tomcat-11.0/upload/");
-        registry.addResourceHandler(pathPatterns)
-                .addResourceLocations(locations);
-
     }
+
     // Для поддержки GET-запросов с параметром типа Pageable
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add( new PageableHandlerMethodArgumentResolver());
+        argumentResolvers.add(new PageableHandlerMethodArgumentResolver());
     }
 
     @Bean
