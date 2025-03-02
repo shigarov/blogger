@@ -12,7 +12,6 @@ import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
 import shigarov.practicum.service.PostService;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -85,28 +84,6 @@ public class PostController {
             return "error/404";  // Имя Thymeleaf шаблона для страницы 404
         }
     }
-
-//    @PostMapping
-//    public String addPost(
-//            @ModelAttribute Post post,
-//            @RequestParam(name = "tagIds", required = false) List<Long> tagIds
-//    )
-//    {
-//        // Получаем выбранные теги по их ID и добавляем их в пост
-//        for (Long tagId : tagIds) {
-//            Tag tag = service.findTagById(tagId).orElse(null);
-//            if (tag != null) {
-//                post.addTag(tag);
-//            }
-//        }
-//
-//        // Сохраняем пост
-//        service.addPost(post);
-//
-//        return "redirect:/posts"; // Перенаправляем на страницу со списком постов
-//    }
-
-    //private static final String UPLOAD_DIR = "webapps/blogger/upload"; // Директория для сохранения файлов
 
     @PostMapping
     public String addPost(
