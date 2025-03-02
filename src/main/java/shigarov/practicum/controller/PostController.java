@@ -27,10 +27,10 @@ public class PostController {
     @Value("${upload.dir}") // Относительный путь
     private String uploadDir;
 
-    private final PostService service;
+    private final PostService postService;
 
-    public PostController(PostService service) {
-        this.service = service;
+    public PostController(PostService postService) {
+        this.postService = postService;
     }
 
     @GetMapping // GET запрос /posts
@@ -39,24 +39,23 @@ public class PostController {
             @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
             @RequestParam(name = "size", required = false, defaultValue = "10") int pageSize,
             Model model
-    )
-    {
+    ) {
 
         final Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         List<Post> posts;
 
         if (tagId != null && tagId > 0) {
-            Page<Post> postsPage = service.findAllByTag(pageable, tagId);
+            Page<Post> postsPage = postService.findAllByTag(pageable, tagId);
             posts = postsPage.stream().toList();
             model.addAttribute("page", postsPage);
         } else {
-            Page<Post> postsPage = service.findAll(pageable);
+            Page<Post> postsPage = postService.findAll(pageable);
             posts = postsPage.stream().toList();
             model.addAttribute("page", postsPage);
         }
 
-        List<Tag> allTags = service.findAllTags();
+        List<Tag> allTags = postService.findAllTags();
 
         // Передаём данные в виде атрибута users
         model.addAttribute("posts", posts);
@@ -73,25 +72,23 @@ public class PostController {
     @GetMapping("/{id}")
     public String postById(@PathVariable("id") long id, Model model) {
         // Получаем пост по ID из репозитория
-        Optional<Post> postOptional = service.findById(id);
+        Optional<Post> postOptional = postService.findById(id);
+
+        List<Tag> allTags = postService.findAllTags();
 
         // Если пост найден, добавляем его в модель
-        if (postOptional.isPresent()) {
-            model.addAttribute("post", postOptional.get());
-            return "post";
-        } else {
-            // Если пост не найден, возвращаем страницу с ошибкой
-            return "error/404";  // Имя Thymeleaf шаблона для страницы 404
-        }
+        model.addAttribute("post", postOptional.orElse(null));
+        model.addAttribute("uploadDir", uploadDir);
+        model.addAttribute("allTags", allTags);
+        return "post";
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public String addPost(
             @ModelAttribute Post post,
             @RequestParam(name = "tagIds", required = false) List<Long> tagIds,
             @RequestParam(name = "imageFile", required = false) MultipartFile file
-    )
-    {
+    ) {
         // Обработка загрузки файла
         if (file != null && !file.isEmpty()) {
             try {
@@ -110,7 +107,7 @@ public class PostController {
         if (tagIds != null) {
             // Получаем выбранные теги по их ID и добавляем их в пост
             for (Long tagId : tagIds) {
-                Tag tag = service.findTagById(tagId).orElse(null);
+                Tag tag = postService.findTagById(tagId).orElse(null);
                 if (tag != null) {
                     post.addTag(tag);
                 }
@@ -118,7 +115,7 @@ public class PostController {
         }
 
         // Сохраняем пост
-        service.addPost(post);
+        postService.addPost(post);
 
         return "redirect:/posts"; // Перенаправляем на страницу со списком постов
     }

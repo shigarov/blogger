@@ -50,46 +50,7 @@
 <!-- Скрываемая форма для добавления нового поста -->
 <div class="form-container" style="display: none;" id="newPostForm">
     <h2>Новый пост</h2>
-<!--    <form th:action="@{/posts}" method="post" th:object="${newPost}">-->
-<!--        &lt;!&ndash; Поле для заголовка &ndash;&gt;-->
-<!--        <div>-->
-<!--            <label for="title">Заголовок:</label>-->
-<!--            <input type="text" id="title" th:field="*{title}" required>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Поле для изображения &ndash;&gt;-->
-<!--        <br>-->
-<!--        <div>-->
-<!--            <label for="image">Ссылка на изображение:</label>-->
-<!--            <input type="text" id="image" th:field="*{image}">-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Поле для текста поста &ndash;&gt;-->
-<!--        <br>-->
-<!--        <div>-->
-<!--            <label for="text">Текст поста:</label>-->
-<!--            <textarea id="text" th:field="*{text}" rows="5" cols="40"></textarea>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Список тегов с множественным выбором &ndash;&gt;-->
-<!--        <br>-->
-<!--        <div>-->
-<!--            <label for="tagIds">Теги:</label>-->
-<!--            <select id="tagIds" name="tagIds" multiple>-->
-<!--                <option th:each="tag : ${allTags}"-->
-<!--                        th:value="${tag.id}"-->
-<!--                        th:text="${tag.name}">-->
-<!--                </option>-->
-<!--            </select>-->
-<!--        </div>-->
-<!--        <br>-->
-<!--        &lt;!&ndash; Кнопка отправки формы &ndash;&gt;-->
-<!--        <div>-->
-<!--            <button type="submit">Добавить</button>-->
-<!--        </div>-->
-<!--    </form>-->
-    <!--<form th:action="@{/posts}" method="post" th:object="${newPost}" enctype="multipart/form-data">-->
-    <form th:action="@{/posts}" method="post" enctype="multipart/form-data" th:object="${newPost}">
+    <form th:action="@{/posts/add}" method="post" enctype="multipart/form-data" th:object="${newPost}">
         <!-- Поле для заголовка -->
         <div>
             <label for="title">Заголовок:</label>

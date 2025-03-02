@@ -25,7 +25,7 @@
 <div>
     <strong>Картинка:</strong>
     <div th:if="${post.image != null}">
-        <img th:src="@{'/images/'+${post.image}}" alt="Картинка"/>
+        <img th:src="@{'/'+${uploadDir}+'/'+${post.image}}" alt="Картинка"/>
     </div>
 </div>
 
