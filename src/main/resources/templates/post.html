@@ -59,7 +59,7 @@
                 <option th:each="tag : ${allTags}"
                         th:value="${tag.id}"
                         th:text="${tag.name}"
-                        th:selected="${post.tags.contains(tag)}">
+                        th:selected="${post.getTagIds().contains(tag.id)}">
                 </option>
             </select>
         </div>
