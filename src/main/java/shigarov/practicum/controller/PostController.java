@@ -120,7 +120,7 @@ public class PostController {
         return "redirect:/posts"; // Перенаправляем на страницу со списком постов
     }
 
-//    @PostMapping("/update/{postId}")
+    //    @PostMapping("/update/{postId}")
 //    public String updatePost(
 //            @PathVariable Long postId,
 //            @RequestParam String title,
@@ -141,43 +141,43 @@ public class PostController {
         // Обновляем заголовок и текст
         savedPost.setTitle(post.getTitle());
         savedPost.setText(post.getText());
-//
-//        // Обработка загрузки нового изображения
-//        if (imageFile != null && !imageFile.isEmpty()) {
-//            try {
-//                // Удаляем старое изображение, если оно есть
-//                if (post.getImage() != null) {
-//                    Path oldImagePath = Paths.get(uploadDir, post.getImage());
-//                    Files.deleteIfExists(oldImagePath);
-//                }
-//
-//                // Сохраняем новое изображение
-//                String fileName = imageFile.getOriginalFilename();
-//                Path path = Paths.get(uploadDir, fileName);
-//                Files.write(path, imageFile.getBytes());
-//
-//                // Обновляем имя файла в объекте Post
-//                post.setImage(fileName);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        // Обновляем теги
-//        if (tagIds != null) {
-//            post.getTags().clear(); // Удаляем старые теги
-//            for (Long tagId : tagIds) {
-//                Tag tag = postService.findTagById(tagId).orElse(null);
-//                if (tag != null) {
-//                    post.addTag(tag);
-//                }
-//            }
-//        }
-//
+
+        // Обработка загрузки нового изображения
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                // Удаляем старое изображение, если оно есть
+                if (savedPost.getImage() != null) {
+                    Path oldImagePath = Paths.get(uploadPath, uploadDir, savedPost.getImage());
+                    Files.deleteIfExists(oldImagePath);
+                }
+
+                // Сохраняем новое изображение
+                String fileName = imageFile.getOriginalFilename();
+                Path path = Paths.get(uploadPath, uploadDir, fileName);
+                Files.write(path, imageFile.getBytes());
+
+                // Обновляем имя файла в объекте Post
+                savedPost.setImage(fileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Обновляем теги
+        if (tagIds != null) {
+            savedPost.removeAllTags();
+            for (Long tagId : tagIds) {
+                Tag tag = postService.findTagById(tagId).orElse(null);
+                if (tag != null) {
+                    savedPost.addTag(tag);
+                }
+            }
+        }
+
         // Сохраняем обновленный пост
         postService.updatePost(savedPost);
 
-        return "redirect:/posts"; // Перенаправляем на страницу со списком постов
+        return "redirect:/posts/" + savedPost.getId();
     }
 
 }

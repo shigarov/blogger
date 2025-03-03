@@ -35,18 +35,6 @@
 
 <h1>Посты</h1>
 
-<h1>Загрузите изображение</h1>
-
-<form th:action="@{/upload}" method="post" enctype="multipart/form-data">
-    <div>
-        <label for="file">Выберите файл:</label>
-        <input type="file" id="file" name="image" accept="image/*" required>
-    </div>
-    <div>
-        <button type="submit">Загрузить</button>
-    </div>
-</form>
-
 <!-- Скрываемая форма для добавления нового поста -->
 <div class="form-container" style="display: none;" id="newPostForm">
     <h2>Новый пост</h2>

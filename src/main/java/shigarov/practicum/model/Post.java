@@ -64,6 +64,10 @@ public class Post {
         tags.put(tag.getId(), tag);
     }
 
+    public void removeAllTags() {
+        tags.clear();
+    }
+
     public int getLikes() {
         return likes;
     }
