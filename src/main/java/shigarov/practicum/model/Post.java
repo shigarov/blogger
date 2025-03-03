@@ -52,6 +52,10 @@ public class Post {
         this.text = text;
     }
 
+    public String getTextPreview() {
+        return "";
+    }
+
     public List<Tag> getTags() {
         return new ArrayList<>(tags.values());
     }

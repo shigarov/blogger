@@ -24,7 +24,7 @@
 
 <h1>Пост</h1>
 
-<!-- Скрываемая форма для добавления нового поста -->
+<!-- Скрываемая форма для редактирования поста -->
 <div class="form-container" style="display: none;" id="newPostForm">
     <h2>Новый пост</h2>
     <form th:action="@{/posts/update}" method="post" enctype="multipart/form-data" th:object="${post}">
@@ -48,7 +48,8 @@
         <!-- Поле для текста поста -->
         <div>
             <label for="text">Текст поста:</label>
-            <textarea id="text" name="text" rows="5" cols="40" th:text="${post.text}"></textarea>
+            <!--<textarea id="text" name="text" rows="5" cols="40" th:text="${post.text}"></textarea>-->
+            <textarea id="text" name="text" rows="5" cols="40" th:text="${#strings.replace(post.text, '\n', '&#10;')}"/>
         </div>
 
         <!-- Список тегов с множественным выбором -->
@@ -101,7 +102,7 @@
 <div>
     <strong>Текст:</strong>
     <!--Вывод текста с абзацами и строками-->
-    <div th:utext="${#strings.replace(post.text, '\r\n', '<br>')}"/>
+    <div th:utext="${#strings.replace(post.text, '\n', '<br>')}"/>
 </div>
 
 <!-- Теги поста -->
