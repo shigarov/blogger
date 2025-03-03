@@ -53,8 +53,25 @@ public class Post {
     }
 
     public String getTextPreview() {
-        return "";
+        // Разделяем текст на абзацы
+        String[] paragraphs = text.split("<br><br>");
+
+        // Берем первый абзац
+        String firstParagraph = paragraphs[0];
+
+        // Разделяем первый абзац на строки
+        String[] lines = firstParagraph.split("<br>");
+
+        // Берем первые три строки
+        StringBuilder preview = new StringBuilder();
+        for (int i = 0; i < Math.min(3, lines.length); i++) {
+            preview.append(lines[i]).append("<br>");
+        }
+
+        return preview.toString().trim();
     }
+
+
 
     public List<Tag> getTags() {
         return new ArrayList<>(tags.values());

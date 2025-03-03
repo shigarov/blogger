@@ -81,11 +81,18 @@ public class PostController {
         List<Tag> allTags = postService.findAllTags();
 
         // Если пост найден, добавляем его в модель
-        model.addAttribute("post", postOptional.orElse(null));
-        model.addAttribute("uploadDir", uploadDir);
-        model.addAttribute("allTags", allTags);
-        if (editingCommentId > 0) {
-            model.addAttribute("editingCommentId", editingCommentId); // ID комментария, который редактируется
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            model.addAttribute("post", post);
+            //String formattedPostText = post.getText().replaceAll("\\n", "&#10;");
+            //model.addAttribute("formattedPostText", formattedPostText);
+            //String htmlPostText = post.getText().replaceAll("\\n", "<br>");
+            //model.addAttribute("htmlPostText", htmlPostText);
+            model.addAttribute("uploadDir", uploadDir);
+            model.addAttribute("allTags", allTags);
+            if (editingCommentId > 0) {
+                model.addAttribute("editingCommentId", editingCommentId); // ID комментария, который редактируется
+            }
         }
         return "post";
     }
