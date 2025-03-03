@@ -16,6 +16,120 @@
 
 <h1>Пост</h1>
 
+<!--&lt;!&ndash; Скрываемая форма для добавления нового поста &ndash;&gt;-->
+<!--<div class="form-container" style="display: none;" id="newPostForm">-->
+<!--    <h2>Редактировать пост</h2>-->
+<!--        <form th:action="@{/posts/update/{id}(id=${post.id})}" method="post" enctype="multipart/form-data">-->
+<!--            &lt;!&ndash; Поле для заголовка &ndash;&gt;-->
+<!--            <div>-->
+<!--                <label for="title">Заголовок:</label>-->
+<!--                <input type="text" id="title" name="title" th:value="${post.title}" required>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Поле для текста поста &ndash;&gt;-->
+<!--            <div>-->
+<!--                <label for="text">Текст поста:</label>-->
+<!--                <textarea id="text" name="text" rows="5" cols="40" th:text="${post.text}"></textarea>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Поле для загрузки изображения &ndash;&gt;-->
+<!--            <div>-->
+<!--                <label for="imageFile">Изображение:</label>-->
+<!--                <input type="file" id="imageFile" name="imageFile" accept="image/*">-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Список тегов с множественным выбором &ndash;&gt;-->
+<!--            <div>-->
+<!--                <label for="tagIds">Теги:</label>-->
+<!--                <select id="tagIds" name="tagIds" multiple>-->
+<!--                    <option th:each="tag : ${allTags}"-->
+<!--                            th:value="${tag.id}"-->
+<!--                            th:text="${tag.name}"-->
+<!--                            th:selected="${post.tags.contains(tag)}">-->
+<!--                    </option>-->
+<!--                </select>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Кнопка отправки формы &ndash;&gt;-->
+<!--            <div>-->
+<!--                <button type="submit">Обновить пост</button>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--    <br><br>-->
+<!--</div>-->
+
+<!--<script>-->
+<!--    function toggleForm() {-->
+<!--        const form = document.getElementById('newPostForm');-->
+<!--        form.style.display = form.style.display === 'none' ? 'block' : 'none';-->
+<!--    }-->
+<!--</script>-->
+
+<!--<button class="btn-add" onclick="toggleForm()">Редактировать пост</button>-->
+
+<!--<br><br>-->
+
+<!-- Скрываемая форма для добавления нового поста -->
+<div class="form-container" style="display: none;" id="newPostForm">
+    <h2>Новый пост</h2>
+    <!--<form th:action="@{/posts/update}" method="post" enctype="multipart/form-data" th:object="${post}">-->
+    <!--    <form th:action="@{/posts/update/{id}(id=${post.id})}" method="post" enctype="multipart/form-data" th:object="${post}">-->
+    <form th:action="@{/posts/update}" method="post" enctype="multipart/form-data" th:object="${post}">
+        <!-- Поле для заголовка -->
+        <input type="hidden" id="postId" name="id" th:value="${post.id}">
+
+
+        <!-- Поле для заголовка -->
+        <div>
+            <label for="title">Заголовок:</label>
+            <input type="text" id="title" name="title" th:value="${post.title}" required>
+        </div>
+
+        <!-- Поле для загрузки изображения -->
+        <div>
+            <label for="imageFile">Изображение:</label>
+            <input type="file" id="imageFile" name="imageFile" accept="image/*">
+        </div>
+
+        <!-- Поле для текста поста -->
+        <div>
+            <label for="text">Текст поста:</label>
+            <textarea id="text" name="text" rows="5" cols="40" th:text="${post.text}"></textarea>
+        </div>
+
+        <!-- Список тегов с множественным выбором -->
+        <br>
+        <div>
+            <label for="tagIds">Теги:</label>
+            <select id="tagIds" name="tagIds" multiple>
+                <option th:each="tag : ${allTags}"
+                        th:value="${tag.id}"
+                        th:text="${tag.name}"
+                        th:selected="${post.tags.contains(tag)}">
+                </option>
+            </select>
+        </div>
+
+        <!-- Кнопка отправки формы -->
+        <br>
+        <div>
+            <button type="submit">Обновить пост</button>
+        </div>
+    </form>
+    <br><br>
+</div>
+
+<script>
+    function toggleForm() {
+        const form = document.getElementById('newPostForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+
+<button class="btn-add" onclick="toggleForm()">Редактировать пост</button>
+
+<br><br>
+
 <div>
     <strong>Название:</strong>
     <span th:text="${post.title}"/>
@@ -40,7 +154,11 @@
 <div>
     <strong>Теги:</strong>
     <!--<span th:text="${post.tags}"/>-->
-    <div><ul><li th:each="tag : ${post.tags}" th:text="${tag.name}"></li></ul></div>
+    <div>
+        <ul>
+            <li th:each="tag : ${post.tags}" th:text="${tag.name}"></li>
+        </ul>
+    </div>
 </div>
 
 <!-- Количество лайков -->

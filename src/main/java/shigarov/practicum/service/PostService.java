@@ -40,6 +40,16 @@ public class PostService {
         );
     }
 
+    public void updatePost(Post post) {
+        postRepository.updatePost(
+                post.getId(),
+                post.getTitle(),
+                post.getImage(),
+                post.getText(),
+                post.getTagIds()
+        );
+    }
+
     public Optional<Tag> findTagById(long id) {
         return postRepository.findTagById(id);
     }
