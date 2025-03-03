@@ -70,7 +70,11 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public String postById(@PathVariable("id") long id, Model model) {
+    public String postById(
+            @PathVariable("id") long id,
+            @RequestParam(value = "editingCommentId", required = false, defaultValue = "0") long editingCommentId,
+            Model model
+    ) {
         // Получаем пост по ID из репозитория
         Optional<Post> postOptional = postService.findById(id);
 
@@ -80,6 +84,9 @@ public class PostController {
         model.addAttribute("post", postOptional.orElse(null));
         model.addAttribute("uploadDir", uploadDir);
         model.addAttribute("allTags", allTags);
+        if (editingCommentId > 0) {
+            model.addAttribute("editingCommentId", editingCommentId); // ID комментария, который редактируется
+        }
         return "post";
     }
 
@@ -120,14 +127,6 @@ public class PostController {
         return "redirect:/posts"; // Перенаправляем на страницу со списком постов
     }
 
-    //    @PostMapping("/update/{postId}")
-//    public String updatePost(
-//            @PathVariable Long postId,
-//            @RequestParam String title,
-//            @RequestParam String text,
-//            @RequestParam(name = "tagIds", required = false) List<Long> tagIds,
-//            @RequestParam(name = "imageFile", required = false) MultipartFile imageFile
-//    ) {
     @PostMapping("/update") //("/update/{postId}")
     public String updatePost(
             //@PathVariable Long postId,
@@ -178,6 +177,35 @@ public class PostController {
         postService.updatePost(savedPost);
 
         return "redirect:/posts/" + savedPost.getId();
+    }
+
+    // Добавление нового комментария
+    @PostMapping("/addComment")
+    public String addComment(
+            @RequestParam(name = "commentText") String text,
+            @RequestParam(name = "postId") Long postId
+    ) {
+        postService.addComment(text, postId);
+        return "redirect:/posts/" + postId;
+    }
+
+    // Начало редактирования комментария
+    @GetMapping("/editComment")
+    public String editComment(
+            @RequestParam(name = "editingCommentId") Long editingCommentId,
+            @RequestParam(name = "postId") Long postId
+    ) {
+        return "redirect:/posts/" + postId + "?editingCommentId=" + editingCommentId;
+    }
+
+    @PostMapping("/updateComment")
+    public String updateComment(
+            @RequestParam(name = "commentText") String text,
+            @RequestParam(name = "commentId") Long id,
+            @RequestParam(name = "postId") Long postId
+    ) {
+        postService.updateComment(id, text);
+        return "redirect:/posts/" + postId;
     }
 
 }

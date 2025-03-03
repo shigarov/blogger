@@ -7,47 +7,47 @@ INSERT INTO tags (id, name) VALUES (4, 'жизнь');
 INSERT INTO tags (id, name) VALUES (5, 'тест');
 INSERT INTO tags (id, name) VALUES (6, 'котики');
 
---INSERT INTO posts (id, title, image, text, likes) VALUES
---(1, 'Пост 1', 'image1.png', 'Абзац 1: Строка 1 \r\n Строка 2 \r\n Строка 3 \r\n Строка 4 \r\n Строка 5 \r\n \r\n Абзац 2: Строка 1 \r\n Строка 2 \r\n Строка 3 \r\n \r\n Абзац 3: Строка 1', 730);
---
---INSERT INTO posts_tags (post_id, tag_id) VALUES
---(1, 2);
---
---INSERT INTO posts (id, title, image, text, likes) VALUES
---(2, 'Пост 2', 'image2.png', 'Абзац 1: Строка 1 \r\n Строка 2 \r\n Строка 3 \r\n \r\n Абзац 2: Строка 1 \r\n Строка 2 \r\n \r\n Абзац 3: Строка 1 \r\n Строка 2 \r\n Строка 3 \r\n Строка 4', 683);
---
---INSERT INTO comments (id, text, post_id) VALUES
---(1, 'хуже ничего в жизни не читал', 2),
---(2, 'хуже ничего в жизни не читал', 2),
---(3, 'самый лучший пост в мире', 2);
---
---INSERT INTO posts_tags (post_id, tag_id) VALUES
---(2, 4);
---
---INSERT INTO posts (id, title, image, text, likes) VALUES
---(3, 'Пост 3', 'image3.png', 'Абзац 1: Строка 1 \r\n \r\n Абзац 2: Строка 1 \r\n Строка 2 \r\n Строка 3 \r\n Строка 4 \r\n Строка 5 \r\n \r\n Абзац 3: Строка 1 \r\n Строка 2 \r\n Строка 3', 865);
---
---INSERT INTO comments (id, text, post_id) VALUES
---(4, 'отвратительный пост', 3),
---(5, 'отличный пост', 3),
---(6, 'отвратительный пост', 3),
---(7, 'отвратительный пост', 3);
---
---INSERT INTO posts_tags (post_id, tag_id) VALUES
---(3, 3);
---
---INSERT INTO posts (id, title, image, text, likes) VALUES
---(4, 'Пост 4', 'image4.png', 'Абзац 1: Строка 1 \r\n Строка 2', 135);
---
---INSERT INTO comments (id, text, post_id) VALUES
---(8, 'отвратительный пост', 4),
---(9, 'отличный пост', 4),
---(10, 'хуже ничего в жизни не читал', 4);
---
---INSERT INTO posts_tags (post_id, tag_id) VALUES
---(4, 6),
---(4, 4),
---(4, 3);
+INSERT INTO posts (id, title, image, text, likes) VALUES
+(1, 'Пост 1', 'image1.png', 'Абзац 1: Строка 1 \r\n Строка 2 \r\n Строка 3 \r\n Строка 4 \r\n Строка 5 \r\n \r\n Абзац 2: Строка 1 \r\n Строка 2 \r\n Строка 3 \r\n \r\n Абзац 3: Строка 1', 730);
+
+INSERT INTO posts_tags (post_id, tag_id) VALUES
+(1, 2);
+
+INSERT INTO posts (id, title, image, text, likes) VALUES
+(2, 'Пост 2', 'image2.png', 'Абзац 1: Строка 1 \r\n Строка 2 \r\n Строка 3 \r\n \r\n Абзац 2: Строка 1 \r\n Строка 2 \r\n \r\n Абзац 3: Строка 1 \r\n Строка 2 \r\n Строка 3 \r\n Строка 4', 683);
+
+INSERT INTO comments (id, text, post_id) VALUES
+(1, 'хуже ничего в жизни не читал', 2),
+(2, 'хуже ничего в жизни не читал', 2),
+(3, 'самый лучший пост в мире', 2);
+
+INSERT INTO posts_tags (post_id, tag_id) VALUES
+(2, 4);
+
+INSERT INTO posts (id, title, image, text, likes) VALUES
+(3, 'Пост 3', 'image3.png', 'Абзац 1: Строка 1 \r\n \r\n Абзац 2: Строка 1 \r\n Строка 2 \r\n Строка 3 \r\n Строка 4 \r\n Строка 5 \r\n \r\n Абзац 3: Строка 1 \r\n Строка 2 \r\n Строка 3', 865);
+
+INSERT INTO comments (id, text, post_id) VALUES
+(4, 'отвратительный пост', 3),
+(5, 'отличный пост', 3),
+(6, 'отвратительный пост', 3),
+(7, 'отвратительный пост', 3);
+
+INSERT INTO posts_tags (post_id, tag_id) VALUES
+(3, 3);
+
+INSERT INTO posts (id, title, image, text, likes) VALUES
+(4, 'Пост 4', 'image4.png', 'Абзац 1: Строка 1 \r\n Строка 2', 135);
+
+INSERT INTO comments (id, text, post_id) VALUES
+(8, 'отвратительный пост', 4),
+(9, 'отличный пост', 4),
+(10, 'хуже ничего в жизни не читал', 4);
+
+INSERT INTO posts_tags (post_id, tag_id) VALUES
+(4, 6),
+(4, 4),
+(4, 3);
 --
 --INSERT INTO posts (id, title, image, text, likes) VALUES
 --(5, 'Пост 5', 'image5.png', 'Абзац 1: Строка 1 \r\n Строка 2 \r\n Строка 3', 606);

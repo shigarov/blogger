@@ -2,6 +2,7 @@ package shigarov.practicum.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
@@ -57,4 +58,13 @@ public class PostService {
     public List<Tag> findAllTags() {
         return postRepository.findAllTags();
     }
+
+    public void addComment(String commentText, Long postId) {
+        postRepository.addComment(commentText, postId);
+    }
+
+    public void updateComment(Long commentId, String commentText) {
+        postRepository.updateComment(commentId, commentText);
+    }
+
 }
