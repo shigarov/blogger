@@ -130,8 +130,7 @@
     <span th:text="${post.likes}"/>
 </div>
 
-<form th:action="@{/posts/incrementPostLikes}" method="post">
-    <input type="hidden" name="postId" th:value="${post.id}">
+<form th:action="@{/posts/incrementLikes/{postId}(postId=${post.id})}" method="post">
     <button type="submit">Лайкнуть</button>
 </form>
 

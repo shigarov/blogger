@@ -138,10 +138,8 @@ public class PostController {
         return "redirect:/posts"; // Перенаправляем на страницу со списком постов
     }
 
-    //@PostMapping("/update")
     @PostMapping("/update/{postId}")
     public String updatePost(
-            //@ModelAttribute Post post, // Автоматическое связывание данных формы с объектом Post
             @PathVariable(name = "postId") Long postId,
             @RequestParam(name = "title", required = false) String title,
             @RequestParam(name = "text", required = false) String text,
@@ -197,14 +195,14 @@ public class PostController {
         return "redirect:/posts/" + savedPost.getId();
     }
 
-    @PostMapping("/incrementPostLikes")
-    public String incrementPostLikes(@RequestParam(name = "postId") Long postId) {
+    @PostMapping("/incrementLikes/{postId}")
+    public String incrementPostLikes(@PathVariable(name = "postId") Long postId) {
         postService.incrementLikes(postId);
         return "redirect:/posts/" + postId;
     }
 
     @PostMapping(value = "/delete/{postId}", params = "_method=delete")
-    public String delete(@PathVariable(name = "postId") Long postId) {
+    public String deletePost(@PathVariable(name = "postId") Long postId) {
         postService.deletePost(postId);
         return "redirect:/posts";
     }
