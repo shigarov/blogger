@@ -213,6 +213,12 @@ public class PostController {
     @PostMapping("/incrementPostLikes")
     public String incrementPostLikes(@RequestParam(name = "postId") Long postId) {
         postService.incrementLikes(postId);
-        return "redirect:/posts/" + postId; // Перенаправление на страницу поста
+        return "redirect:/posts/" + postId;
+    }
+
+    @PostMapping(value = "/delete/{id}", params = "_method=delete")
+    public String delete(@PathVariable(name = "id") Long id) {
+        postService.deletePost(id);
+        return "redirect:/posts";
     }
 }

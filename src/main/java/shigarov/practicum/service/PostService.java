@@ -71,4 +71,8 @@ public class PostService {
         postRepository.incrementPostLikes(postId);
     }
 
+    public void deletePost(Long postId) {
+        postRepository.deletePost(postId);
+    }
+
 }

@@ -86,6 +86,13 @@
 
 <br><br>
 
+<form th:action="@{/delete/{id}(id=${post.id})}" method="post">
+    <input type="hidden" name="_method" value="delete" /> <!-- Указываем метод DELETE -->
+    <button type="submit" class="btn btn-danger">Удалить пост</button>
+</form>
+
+<br><br>
+
 <div>
     <strong>Название:</strong>
     <span th:text="${post.title}"/>
