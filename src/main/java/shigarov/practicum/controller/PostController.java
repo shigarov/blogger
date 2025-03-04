@@ -138,18 +138,26 @@ public class PostController {
         return "redirect:/posts"; // Перенаправляем на страницу со списком постов
     }
 
-    @PostMapping("/update")
+    //@PostMapping("/update")
+    @PostMapping("/update/{postId}")
     public String updatePost(
-            @ModelAttribute Post post, // Автоматическое связывание данных формы с объектом Post
+            //@ModelAttribute Post post, // Автоматическое связывание данных формы с объектом Post
+            @PathVariable(name = "postId") Long postId,
+            @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "text", required = false) String text,
             @RequestParam(name = "tagIds", required = false) List<Long> tagIds,
             @RequestParam(name = "imageFile", required = false) MultipartFile imageFile
     ) {
         // Находим пост по ID
-        Post savedPost = postService.findById(post.getId()).orElseThrow(() -> new RuntimeException("Пост не найден"));
+        Post savedPost = postService.findById(postId).orElseThrow(() -> new RuntimeException("Пост не найден"));
 
-        // Обновляем заголовок и текст
-        savedPost.setTitle(post.getTitle());
-        savedPost.setText(post.getText());
+        // Обновляем заголовок
+        if (title != null)
+            savedPost.setTitle(title);
+
+        // Обновляем текст
+        if (text != null)
+            savedPost.setText(text);
 
         // Обработка загрузки нового изображения
         if (imageFile != null && !imageFile.isEmpty()) {

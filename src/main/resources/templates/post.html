@@ -26,10 +26,8 @@
 
 <!-- Скрываемая форма для редактирования поста -->
 <div class="form-container" style="display: none;" id="newPostForm">
-    <h2>Новый пост</h2>
-    <form th:action="@{/posts/update}" method="post" enctype="multipart/form-data" th:object="${post}">
-        <!-- Поле для заголовка -->
-        <input type="hidden" id="postId" name="id" th:value="${post.id}">
+    <h2>Редактировать пост</h2>
+    <form th:action="@{/posts/update/{postId}(postId=${post.id})}" method="post" enctype="multipart/form-data">
 
         <!-- Поле для заголовка -->
         <div>
@@ -176,7 +174,7 @@
 <!-- Форма для добавления нового комментария -->
 <form th:action="@{/posts/{postId}/comments/add(postId=${post.id})}" method="post">
     <div>
-        <label for="commentText">Ваш комментарий:</label>
+        <label for="commentText">Текст комментария:</label>
         <textarea id="commentText" name="commentText" rows="3" cols="100" required></textarea>
     </div>
     <button type="submit" class="btn btn-primary">Добавить комментарий</button>
