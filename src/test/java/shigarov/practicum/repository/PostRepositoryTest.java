@@ -7,14 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import shigarov.practicum.configuration.DataSourceConfiguration;
+
+import shigarov.practicum.configuration.TestDataSourceConfiguration;
 import shigarov.practicum.model.Post;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(classes = {DataSourceConfiguration.class, JdbcNativePostRepository.class})
+@SpringJUnitConfig(classes = {TestDataSourceConfiguration.class, JdbcNativePostRepository.class})
 @TestPropertySource(locations = "classpath:test-application.properties")
 public class PostRepositoryTest {
     @Autowired
