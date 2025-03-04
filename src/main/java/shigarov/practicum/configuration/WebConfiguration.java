@@ -58,10 +58,6 @@ public class WebConfiguration implements WebMvcConfigurer {
         return new StandardServletMultipartResolver();
     }
 
-//    @Bean
-//    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
-//        return new HiddenHttpMethodFilter();
-//    }
 }
 
 

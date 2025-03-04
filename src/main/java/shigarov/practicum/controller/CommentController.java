@@ -1,10 +1,7 @@
 package shigarov.practicum.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import shigarov.practicum.service.CommentService;
 
 @Controller
@@ -17,31 +14,30 @@ public class CommentController {
     }
 
     // Добавление нового комментария
-    @PostMapping("/addComment")
+    @PostMapping("/{postId}/comments/add")
     public String addComment(
-            @RequestParam(name = "commentText") String text,
-            @RequestParam(name = "postId") Long postId
+            @PathVariable(name = "postId") Long postId,
+            @RequestParam(name = "commentText") String text
     ) {
         commentService.addComment(text, postId);
         return "redirect:/posts/" + postId;
     }
 
-    // Начало редактирования комментария
-    @GetMapping("/editComment")
+    @GetMapping("/{postId}/comments/{commentId}/edit")
     public String editComment(
-            @RequestParam(name = "editingCommentId") Long editingCommentId,
-            @RequestParam(name = "postId") Long postId
+            @PathVariable(name = "postId") Long postId,
+            @PathVariable(name = "commentId") Long commentId
     ) {
-        return "redirect:/posts/" + postId + "?editingCommentId=" + editingCommentId;
+        return "redirect:/posts/" + postId + "?editingCommentId=" + commentId;
     }
 
-    @PostMapping("/updateComment")
+    @PostMapping("/{postId}/comments/{commentId}/update")
     public String updateComment(
-            @RequestParam(name = "commentText") String text,
-            @RequestParam(name = "commentId") Long id,
-            @RequestParam(name = "postId") Long postId
+            @PathVariable(name = "postId") Long postId,
+            @PathVariable(name = "commentId") Long commentId,
+            @RequestParam(name = "commentText") String text//,
     ) {
-        commentService.updateComment(id, text);
+        commentService.updateComment(commentId, text);
         return "redirect:/posts/" + postId;
     }
 
