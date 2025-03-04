@@ -48,10 +48,8 @@
         <!-- Поле для текста поста -->
         <div>
             <label for="text">Текст поста (строки, разделяются тегом <code>&lt;br&gt;</code>,
-                абзацы разделяются парами тегов <code>&lt;br&gt;&lt;br&gt;</code>):</label>
-            <!--<textarea id="text" name="text" rows="5" cols="40" th:text="${post.text}"></textarea>-->
+                абзацы выделяются парой тегов <code>&lt;p&gt;&lt;&#47;p&gt;</code>):</label>
             <!--<textarea id="text" name="text" rows="5" cols="40" th:text="${#strings.replace(post.text, '\n', '&#10;')}"/>-->
-            <!--<textarea id="text" name="text" rows="5" cols="40" th:text="${post.text}"/>-->
             <textarea id="text" name="text" rows="10" cols="100" th:text="${post.text}"/>
         </div>
 

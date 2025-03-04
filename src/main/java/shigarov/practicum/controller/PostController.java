@@ -84,10 +84,6 @@ public class PostController {
         if (postOptional.isPresent()) {
             Post post = postOptional.get();
             model.addAttribute("post", post);
-            //String formattedPostText = post.getText().replaceAll("\\n", "&#10;");
-            //model.addAttribute("formattedPostText", formattedPostText);
-            //String htmlPostText = post.getText().replaceAll("\\n", "<br>");
-            //model.addAttribute("htmlPostText", htmlPostText);
             model.addAttribute("uploadDir", uploadDir);
             model.addAttribute("allTags", allTags);
             if (editingCommentId > 0) {
@@ -134,9 +130,8 @@ public class PostController {
         return "redirect:/posts"; // Перенаправляем на страницу со списком постов
     }
 
-    @PostMapping("/update") //("/update/{postId}")
+    @PostMapping("/update")
     public String updatePost(
-            //@PathVariable Long postId,
             @ModelAttribute Post post, // Автоматическое связывание данных формы с объектом Post
             @RequestParam(name = "tagIds", required = false) List<Long> tagIds,
             @RequestParam(name = "imageFile", required = false) MultipartFile imageFile

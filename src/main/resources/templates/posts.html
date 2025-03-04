@@ -55,8 +55,9 @@
         <!-- Поле для текста поста -->
         <br>
         <div>
-            <label for="text">Текст поста:</label>
-            <textarea id="text" th:field="*{text}" rows="5" cols="40"></textarea>
+            <label for="text">Текст поста (строки, разделяются тегом <code>&lt;br&gt;</code>,
+                абзацы выделяются парой тегов <code>&lt;p&gt;&lt;&#47;p&gt;</code>):</label>
+            <textarea id="text" th:field="*{text}" rows="10" cols="100"></textarea>
         </div>
 
         <!-- Список тегов с множественным выбором -->
@@ -158,12 +159,10 @@
     <tr th:each="post : ${posts}">
         <td th:text="${post.id}"/>
         <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}"/></td>
-        <!--        <td><img th:if="${post.image != null}" th:src="@{'/images/'+${post.image}}" alt="Картинка"/></td>-->
         <td><img th:if="${post.image != null}" th:src="@{'/'+${uploadDir}+'/'+${post.image}}" alt="Картинка"/></td>
         <!--Вывод текста с абзацами и строками-->
         <!--<td th:utext="${#strings.replace(post.preview, '\n', '<br>')}"/>-->
         <td th:utext="${post.textPreview}"/>
-        <!--<td th:utext="${htmlPostText}"/>-->
         <td>
             <ul>
                 <li th:each="tag : ${post.tags}" th:text="${tag.name}"></li>
