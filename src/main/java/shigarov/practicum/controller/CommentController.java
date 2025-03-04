@@ -22,7 +22,7 @@ public class CommentController {
         return "redirect:/posts/" + postId;
     }
 
-    @GetMapping("/posts/{postId}/comments/{commentId}/edit")
+    @GetMapping("/posts/{postId}/comments/edit/{commentId}")
     public String editComment(
             @PathVariable(name = "postId") Long postId,
             @PathVariable(name = "commentId") Long commentId
@@ -30,7 +30,7 @@ public class CommentController {
         return "redirect:/posts/" + postId + "?editingCommentId=" + commentId;
     }
 
-    @PostMapping("/posts/{postId}/comments/{commentId}/update")
+    @PostMapping("/posts/{postId}/comments/update/{commentId}")
     public String updateComment(
             @PathVariable(name = "postId") Long postId,
             @PathVariable(name = "commentId") Long commentId,

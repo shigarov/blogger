@@ -150,7 +150,7 @@
         <td>
             <!-- Форма для редактирования комментария -->
             <form th:if="${comment.id == editingCommentId}"
-                  th:action="@{/posts/{postId}/comments/{commentId}/update(postId=${post.id}, commentId=${comment.id})}"
+                  th:action="@{/posts/{postId}/comments/update/{commentId}(postId=${post.id}, commentId=${comment.id})}"
                   method="post">
                 <input type="hidden" name="postId" th:value="${post.id}">
                 <input type="hidden" name="commentId" th:value="${comment.id}">
@@ -160,7 +160,7 @@
             </form>
             <!-- Отображение текста комментария с возможностью редактирования -->
             <span th:unless="${comment.id == editingCommentId}" th:text="${comment.text}"
-                  th:onclick="'location.href=\'/blogger/posts/' + ${post.id} + '/comments/' + ${comment.id} + '/edit' + '\''"
+                  th:onclick="'location.href=\'/blogger/posts/' + ${post.id} + '/comments/edit/' + ${comment.id} + '\''"
                   style="cursor: pointer;">
             </span>
         </td>
