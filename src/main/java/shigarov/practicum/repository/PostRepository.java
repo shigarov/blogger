@@ -40,11 +40,6 @@ public interface PostRepository {
 
     void incrementPostLikes(long postId);
 
-    List<Tag> findAllTags();
-
-    Optional<Tag> findTagById(long id);
-
-    void addTag(@NonNull String tag);
 
     Optional<Comment> findCommentById(long id);
 

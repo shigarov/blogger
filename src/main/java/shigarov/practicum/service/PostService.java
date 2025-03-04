@@ -51,13 +51,6 @@ public class PostService {
         );
     }
 
-    public Optional<Tag> findTagById(long id) {
-        return postRepository.findTagById(id);
-    }
-
-    public List<Tag> findAllTags() {
-        return postRepository.findAllTags();
-    }
 
     public void addComment(String commentText, Long postId) {
         postRepository.addComment(commentText, postId);

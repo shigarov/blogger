@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
 import shigarov.practicum.service.PostService;
+import shigarov.practicum.service.TagService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,9 +29,11 @@ public class PostController {
     private String uploadDir;
 
     private final PostService postService;
+    private final TagService tagService;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, TagService tagService) {
         this.postService = postService;
+        this.tagService = tagService;
     }
 
     @GetMapping // GET запрос /posts
@@ -55,7 +58,7 @@ public class PostController {
             model.addAttribute("page", postsPage);
         }
 
-        List<Tag> allTags = postService.findAllTags();
+        List<Tag> allTags = tagService.findAllTags();
 
         // Передаём данные в виде атрибута users
         model.addAttribute("posts", posts);
@@ -78,7 +81,7 @@ public class PostController {
         // Получаем пост по ID из репозитория
         Optional<Post> postOptional = postService.findById(id);
 
-        List<Tag> allTags = postService.findAllTags();
+        List<Tag> allTags = tagService.findAllTags();
 
         // Если пост найден, добавляем его в модель
         if (postOptional.isPresent()) {
@@ -117,7 +120,7 @@ public class PostController {
         if (tagIds != null) {
             // Получаем выбранные теги по их ID и добавляем их в пост
             for (Long tagId : tagIds) {
-                Tag tag = postService.findTagById(tagId).orElse(null);
+                Tag tag = tagService.findTagById(tagId).orElse(null);
                 if (tag != null) {
                     post.addTag(tag);
                 }
@@ -168,7 +171,7 @@ public class PostController {
         if (tagIds != null) {
             savedPost.removeAllTags();
             for (Long tagId : tagIds) {
-                Tag tag = postService.findTagById(tagId).orElse(null);
+                Tag tag = tagService.findTagById(tagId).orElse(null);
                 if (tag != null) {
                     savedPost.addTag(tag);
                 }

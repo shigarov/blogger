@@ -389,54 +389,6 @@ public class JdbcNativePostRepository implements PostRepository {
         }
     }
 
-    @Override
-    public List<Tag> findAllTags() {
-        final String sql = """
-                SELECT
-                    t.id,
-                    t.name,
-                FROM tags t
-                ORDER BY t.id;
-                """;
-
-        return jdbcTemplate.query(sql, new TagResultSetExtractor());
-    }
-
-    @Override
-    public Optional<Tag> findTagById(long id) {
-        final String sql = """
-                SELECT
-                    t.id,
-                    t.name,
-                FROM tags t
-                WHERE t.id = ?;
-                """;
-
-        List<Tag> tags = jdbcTemplate.query(sql, new TagResultSetExtractor(), id);
-        return Optional.ofNullable(tags.getFirst());
-        //return Optional.empty();
-    }
-
-    @Override
-    public void addTag(@NonNull String tag) {
-        jdbcTemplate.update("INSERT INTO tags (name) VALUES (?)", tag);
-    }
-
-    private static class TagResultSetExtractor implements ResultSetExtractor<List<Tag>> {
-        @Override
-        public List<Tag> extractData(ResultSet rs) throws SQLException {
-            List<Tag> tags = new LinkedList<>();
-
-            while (rs.next()) {
-                Tag tag = new Tag();
-                tag.setId(rs.getLong("id"));
-                tag.setName(rs.getString("name"));
-                tags.add(tag);
-            }
-
-            return tags;
-        }
-    }
 
     public Optional<Comment> findCommentById(long id) {
         String sql = """
