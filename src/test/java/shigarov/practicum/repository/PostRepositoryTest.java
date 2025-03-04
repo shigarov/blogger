@@ -30,89 +30,10 @@ public class PostRepositoryTest {
         jdbcTemplate.execute("DELETE FROM tags");
         jdbcTemplate.execute("DELETE FROM comments");
         jdbcTemplate.execute("DELETE FROM posts");
-
-//        // Добавление тестовых данных в таблицу тегов
-//        final String sqlCreateTags = """
-//                INSERT INTO tags (id, name) VALUES
-//                (1, 'технологии'),
-//                (2, 'блог'),
-//                (3, 'программирование'),
-//                (4, 'жизнь'),
-//                (5, 'тест'),
-//                (6, 'котики');
-//                """;
-//        jdbcTemplate.execute(sqlCreateTags);
-//
-//        // Добавление тестовых данных в таблицу постов
-//        final String sqlCreatePosts = """
-//                INSERT INTO posts (id, title, image, text, likes) VALUES
-//                (1, 'Пост 1', 'image1.png', 'Текст поста 1, разбитый на абзацы.', 10),
-//                (2, 'Пост 2', 'image2.png', 'Текст поста 2, разбитый на абзацы.', 5),
-//                (3, 'Пост 3', 'image3.png', 'Текст поста 3, разбитый на абзацы.', 15),
-//                (4, 'Пост 4', NULL, 'Текст поста 4, разбитый на абзацы.', 20),
-//                (5, 'Пост 5', NULL, 'Текст поста 5, разбитый на абзацы.', 8),
-//                (6, 'Пост 6', NULL, 'Текст поста 6, разбитый на абзацы.', 12),
-//                (7, 'Пост 7', NULL, 'Текст поста 7, разбитый на абзацы.', 7),
-//                (8, 'Пост 8', NULL, 'Текст поста 8, разбитый на абзацы.', 30),
-//                (9, 'Пост 9', NULL, 'Текст поста 9, разбитый на абзацы.', 25),
-//                (10, 'Пост 10', NULL, 'Текст поста 10, разбитый на абзацы.', 18);
-//                """;
-//        jdbcTemplate.execute(sqlCreatePosts);
-//
-//        // Добавление тестовых данных в таблицу комментариев
-//        final String sqlCreatePostsTags = """
-//                INSERT INTO posts_tags (post_id, tag_id) VALUES
-//                (1, 1),
-//                (1, 3),
-//                (2, 3),
-//                (2, 4),
-//                (2, 6),
-//                (4, 1),
-//                (4, 2),
-//                (5, 3),
-//                (5, 5),
-//                (5, 6),
-//                (6, 4),
-//                (7, 3),
-//                (7, 5),
-//                (9, 1),
-//                (10, 1),
-//                (10, 2);
-//                """;
-//        jdbcTemplate.execute(sqlCreatePostsTags);
-//
-//        // Добавление тестовых данных в таблицу комментариев
-//        final String sqlCreateComments = """
-//                INSERT INTO comments (id, text, post_id) VALUES
-//                (1, 'Отличный пост!', 1),
-//                (2, 'Спасибо за информацию.', 1),
-//                (3, 'Интересно, но можно подробнее?', 2),
-//                (4, 'Полезный материал.', 2),
-//                (5, 'Согласен с автором.', 2),
-//                (6, 'Первый комментарий к посту 3.', 3),
-//                (7, 'Классный пост!', 4),
-//                (8, 'Много нового узнал.', 4),
-//                (9, 'Спасибо за статью.', 5),
-//                (10, 'Интересная точка зрения.', 5),
-//                (11, 'Жду продолжения.', 5),
-//                (12, 'Отлично написано!', 6),
-//                (13, 'Полезно для начинающих.', 7),
-//                (14, 'Спасибо за советы.', 7),
-//                (15, 'Интересный материал.', 8),
-//                (16, 'Много полезной информации.', 8),
-//                (17, 'Рекомендую к прочтению.', 8),
-//                (18, 'Отличный пост!', 9),
-//                (19, 'Спасибо за труд.', 9),
-//                (20, 'Очень познавательно.', 10),
-//                (21, 'Спасибо за подробности.', 10);
-//                """;
-//
-//        jdbcTemplate.execute(sqlCreateComments);
     }
 
-
     @Nested
-    class TestFindsPosts {
+    class FindPostsTests {
         @BeforeEach
         void setUp() {
             // Добавляем тестовые данные
@@ -191,7 +112,7 @@ public class PostRepositoryTest {
     }
 
     @Nested
-    class TestPostAdds {
+    class AddPostTests {
         @BeforeEach
         void setUp() {
             // Добавляем тестовые теги
@@ -262,7 +183,7 @@ public class PostRepositoryTest {
     }
 
     @Nested
-    class TestPostUpdates {
+    class UpdatePostTests {
         @BeforeEach
         void setUp() {
             // Добавляем тестовые данные
@@ -351,65 +272,67 @@ public class PostRepositoryTest {
         }
     }
 
-    @Test
-    void testDeletePostWithRelatedData() {
-        // Добавляем тестовые данные
-        jdbcTemplate.update(
-                "INSERT INTO posts (id, title, image, text) VALUES (?, ?, ?, ?)",
-                1L, "Тестовый пост", "https://example.com/image.jpg", "Текст поста"
-        );
-        jdbcTemplate.update(
-                "INSERT INTO comments (id, text, post_id) VALUES (?, ?, ?)",
-                1L, "Тестовый комментарий", 1L
-        );
-        jdbcTemplate.update("INSERT INTO tags (id, name) VALUES (?, ?)", 1L, "тег");
-        jdbcTemplate.update("INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)", 1L, 1L);
+    @Nested
+    class DeletePostTests {
+        @Test
+        void testDeletePostWithRelatedData() {
+            // Добавляем тестовые данные
+            jdbcTemplate.update(
+                    "INSERT INTO posts (id, title, image, text) VALUES (?, ?, ?, ?)",
+                    1L, "Тестовый пост", "https://example.com/image.jpg", "Текст поста"
+            );
+            jdbcTemplate.update(
+                    "INSERT INTO comments (id, text, post_id) VALUES (?, ?, ?)",
+                    1L, "Тестовый комментарий", 1L
+            );
+            jdbcTemplate.update("INSERT INTO tags (id, name) VALUES (?, ?)", 1L, "тег");
+            jdbcTemplate.update("INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)", 1L, 1L);
 
-        // Удаляем пост с ID = 1
-        postRepository.deletePost(1L);
+            // Удаляем пост с ID = 1
+            postRepository.deletePost(1L);
 
-        // Проверяем, что пост удалён
-        Integer postCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM posts WHERE id = ?", Integer.class, 1L);
-        assertEquals(0, postCount, "Пост должен быть удалён");
+            // Проверяем, что пост удалён
+            Integer postCount = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM posts WHERE id = ?", Integer.class, 1L);
+            assertEquals(0, postCount, "Пост должен быть удалён");
 
-        // Проверяем, что комментарии удалены
-        Integer commentCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM comments WHERE post_id = ?", Integer.class, 1L);
-        assertEquals(0, commentCount, "Комментарии должны быть удалены");
+            // Проверяем, что комментарии удалены
+            Integer commentCount = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM comments WHERE post_id = ?", Integer.class, 1L);
+            assertEquals(0, commentCount, "Комментарии должны быть удалены");
 
-        // Проверяем, что связи с тегами удалены
-        Integer tagRelationCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM posts_tags WHERE post_id = ?", Integer.class, 1L);
-        assertEquals(0, tagRelationCount, "Связи с тегами должны быть удалены");
+            // Проверяем, что связи с тегами удалены
+            Integer tagRelationCount = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM posts_tags WHERE post_id = ?", Integer.class, 1L);
+            assertEquals(0, tagRelationCount, "Связи с тегами должны быть удалены");
+        }
+
+        @Test
+        void testDeletePostWithNoRelatedData() {
+            // Добавляем пост без комментариев и тегов
+            jdbcTemplate.update(
+                    "INSERT INTO posts (id, title, image, text) VALUES (?, ?, ?, ?)",
+                    2L, "Пост без связей", "https://example.com/image.jpg", "Текст поста"
+            );
+
+            // Удаляем пост с ID = 2
+            postRepository.deletePost(2L);
+
+            // Проверяем, что пост удалён
+            Integer postCount = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM posts WHERE id = ?", Integer.class, 2L);
+            assertEquals(0, postCount, "Пост должен быть удалён");
+
+            // Проверяем, что комментарии и связи с тегами отсутствуют
+            Integer commentCount = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM comments WHERE post_id = ?", Integer.class, 2L);
+            assertEquals(0, commentCount, "Комментарии должны отсутствовать");
+
+            Integer tagRelationCount = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM posts_tags WHERE post_id = ?", Integer.class, 2L);
+            assertEquals(0, tagRelationCount, "Связи с тегами должны отсутствовать");
+        }
     }
-
-    @Test
-    void testDeletePostWithNoRelatedData() {
-        // Добавляем пост без комментариев и тегов
-        jdbcTemplate.update(
-                "INSERT INTO posts (id, title, image, text) VALUES (?, ?, ?, ?)",
-                2L, "Пост без связей", "https://example.com/image.jpg", "Текст поста"
-        );
-
-        // Удаляем пост с ID = 2
-        postRepository.deletePost(2L);
-
-        // Проверяем, что пост удалён
-        Integer postCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM posts WHERE id = ?", Integer.class, 2L);
-        assertEquals(0, postCount, "Пост должен быть удалён");
-
-        // Проверяем, что комментарии и связи с тегами отсутствуют
-        Integer commentCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM comments WHERE post_id = ?", Integer.class, 2L);
-        assertEquals(0, commentCount, "Комментарии должны отсутствовать");
-
-        Integer tagRelationCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM posts_tags WHERE post_id = ?", Integer.class, 2L);
-        assertEquals(0, tagRelationCount, "Связи с тегами должны отсутствовать");
-    }
-
     @Test
     void testIncrementPostLikes() {
         // Добавляем тестовый пост

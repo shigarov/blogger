@@ -48,9 +48,14 @@ public class JdbcNativeTagRepository implements TagRepository {
         //return Optional.empty();
     }
 
+//    @Override
+//    public void addTag(@NonNull String tag) {
+//        jdbcTemplate.update("INSERT INTO tags (name) VALUES (?)", tag);
+//    }
+
     @Override
-    public void addTag(@NonNull String tag) {
-        jdbcTemplate.update("INSERT INTO tags (name) VALUES (?)", tag);
+    public void addTag(long id, @NonNull String name) {
+        jdbcTemplate.update("INSERT INTO tags (id, name) VALUES (?, ?)", id, name);
     }
 
     private static class TagResultSetExtractor implements ResultSetExtractor<List<Tag>> {
