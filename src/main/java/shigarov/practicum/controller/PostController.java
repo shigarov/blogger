@@ -8,9 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
-import shigarov.practicum.service.CommentService;
 import shigarov.practicum.service.PostService;
 import shigarov.practicum.service.TagService;
 
@@ -40,8 +40,8 @@ public class PostController {
         this.tagService = tagService;
     }
 
-    @GetMapping // GET запрос /posts
-    public String posts(
+    @GetMapping
+    public String getPosts(
             @RequestParam(name = "tagId", required = false, defaultValue = "0") Long tagId,
             @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
             @RequestParam(name = "size", required = false, defaultValue = "10") int pageSize,
@@ -77,7 +77,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public String postById(
+    public String getPost(
             @PathVariable("id") long id,
             @RequestParam(value = "editingCommentId", required = false, defaultValue = "0") long editingCommentId,
             Model model
@@ -94,7 +94,8 @@ public class PostController {
             model.addAttribute("uploadDir", uploadDir);
             model.addAttribute("allTags", allTags);
             if (editingCommentId > 0) {
-                model.addAttribute("editingCommentId", editingCommentId); // ID комментария, который редактируется
+                // ID комментария, который будет редактироваться
+                model.addAttribute("editingCommentId", editingCommentId);
             }
         }
         return "post";
@@ -194,9 +195,9 @@ public class PostController {
         return "redirect:/posts/" + postId;
     }
 
-    @PostMapping(value = "/delete/{id}", params = "_method=delete")
-    public String delete(@PathVariable(name = "id") Long id) {
-        postService.deletePost(id);
+    @PostMapping(value = "/delete/{postId}", params = "_method=delete")
+    public String delete(@PathVariable(name = "postId") Long postId) {
+        postService.deletePost(postId);
         return "redirect:/posts";
     }
 }
