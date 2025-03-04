@@ -174,16 +174,6 @@
 <br><br>
 
 <!-- Форма для добавления нового комментария -->
-<!--<form th:action="@{/posts/addComment}" method="post">-->
-<!--<form th:action="@{/posts/{postId}(postId=${post.id})/comments/add}" method="post">-->
-<!--&lt;!&ndash;    <input type="hidden" name="postId" th:value="${post.id}">&ndash;&gt;-->
-<!--    <div>-->
-<!--        <label for="commentText">Текст комментария:</label>-->
-<!--        <input type="text" id="commentText" name="commentText" required>-->
-<!--    </div>-->
-<!--    <button type="submit">Добавить комментарий</button>-->
-<!--</form>-->
-
 <form th:action="@{/posts/{postId}/comments/add(postId=${post.id})}" method="post">
     <div>
         <label for="commentText">Ваш комментарий:</label>

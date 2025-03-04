@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import shigarov.practicum.service.CommentService;
 
 @Controller
-@RequestMapping("/posts")
 public class CommentController {
     private final CommentService commentService;
 
@@ -14,16 +13,16 @@ public class CommentController {
     }
 
     // Добавление нового комментария
-    @PostMapping("/{postId}/comments/add")
+    @PostMapping("/posts/{postId}/comments/add")
     public String addComment(
             @PathVariable(name = "postId") Long postId,
-            @RequestParam(name = "commentText") String text
+            @RequestParam(name = "commentText") String commentText
     ) {
-        commentService.addComment(text, postId);
+        commentService.addComment(commentText, postId);
         return "redirect:/posts/" + postId;
     }
 
-    @GetMapping("/{postId}/comments/{commentId}/edit")
+    @GetMapping("/posts/{postId}/comments/{commentId}/edit")
     public String editComment(
             @PathVariable(name = "postId") Long postId,
             @PathVariable(name = "commentId") Long commentId
@@ -31,13 +30,13 @@ public class CommentController {
         return "redirect:/posts/" + postId + "?editingCommentId=" + commentId;
     }
 
-    @PostMapping("/{postId}/comments/{commentId}/update")
+    @PostMapping("/posts/{postId}/comments/{commentId}/update")
     public String updateComment(
             @PathVariable(name = "postId") Long postId,
             @PathVariable(name = "commentId") Long commentId,
-            @RequestParam(name = "commentText") String text//,
+            @RequestParam(name = "commentText") String commentText//,
     ) {
-        commentService.updateComment(commentId, text);
+        commentService.updateComment(commentId, commentText);
         return "redirect:/posts/" + postId;
     }
 
