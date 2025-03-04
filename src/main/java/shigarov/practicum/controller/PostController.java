@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
+import shigarov.practicum.service.CommentService;
 import shigarov.practicum.service.PostService;
 import shigarov.practicum.service.TagService;
 
@@ -30,10 +31,16 @@ public class PostController {
 
     private final PostService postService;
     private final TagService tagService;
+    private final CommentService commentService;
 
-    public PostController(PostService postService, TagService tagService) {
+    public PostController(
+            PostService postService,
+            TagService tagService,
+            CommentService commentService
+    ) {
         this.postService = postService;
         this.tagService = tagService;
+        this.commentService = commentService;
     }
 
     @GetMapping // GET запрос /posts
@@ -190,7 +197,7 @@ public class PostController {
             @RequestParam(name = "commentText") String text,
             @RequestParam(name = "postId") Long postId
     ) {
-        postService.addComment(text, postId);
+        commentService.addComment(text, postId);
         return "redirect:/posts/" + postId;
     }
 
@@ -209,7 +216,7 @@ public class PostController {
             @RequestParam(name = "commentId") Long id,
             @RequestParam(name = "postId") Long postId
     ) {
-        postService.updateComment(id, text);
+        commentService.updateComment(id, text);
         return "redirect:/posts/" + postId;
     }
 
