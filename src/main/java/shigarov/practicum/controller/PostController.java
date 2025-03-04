@@ -210,4 +210,9 @@ public class PostController {
         return "redirect:/posts/" + postId;
     }
 
+    @PostMapping("/incrementPostLikes")
+    public String incrementPostLikes(@RequestParam(name = "postId") Long postId) {
+        postService.incrementLikes(postId);
+        return "redirect:/posts/" + postId; // Перенаправление на страницу поста
+    }
 }

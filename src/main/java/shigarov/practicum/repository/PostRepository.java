@@ -21,27 +21,12 @@ public interface PostRepository {
 
     Optional<Post> findPostById(long id);
 
-//    void addPostWithTags (
-//            @NonNull String title,
-//            @Nullable String image,
-//            @NonNull String text,
-//            @Nullable List<String> tags
-//    );
-
     void addPost (
             @NonNull String title,
             @Nullable String image,
             @NonNull String text,
             @Nullable List<Long> tagIds
     );
-
-//    void updatePost (
-//            long postId,
-//            @NonNull String title,
-//            @Nullable String image,
-//            @NonNull String text,
-//            @Nullable List<String> tags
-//    );
 
     void updatePost (
             long postId,

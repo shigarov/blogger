@@ -67,4 +67,8 @@ public class PostService {
         postRepository.updateComment(commentId, commentText);
     }
 
+    public void incrementLikes(Long postId) {
+        postRepository.incrementPostLikes(postId);
+    }
+
 }
