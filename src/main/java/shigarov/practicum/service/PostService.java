@@ -51,15 +51,6 @@ public class PostService {
         );
     }
 
-
-//    public void addComment(String commentText, Long postId) {
-//        postRepository.addComment(commentText, postId);
-//    }
-//
-//    public void updateComment(Long commentId, String commentText) {
-//        postRepository.updateComment(commentId, commentText);
-//    }
-
     public void incrementLikes(Long postId) {
         postRepository.incrementPostLikes(postId);
     }

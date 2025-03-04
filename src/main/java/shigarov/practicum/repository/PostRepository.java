@@ -40,10 +40,4 @@ public interface PostRepository {
 
     void incrementPostLikes(long postId);
 
-
-//    Optional<Comment> findCommentById(long id);
-//
-//    void addComment(@NonNull String text, long postId);
-//
-//    void updateComment(long id, @NonNull String text);
 }
