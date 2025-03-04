@@ -191,34 +191,34 @@ public class PostController {
         return "redirect:/posts/" + savedPost.getId();
     }
 
-    // Добавление нового комментария
-    @PostMapping("/addComment")
-    public String addComment(
-            @RequestParam(name = "commentText") String text,
-            @RequestParam(name = "postId") Long postId
-    ) {
-        commentService.addComment(text, postId);
-        return "redirect:/posts/" + postId;
-    }
-
-    // Начало редактирования комментария
-    @GetMapping("/editComment")
-    public String editComment(
-            @RequestParam(name = "editingCommentId") Long editingCommentId,
-            @RequestParam(name = "postId") Long postId
-    ) {
-        return "redirect:/posts/" + postId + "?editingCommentId=" + editingCommentId;
-    }
-
-    @PostMapping("/updateComment")
-    public String updateComment(
-            @RequestParam(name = "commentText") String text,
-            @RequestParam(name = "commentId") Long id,
-            @RequestParam(name = "postId") Long postId
-    ) {
-        commentService.updateComment(id, text);
-        return "redirect:/posts/" + postId;
-    }
+//    // Добавление нового комментария
+//    @PostMapping("/addComment")
+//    public String addComment(
+//            @RequestParam(name = "commentText") String text,
+//            @RequestParam(name = "postId") Long postId
+//    ) {
+//        commentService.addComment(text, postId);
+//        return "redirect:/posts/" + postId;
+//    }
+//
+//    // Начало редактирования комментария
+//    @GetMapping("/editComment")
+//    public String editComment(
+//            @RequestParam(name = "editingCommentId") Long editingCommentId,
+//            @RequestParam(name = "postId") Long postId
+//    ) {
+//        return "redirect:/posts/" + postId + "?editingCommentId=" + editingCommentId;
+//    }
+//
+//    @PostMapping("/updateComment")
+//    public String updateComment(
+//            @RequestParam(name = "commentText") String text,
+//            @RequestParam(name = "commentId") Long id,
+//            @RequestParam(name = "postId") Long postId
+//    ) {
+//        commentService.updateComment(id, text);
+//        return "redirect:/posts/" + postId;
+//    }
 
     @PostMapping("/incrementPostLikes")
     public String incrementPostLikes(@RequestParam(name = "postId") Long postId) {
