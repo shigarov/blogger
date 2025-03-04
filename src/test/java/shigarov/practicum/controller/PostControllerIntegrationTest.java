@@ -15,6 +15,7 @@ import shigarov.practicum.configuration.TestDataSourceConfiguration;
 import shigarov.practicum.configuration.TestWebConfiguration;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringJUnitConfig(classes = {TestDataSourceConfiguration.class, TestWebConfiguration.class})
@@ -79,7 +80,51 @@ public class PostControllerIntegrationTest {
                 .andExpect(model().attributeExists("posts"))
                 .andExpect(xpath("//table/tbody/tr").nodeCount(2))
                 .andExpect(xpath("//table/tbody/tr[1]/td[2]").string("Пост 1"));
-
     }
+
+    @Test
+    void testGetPost() throws Exception {
+        mockMvc.perform(get("/posts/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/html;charset=UTF-8"))
+                .andExpect(view().name("post"))
+                .andExpect(model().attributeExists("post"));
+    }
+
+    @Test
+    void testAddPost() throws Exception {
+        mockMvc.perform(post("/posts/add")
+                        .param("title", "Пост 3")
+                        .param("text", "Текст поста 3")
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts"));
+    }
+
+    @Test
+    void testUpdatePost() throws Exception {
+        mockMvc.perform(post("/posts/update/1")
+                        .param("title", "Обновленный Пост 1")
+                        .param("text", "Обновленный текст поста 1")
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/1"));
+    }
+
+    @Test
+    void testDeletePost() throws Exception {
+        mockMvc.perform(post("/posts/delete/1")
+                        .param("_method", "delete"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts"));
+    }
+
+    @Test
+    void testIncrementPostLikes() throws Exception {
+        mockMvc.perform(post("/posts/incrementLikes/1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts/1"));
+    }
+
 
 }
