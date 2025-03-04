@@ -4,8 +4,6 @@ import org.h2.Driver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -14,9 +12,8 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import javax.sql.DataSource;
 
 @Configuration
-public class TestDataSourceConfiguration {
+public class DataSourceConfiguration {
 
-    // Настройка DataSource — компонент, отвечающий за соединение с базой данных
     @Bean
     public DataSource dataSource(
             // Настройки соединения возьмём из Environment
@@ -30,6 +27,10 @@ public class TestDataSourceConfiguration {
         dataSource.setUsername(username);
         dataSource.setPassword(password);
 
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(new ClassPathResource("test-schema.sql"));
+        populator.execute(dataSource);
+
         return dataSource;
     }
 
@@ -39,13 +40,4 @@ public class TestDataSourceConfiguration {
         return new JdbcTemplate(dataSource);
     }
 
-    // После инициализации контекста выполняем создание базы данных
-    @EventListener
-    public void populate(ContextRefreshedEvent event) {
-        DataSource dataSource = event.getApplicationContext().getBean(DataSource.class);
-
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("test-schema.sql")); // Файл должен находиться в ресурсах
-        populator.execute(dataSource);
-    }
 }

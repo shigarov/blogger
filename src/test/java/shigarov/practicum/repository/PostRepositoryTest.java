@@ -8,14 +8,16 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import shigarov.practicum.configuration.TestDataSourceConfiguration;
-import shigarov.practicum.model.Post;
-
-import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(classes = {TestDataSourceConfiguration.class, JdbcNativePostRepository.class})
+import shigarov.practicum.configuration.DataSourceConfiguration;
+import shigarov.practicum.model.Post;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+@SpringJUnitConfig(classes = {DataSourceConfiguration.class, JdbcNativePostRepository.class})
 @TestPropertySource(locations = "classpath:test-application.properties")
 public class PostRepositoryTest {
     @Autowired
