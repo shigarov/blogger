@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {"shigarov.practicum"})
-public class WebConfiguration implements WebMvcConfigurer {
+public class TestWebConfiguration implements WebMvcConfigurer {
 }
 
 

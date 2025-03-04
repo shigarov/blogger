@@ -2,8 +2,8 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"/>
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>-->
 
     <!-- Название страницы-->
     <title>Посты</title>
@@ -42,18 +42,18 @@
         <!-- Поле для заголовка -->
         <div>
             <label for="title">Заголовок:</label>
-            <input type="text" id="title" th:field="*{title}" required>
+            <input type="text" id="title" th:field="*{title}" required="true"/>
         </div>
 
         <!-- Поле для загрузки изображения -->
-        <br>
+        <br/>
         <div>
             <label for="imageFile">Изображение:</label>
-            <input type="file" id="imageFile" name="imageFile" accept="image/*">
+            <input type="file" id="imageFile" name="imageFile" accept="image/*"/>
         </div>
 
         <!-- Поле для текста поста -->
-        <br>
+        <br/>
         <div>
             <label for="text">Текст поста (строки, разделяются тегом <code>&lt;br&gt;</code>,
                 абзацы выделяются парой тегов <code>&lt;p&gt;&lt;&#47;p&gt;</code>):</label>
@@ -61,10 +61,10 @@
         </div>
 
         <!-- Список тегов с множественным выбором -->
-        <br>
+        <br/>
         <div>
             <label for="tagIds">Теги:</label>
-            <select id="tagIds" name="tagIds" multiple>
+            <select id="tagIds" name="tagIds" multiple="true">
                 <option th:each="tag : ${allTags}"
                         th:value="${tag.id}"
                         th:text="${tag.name}">
@@ -73,12 +73,12 @@
         </div>
 
         <!-- Кнопка отправки формы -->
-        <br>
+        <br/>
         <div>
             <button type="submit">Добавить пост</button>
         </div>
     </form>
-    <br><br>
+    <br/><br/>
 </div>
 
 <script>
@@ -90,7 +90,7 @@
 
 <button class="btn-add" onclick="toggleForm()">Новый пост</button>
 
-<br><br>
+<br/><br/>
 
 <!-- Форма для выбора страницы -->
 <form id="pageForm" th:action="@{/posts}" method="get">
@@ -105,9 +105,9 @@
     </select>
 
     <!-- Скрытое поле для сохранения текущего размера страницы -->
-    <input type="hidden" name="size" th:value="${page.size}">
+    <input type="hidden" name="size" th:value="${page.size}"/>
     <!-- Скрытое поле для сохранения текущего тега -->
-    <input type="hidden" name="tagId" th:value="${tagId}">
+    <input type="hidden" name="tagId" th:value="${tagId}"/>
 </form>
 
 <!-- Форма для выбора размера страницы -->
@@ -120,9 +120,9 @@
     </select>
 
     <!-- Скрытое поле для сохранения текущей страницы -->
-    <input type="hidden" name="page" th:value="0">
+    <input type="hidden" name="page" th:value="0"/>
     <!-- Скрытое поле для сохранения текущего тега -->
-    <input type="hidden" name="tagId" th:value="${tagId}">
+    <input type="hidden" name="tagId" th:value="${tagId}"/>
 </form>
 
 <!-- Форма для выбора тега -->
@@ -135,12 +135,12 @@
     </select>
 
     <!-- Скрытое поле для сохранения текущей страницы -->
-    <input type="hidden" name="page" th:value="0">
+    <input type="hidden" name="page" th:value="0"/>
     <!-- Скрытое поле для сохранения текущего размера страницы -->
-    <input type="hidden" name="size" th:value="${page.size}">
+    <input type="hidden" name="size" th:value="${page.size}"/>
 </form>
 
-<br>
+<br/>
 
 <table>
     <thead>
@@ -161,7 +161,7 @@
         <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}"/></td>
         <td><img th:if="${post.image != null}" th:src="@{'/'+${uploadDir}+'/'+${post.image}}" alt="Картинка"/></td>
         <!--Вывод текста с абзацами и строками-->
-        <!--<td th:utext="${#strings.replace(post.preview, '\n', '<br>')}"/>-->
+        <!--<td th:utext="${#strings.replace(post.preview, '\n', '<br/>')}"/>-->
         <td th:utext="${post.textPreview}"/>
         <td>
             <ul>
