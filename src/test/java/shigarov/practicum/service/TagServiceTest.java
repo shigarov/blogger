@@ -72,13 +72,11 @@ public class TagServiceTest {
 
     @Test
     void testAddTag() {
+        String tagName = "Тег1";
         // Вызов метода
-        tagService.addTag(tagOne);
+        tagService.addTag(tagName);
 
         // Проверка
-        verify(tagRepository, times(1)).addTag(
-                tagOne.getId(),
-                tagOne.getName()
-        );
+        verify(tagRepository, times(1)).addTag(tagName);
     }
 }

@@ -47,25 +47,40 @@ public class CommentServiceTest {
     }
 
     @Test
+    void testFindTagById() {
+        // Подготовка данных
+        when(commentRepository.findCommentById(1L)).thenReturn(Optional.of(comment));
+
+        // Вызов метода
+        Optional<Comment> result = commentService.findCommentById(1L);
+
+        // Проверка
+        assertTrue(result.isPresent());
+        assertEquals(comment, result.get());
+        verify(commentRepository, times(1)).findCommentById(1L);
+    }
+
+    @Test
     void testAddComment() {
-//        String commentText = "Комментарий 1";
-//        Long postId = 1L;
-//
-//        commentService.addComment(comment.getText(), postId);
-//
-//        verify(commentRepository, times(1)).addComment(commentText, postId);
+        // Подготовка данных
+        String commentText = "Комментарий 2";
+
+        // Вызов метода
+        commentService.addComment(commentText, post);
+
+        // Проверка
+        verify(commentRepository, times(1)).addComment(commentText, post.getId());
     }
 
     @Test
     void testUpdateComment() {
-//        // Arrange
-//        Long commentId = 1L;
-//        String updatedCommentText = "Updated comment";
-//
-//        // Act
-//        commentService.updateComment(commentId, updatedCommentText);
-//
-//        // Assert
-//        verify(commentRepository, times(1)).updateComment(commentId, updatedCommentText);
+        // Подготовка данных
+        String newCommentText = "Новый комментарий 1";
+
+        // Вызов метода
+        commentService.updateComment(comment, newCommentText);
+
+        // Проверка
+        verify(commentRepository, times(1)).updateComment(comment.getId(), newCommentText);
     }
 }

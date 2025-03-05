@@ -17,10 +17,6 @@ public class CommentService {
         this.commentRepository = commentRepository;
     }
 
-//    public void addComment(String commentText, Long postId) {
-//        commentRepository.addComment(commentText, postId);
-//    }
-
     public Optional<Comment> findCommentById(long commentId) {
         return commentRepository.findCommentById(commentId);
     }
@@ -28,10 +24,6 @@ public class CommentService {
     public void addComment(@NonNull String commentText, @NonNull Post post) {
         commentRepository.addComment(commentText, post.getId());
     }
-
-//    public void updateComment(Long commentId, String commentText) {
-//        commentRepository.updateComment(commentId, commentText);
-//    }
 
     public void updateComment(@NonNull Comment comment, @NonNull String newCommentText) {
         commentRepository.updateComment(comment.getId(), newCommentText);

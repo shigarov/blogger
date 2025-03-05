@@ -1,5 +1,6 @@
 package shigarov.practicum.service;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
@@ -24,11 +25,8 @@ public class TagService {
         return tagRepository.findAllTags();
     }
 
-    public void addTag(Tag tag) {
-        tagRepository.addTag(
-                tag.getId(),
-                tag.getName()
-        );
+    public void addTag(@NonNull String name) {
+        tagRepository.addTag(name);
     }
 
 }

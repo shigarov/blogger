@@ -11,7 +11,5 @@ public interface TagRepository {
 
     Optional<Tag> findTagById(long id);
 
-    //void addTag(@NonNull String tag);
-
-    void addTag(long id, @NonNull String name);
+    void addTag(@NonNull String tag);
 }
