@@ -1,8 +1,13 @@
 package shigarov.practicum.service;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import shigarov.practicum.model.Comment;
+import shigarov.practicum.model.Post;
 import shigarov.practicum.repository.CommentRepository;
 import shigarov.practicum.repository.PostRepository;
+
+import java.util.Optional;
 
 @Service
 public class CommentService {
@@ -12,11 +17,23 @@ public class CommentService {
         this.commentRepository = commentRepository;
     }
 
-    public void addComment(String commentText, Long postId) {
-        commentRepository.addComment(commentText, postId);
+//    public void addComment(String commentText, Long postId) {
+//        commentRepository.addComment(commentText, postId);
+//    }
+
+    public Optional<Comment> findCommentById(long commentId) {
+        return commentRepository.findCommentById(commentId);
     }
 
-    public void updateComment(Long commentId, String commentText) {
-        commentRepository.updateComment(commentId, commentText);
+    public void addComment(@NonNull String commentText, @NonNull Post post) {
+        commentRepository.addComment(commentText, post.getId());
+    }
+
+//    public void updateComment(Long commentId, String commentText) {
+//        commentRepository.updateComment(commentId, commentText);
+//    }
+
+    public void updateComment(@NonNull Comment comment, @NonNull String newCommentText) {
+        commentRepository.updateComment(comment.getId(), newCommentText);
     }
 }

@@ -19,11 +19,11 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 public class TagServiceTest {
-    @InjectMocks
-    private TagService tagService;
-
     @Mock
     private TagRepository tagRepository;
+
+    @InjectMocks
+    private TagService tagService;
 
     private Tag tagOne, tagTwo;
 
