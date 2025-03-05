@@ -1,3 +1,5 @@
+-- Удаление таблиц в правильном порядке
+
 DROP TABLE IF EXISTS posts_tags;
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS posts;
