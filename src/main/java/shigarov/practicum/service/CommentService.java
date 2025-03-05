@@ -19,5 +19,4 @@ public class CommentService {
     public void updateComment(Long commentId, String commentText) {
         commentRepository.updateComment(commentId, commentText);
     }
-
 }

@@ -4,182 +4,155 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.web.WebAppConfiguration;
-import shigarov.practicum.configuration.TestDataSourceConfiguration;
-import shigarov.practicum.configuration.TestWebConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import shigarov.practicum.model.Post;
 import shigarov.practicum.model.Tag;
 import shigarov.practicum.repository.PostRepository;
-import shigarov.practicum.repository.TagRepository;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-@SpringJUnitConfig(classes = {TestDataSourceConfiguration.class})
-@TestPropertySource(locations = "classpath:test-application.properties")
+@ExtendWith(SpringExtension.class)
 public class PostServiceTest {
-
     @Mock
     private PostRepository postRepository;
 
     @InjectMocks
-    private PostService postService = new PostService(postRepository);
+    private PostService postService;
 
-    @Mock
-    private TagRepository tagRepository;
-
-    @InjectMocks
-    private TagService tagService = new TagService(tagRepository);
-
-    private Post post;
-    private Tag tag;
+    private Post postOne, postTwo;
+    private Tag tagOne, tagTwo;
 
     @BeforeEach
     void setUp() {
-        // Инициализация тестовых объектов
-        post = new Post();
-        post.setId(1L);
-        post.setTitle("Test Post");
-        post.setImage("test.jpg");
-        post.setText("This is a test post.");
-//        post.setTagIds(new Long[]{1L, 2L});
-//
-//        tag = new Tag();
-//        tag.setId(1L);
-//        tag.setName("Test Tag");
-//
-//        post.addTag(tag);
+        MockitoAnnotations.openMocks(this);
+
+        // Подготовка тестовых объектов
+        postOne = new Post();
+        postOne.setId(1L);
+        postOne.setTitle("Пост 1");
+        postOne.setText("Текст поста 1");
+
+        postTwo = new Post();
+        postTwo.setId(2L);
+        postTwo.setTitle("Пост 2");
+        postTwo.setText("Текст поста 2");
+
+        tagOne = new Tag();
+        tagOne.setId(1L);
+        tagOne.setName("Тег1");
+
+        tagTwo = new Tag();
+        tagTwo.setId(2L);
+        tagTwo.setName("Тег2");
+
+        postOne.addTag(tagOne);
+        postOne.addTag(tagTwo);
+        postTwo.addTag(tagOne);
     }
 
-    // Тесты для PostService
+    @Test
+    void testFindAllPosts() {
+        // Подготовка данных
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Post> page = new PageImpl<>(List.of(postOne, postTwo), pageable, 2);
+        when(postRepository.findAllPosts(pageable)).thenReturn(page);
 
-//    @Test
-//    void testFindAllPosts() {
-//        // Подготовка данных
-//        postRepository.addPost(post.getTitle(), null, post.getText(), null);
-//        Pageable pageable = PageRequest.of(0, 10);
-//        Page<Post> page = mock(Page.class);
-//        when(postRepository.findAllPosts(pageable)).thenReturn(page);
-//
-//        // Вызов метода
-//        Page<Post> result = postService.findAll(pageable);
-//
-//        // Проверка
-//        assertNotNull(result);
-//        verify(postRepository, times(1)).findAllPosts(pageable);
-//    }
-//
-//    @Test
-//    void testFindPostById() {
-//        // Подготовка данных
-//        when(postRepository.findPostById(1L)).thenReturn(Optional.of(post));
-//
-//        // Вызов метода
-//        Optional<Post> result = postService.findById(1L);
-//
-//        // Проверка
-//        assertTrue(result.isPresent());
-//        assertEquals(post, result.get());
-//        verify(postRepository, times(1)).findPostById(1L);
-//    }
-//
-//    @Test
-//    void testAddPost() {
-//        // Вызов метода
-//        postService.addPost(post);
-//
-//        // Проверка
-//        verify(postRepository, times(1)).addPost(
-//                post.getTitle(),
-//                post.getImage(),
-//                post.getText(),
-//                post.getTagIds()
-//        );
-//    }
-//
-//    @Test
-//    void testUpdatePost() {
-//        // Вызов метода
-//        postService.updatePost(post);
-//
-//        // Проверка
-//        verify(postRepository, times(1)).updatePost(
-//                post.getId(),
-//                post.getTitle(),
-//                post.getImage(),
-//                post.getText(),
-//                post.getTagIds()
-//        );
-//    }
-//
-//    @Test
-//    void testIncrementLikes() {
-//        // Вызов метода
-//        postService.incrementLikes(1L);
-//
-//        // Проверка
-//        verify(postRepository, times(1)).incrementPostLikes(1L);
-//    }
-//
-//    @Test
-//    void testDeletePost() {
-//        // Вызов метода
-//        postService.deletePost(1L);
-//
-//        // Проверка
-//        verify(postRepository, times(1)).deletePost(1L);
-//    }
+        // Вызов метода
+        Page<Post> resultPage = postService.findAll(pageable);
 
-    // Тесты для TagService
+        // Проверка
+        assertNotNull(resultPage);
+        assertEquals(2, resultPage.getContent().size());
+        verify(postRepository, times(1)).findAllPosts(pageable);
+    }
 
-//    @Test
-//    void testFindTagById() {
-//        // Подготовка данных
-//        when(tagRepository.findTagById(1L)).thenReturn(Optional.of(tag));
-//
-//        // Вызов метода
-//        Optional<Tag> result = tagService.findTagById(1L);
-//
-//        // Проверка
-//        assertTrue(result.isPresent());
-//        assertEquals(tag, result.get());
-//        verify(tagRepository, times(1)).findTagById(1L);
-//    }
-//
-//    @Test
-//    void testFindAllTags() {
-//        // Подготовка данных
-//        when(tagRepository.findAllTags()).thenReturn(List.of(tag));
-//
-//        // Вызов метода
-//        List<Tag> result = tagService.findAllTags();
-//
-//        // Проверка
-//        assertNotNull(result);
-//        assertEquals(1, result.size());
-//        assertEquals(tag, result.get(0));
-//        verify(tagRepository, times(1)).findAllTags();
-//    }
-//
-//    @Test
-//    void testAddTag() {
-//        // Вызов метода
-//        tagService.addTag(tag);
-//
-//        // Проверка
-//        verify(tagRepository, times(1)).addTag(
-//                tag.getId(),
-//                tag.getName()
-//        );
-//    }
+    @Test
+    void testFindAllPostsByTag() {
+        // Подготовка данных
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Post> page = new PageImpl<>(List.of(postOne), pageable, 2);
+        Long tagId = tagTwo.getId();
+        when(postRepository.findAllPostsByTag(pageable, tagId)).thenReturn(page);
+
+        // Вызов метода
+        Page<Post> resultPage = postRepository.findAllPostsByTag(pageable, tagId);
+
+        // Проверка
+        assertNotNull(resultPage);
+        assertEquals(1, resultPage.getContent().size());
+        verify(postRepository, times(1)).findAllPostsByTag(pageable, tagId);
+    }
+
+    @Test
+    void testFindPostById() {
+        // Подготовка данных
+        when(postRepository.findPostById(1L)).thenReturn(Optional.of(postOne));
+
+        // Вызов метода
+        Optional<Post> resultOptional = postRepository.findPostById(1L);
+
+        // Проверка
+        assertTrue(resultOptional.isPresent());
+        assertEquals(postOne, resultOptional.get());
+        verify(postRepository, times(1)).findPostById(1L);
+    }
+
+    @Test
+    void testAddPost() {
+        // Вызов метода
+        postService.addPost(postOne);
+
+        // Проверка
+        verify(postRepository, times(1)).addPost(
+                postOne.getTitle(),
+                postOne.getImage(),
+                postOne.getText(),
+                postOne.getTagIds()
+        );
+    }
+
+    @Test
+    void testUpdatePost() {
+        // Вызов метода
+        postService.updatePost(postOne);
+
+        // Проверка
+        verify(postRepository, times(1)).updatePost(
+                postOne.getId(),
+                postOne.getTitle(),
+                postOne.getImage(),
+                postOne.getText(),
+                postOne.getTagIds()
+        );
+    }
+
+    @Test
+    void testIncrementLikes() {
+        // Вызов метода
+        postService.incrementLikes(1L);
+
+        // Проверка
+        verify(postRepository, times(1)).incrementPostLikes(1L);
+    }
+
+    @Test
+    void testDeletePost() {
+        // Вызов метода
+        postService.deletePost(1L);
+
+        // Проверка
+        verify(postRepository, times(1)).deletePost(1L);
+    }
+
 }
