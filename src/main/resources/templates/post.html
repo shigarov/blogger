@@ -160,7 +160,7 @@
             </form>
             <!-- Отображение текста комментария с возможностью редактирования -->
             <span th:unless="${comment.id == editingCommentId}" th:text="${comment.text}"
-                  th:onclick="'location.href=\'/blogger/posts/' + ${post.id} + '/comments/edit/' + ${comment.id} + '\''"
+                  th:onclick="'location.href=\'/posts/' + ${post.id} + '/comments/edit/' + ${comment.id} + '\''"
                   style="cursor: pointer;">
             </span>
         </td>
