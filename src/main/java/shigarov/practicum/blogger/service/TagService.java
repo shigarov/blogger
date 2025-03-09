@@ -16,16 +16,17 @@ public class TagService {
     public TagService(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
     }
-    public Optional<Tag> findTagById(long id) {
-        return tagRepository.findTagById(id);
+
+    public Optional<Tag> findById(long id) {
+        return tagRepository.findById(id);
     }
 
-    public List<Tag> findAllTags() {
-        return tagRepository.findAllTags();
+    public List<Tag> findAll() {
+        return tagRepository.findAll();
     }
 
-    public void addTag(@NonNull String name) {
-        tagRepository.addTag(name);
+    public void add(Tag tag) {
+        tagRepository.add(tag);
     }
 
 }

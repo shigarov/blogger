@@ -61,7 +61,7 @@ public class PostController {
             model.addAttribute("page", postsPage);
         }
 
-        List<Tag> allTags = tagService.findAllTags();
+        List<Tag> allTags = tagService.findAll();
 
         // Передаём данные в виде атрибута users
         model.addAttribute("posts", posts);
@@ -84,7 +84,7 @@ public class PostController {
         // Получаем пост по ID из репозитория
         Optional<Post> postOptional = postService.findById(id);
 
-        List<Tag> allTags = tagService.findAllTags();
+        List<Tag> allTags = tagService.findAll();
 
         // Если пост найден, добавляем его в модель
         if (postOptional.isPresent()) {
@@ -118,7 +118,7 @@ public class PostController {
         if (tagIds != null) {
             // Получаем выбранные теги по их ID и добавляем их в пост
             for (Long tagId : tagIds) {
-                Tag tag = tagService.findTagById(tagId).orElse(null);
+                Tag tag = tagService.findById(tagId).orElse(null);
                 if (tag != null) {
                     post.addTag(tag);
                 }
@@ -165,7 +165,7 @@ public class PostController {
         if (tagIds != null) {
             savedPost.removeAllTags();
             for (Long tagId : tagIds) {
-                Tag tag = tagService.findTagById(tagId).orElse(null);
+                Tag tag = tagService.findById(tagId).orElse(null);
                 if (tag != null) {
                     savedPost.addTag(tag);
                 }

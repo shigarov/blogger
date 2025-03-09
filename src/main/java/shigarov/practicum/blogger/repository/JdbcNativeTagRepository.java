@@ -22,7 +22,7 @@ public class JdbcNativeTagRepository implements TagRepository {
     }
 
     @Override
-    public List<Tag> findAllTags() {
+    public List<Tag> findAll() {
         return jdbcTemplate.query(
                 "SELECT * FROM tags ORDER BY id",
                 new TagResultSetExtractor()
@@ -30,7 +30,7 @@ public class JdbcNativeTagRepository implements TagRepository {
     }
 
     @Override
-    public Optional<Tag> findTagById(long id) {
+    public Optional<Tag> findById(long id) {
         List<Tag> tags = jdbcTemplate.query(
                 "SELECT t.id, t.name FROM tags t WHERE t.id = ?",
                 new TagResultSetExtractor(),
@@ -41,8 +41,15 @@ public class JdbcNativeTagRepository implements TagRepository {
     }
 
     @Override
-    public void addTag(@NonNull String tag) {
-        jdbcTemplate.update("INSERT INTO tags (name) VALUES (?)", tag);
+    public void add(Tag tag) {
+        if (tag == null)
+            return;
+        var name = tag.getName();
+        addTag(name);
+    }
+
+    private void addTag(@NonNull String tagName) {
+        jdbcTemplate.update("INSERT INTO tags (name) VALUES (?)", tagName);
     }
 
     private static class TagResultSetExtractor implements ResultSetExtractor<List<Tag>> {

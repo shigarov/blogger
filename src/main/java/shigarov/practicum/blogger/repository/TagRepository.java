@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TagRepository {
-    List<Tag> findAllTags();
+    List<Tag> findAll();
 
-    Optional<Tag> findTagById(long id);
+    Optional<Tag> findById(long id);
 
-    void addTag(@NonNull String tag);
+    void add(Tag tag);
 }
