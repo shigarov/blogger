@@ -2,13 +2,11 @@ package shigarov.practicum.blogger.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import shigarov.practicum.blogger.model.Post;
 import shigarov.practicum.blogger.repository.PostRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,42 +19,31 @@ public class PostService {
     }
 
     public Page<Post> findAll(Pageable pageable) {
-        return postRepository.findAllPosts(pageable);
+        return postRepository.findAll(pageable);
     }
 
     public Page<Post> findAllByTag(Pageable pageable, Long tagId) {
-        return postRepository.findAllPostsByTag(pageable, tagId);
+        return postRepository.findAllByTag(pageable, tagId);
     }
 
     public Optional<Post> findById(long id) {
-        return postRepository.findPostById(id);
+        return postRepository.findById(id);
     }
 
-    public void addPost(Post post) {
-        postRepository.addPost(
-                post.getTitle(),
-                post.getImage(),
-                post.getText(),
-                post.getTagIds()
-        );
+    public void add(Post post) {
+        postRepository.add(post);
     }
 
-    public void updatePost(Post post) {
-        postRepository.updatePost(
-                post.getId(),
-                post.getTitle(),
-                post.getImage(),
-                post.getText(),
-                post.getTagIds()
-        );
+    public void update(Post post) {
+        postRepository.update(post);
     }
 
     public void incrementLikes(Long postId) {
-        postRepository.incrementPostLikes(postId);
+        postRepository.incrementLikes(postId);
     }
 
-    public void deletePost(Long postId) {
-        postRepository.deletePost(postId);
+    public void deleteById(Long postId) {
+        postRepository.deleteById(postId);
     }
 
 }

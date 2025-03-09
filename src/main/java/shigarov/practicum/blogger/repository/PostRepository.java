@@ -2,8 +2,6 @@ package shigarov.practicum.blogger.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 import shigarov.practicum.blogger.model.Post;
 
@@ -12,31 +10,20 @@ import java.util.Optional;
 
 public interface PostRepository {
 
-    List<Post> findAllPosts();
+    List<Post> findAll();
 
-    Page<Post> findAllPosts(Pageable pageable);
+    Page<Post> findAll(Pageable pageable);
 
-    Page<Post> findAllPostsByTag(Pageable pageable, Long tagId);
+    Page<Post> findAllByTag(Pageable pageable, Long tagId);
 
-    Optional<Post> findPostById(long id);
+    Optional<Post> findById(long id);
 
-    void addPost (
-            @NonNull String title,
-            @Nullable String image,
-            @NonNull String text,
-            @Nullable List<Long> tagIds
-    );
+    void add(Post post);
 
-    void updatePost (
-            long postId,
-            @NonNull String title,
-            @Nullable String image,
-            @NonNull String text,
-            @Nullable List<Long> tagIds
-    );
+    void update(Post post);
 
-    void deletePost(long postId);
+    void deleteById(long postId);
 
-    void incrementPostLikes(long postId);
+    void incrementLikes(long postId);
 
 }

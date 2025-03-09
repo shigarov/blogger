@@ -126,7 +126,7 @@ public class PostController {
         }
 
         // Сохраняем пост
-        postService.addPost(post);
+        postService.add(post);
 
         return "redirect:/posts"; // Перенаправляем на страницу со списком постов
     }
@@ -173,7 +173,7 @@ public class PostController {
         }
 
         // Сохраняем обновленный пост
-        postService.updatePost(savedPost);
+        postService.update(savedPost);
 
         return "redirect:/posts/" + savedPost.getId();
     }
@@ -186,7 +186,7 @@ public class PostController {
 
     @PostMapping(value = "/posts/delete/{postId}", params = "_method=delete")
     public String deletePost(@PathVariable(name = "postId") Long postId) {
-        postService.deletePost(postId);
+        postService.deleteById(postId);
         return "redirect:/posts";
     }
 }

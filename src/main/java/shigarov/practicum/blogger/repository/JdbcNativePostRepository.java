@@ -28,7 +28,7 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findAllPosts() {
+    public List<Post> findAll() {
         final String sql = """
                 SELECT
                     p.id AS post_id,
@@ -57,7 +57,7 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public Page<Post> findAllPosts(@NonNull Pageable pageable) {
+    public Page<Post> findAll(@NonNull Pageable pageable) {
         final String postCountSql = "SELECT count(1) AS row_count FROM posts";
         final long totalPosts = jdbcTemplate.queryForObject(
                 postCountSql,
@@ -99,7 +99,7 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public Page<Post> findAllPostsByTag(@NonNull Pageable pageable, Long tagId) {
+    public Page<Post> findAllByTag(@NonNull Pageable pageable, Long tagId) {
         final String postCountSql = """
                 SELECT COUNT(DISTINCT p.id) AS post_count
                 FROM posts p
@@ -146,7 +146,7 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public Optional<Post> findPostById(long postId) {
+    public Optional<Post> findById(long postId) {
         final String sql = """
                 SELECT
                     p.id AS post_id,
@@ -177,7 +177,18 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public void addPost(
+    public void add(Post post) {
+        if (post == null) return;
+
+        var title = post.getTitle();
+        var image = post.getImage();
+        var text = post.getText();
+        var tagIds = post.getTagIds();
+
+        addPost(title, image, text, tagIds);
+    }
+
+    private void addPost(
             @NonNull String title,
             @Nullable String image,
             @NonNull String text,
@@ -210,7 +221,20 @@ public class JdbcNativePostRepository implements PostRepository {
         }
     }
 
-    public void updatePost(
+    @Override
+    public void update(Post post) {
+        if (post == null) return;
+
+        var id = post.getId();
+        var title = post.getTitle();
+        var image = post.getImage();
+        var text = post.getText();
+        var tagIds = post.getTagIds();
+
+        updatePost(id, title, image, text, tagIds);
+    }
+
+    private void updatePost(
             long postId,
             @NonNull String title,
             @Nullable String image,
@@ -238,7 +262,7 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public void deletePost(long postId) {
+    public void deleteById(long postId) {
         // Удаляем связанные комментарии
         jdbcTemplate.update("DELETE FROM comments WHERE post_id = ?", postId);
 
@@ -250,7 +274,7 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public void incrementPostLikes(long postId) {
+    public void incrementLikes(long postId) {
         jdbcTemplate.update("UPDATE posts SET likes = likes + 1 WHERE id = ?", postId);
     }
 
@@ -270,9 +294,7 @@ public class JdbcNativePostRepository implements PostRepository {
                     post.setTitle(rs.getString("title"));
                     post.setImage(rs.getString("image"));
                     post.setText(rs.getString("text"));
-                    //post.setTags(new ArrayList<>()); // Инициализация списка тегов
                     post.setLikes(rs.getInt("likes"));
-                    //post.setComments(new ArrayList<>()); // Инициализация списка комментариев
                     postMap.put(postId, post);
                 }
 
