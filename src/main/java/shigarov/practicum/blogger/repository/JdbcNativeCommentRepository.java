@@ -51,7 +51,17 @@ public class JdbcNativeCommentRepository implements CommentRepository {
     }
 
     @Override
-    public void addComment(@NonNull String text, long postId) {
+    public void add(Comment comment) {
+        if (comment == null)
+            return;
+
+        var text = comment.getText();
+        var postId = comment.getPost().getId();
+
+        addComment(text, postId);
+    }
+
+    private void addComment(@NonNull String text, long postId) {
         jdbcTemplate.update(
                 "INSERT INTO comments (text, post_id) VALUES (?, ?)",
                 text, postId
@@ -59,7 +69,13 @@ public class JdbcNativeCommentRepository implements CommentRepository {
     }
 
     @Override
-    public void updateComment(long id, @NonNull String text) {
+    public void update(Comment comment) {
+        var id = comment.getId();
+        var text = comment.getText();
+        updateComment(id, text);
+    }
+
+    private void updateComment(long id, @NonNull String text) {
         jdbcTemplate.update("UPDATE comments SET text = ? WHERE id = ?", text, id);
     }
 

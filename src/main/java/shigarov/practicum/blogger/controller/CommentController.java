@@ -29,10 +29,12 @@ public class CommentController {
             @PathVariable(name = "postId") Long postId,
             @RequestParam(name = "commentText") String commentText
     ) {
-        //commentService.addComment(commentText, postId);
         Optional<Post> postOptional = postService.findById(postId);
         if (postOptional.isPresent()) {
-            commentService.addComment(commentText, postOptional.get());
+            Comment comment = new Comment();
+            comment.setText(commentText);
+            comment.setPost(postOptional.get());
+            commentService.add(comment);
         }
 
         return "redirect:/posts/" + postId;
@@ -52,12 +54,13 @@ public class CommentController {
             @PathVariable(name = "commentId") Long commentId,
             @RequestParam(name = "commentText") String commentText//,
     ) {
-        //commentService.updateComment(commentId, commentText);
-
-        Optional<Comment> commentOptional = commentService.findCommentById(commentId);
+        Optional<Comment> commentOptional = commentService.findById(commentId);
         if (commentOptional.isPresent()) {
-            commentService.updateComment(commentOptional.get(), commentText);
+            Comment comment = commentOptional.get();
+            comment.setText(commentText);
+            commentService.update(comment);
         }
+
         return "redirect:/posts/" + postId;
     }
 

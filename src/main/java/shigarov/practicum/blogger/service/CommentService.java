@@ -1,10 +1,8 @@
 package shigarov.practicum.blogger.service;
 
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import shigarov.practicum.blogger.model.Comment;
-import shigarov.practicum.blogger.model.Post;
 import shigarov.practicum.blogger.repository.CommentRepository;
 
 import java.util.Optional;
@@ -17,15 +15,15 @@ public class CommentService {
         this.commentRepository = commentRepository;
     }
 
-    public Optional<Comment> findCommentById(long commentId) {
-        return commentRepository.findCommentById(commentId);
+    public Optional<Comment> findById(long id) {
+        return commentRepository.findCommentById(id);
     }
 
-    public void addComment(@NonNull String commentText, @NonNull Post post) {
-        commentRepository.addComment(commentText, post.getId());
+    public void add(Comment comment) {
+        commentRepository.add(comment);
     }
 
-    public void updateComment(@NonNull Comment comment, @NonNull String newCommentText) {
-        commentRepository.updateComment(comment.getId(), newCommentText);
+    public void update(Comment comment) {
+        commentRepository.update(comment);
     }
 }
