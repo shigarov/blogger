@@ -90,7 +90,7 @@ public class JdbcNativeCommentRepository implements CommentRepository {
             Post post = new Post();
             post.setId(rs.getLong("post_id"));
             post.setTitle(rs.getString("post_title"));
-            post.setImage(rs.getString("post_image"));
+            post.setImageFileName(rs.getString("post_image"));
             post.setText(rs.getString("post_text"));
             post.setLikes(rs.getInt("post_likes"));
 

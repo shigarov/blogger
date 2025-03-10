@@ -106,8 +106,8 @@
 <!-- Изображение поста (если есть) -->
 <div>
     <strong>Картинка:</strong>
-    <div th:if="${post.image != null}">
-        <img th:src="@{'/'+${uploadDir}+'/'+${post.image}}" alt="Картинка"/>
+    <div th:if="${post.imageFileName != null}">
+        <img th:src="@{'/'+${uploadDir}+'/'+${post.imageFileName}}" alt="Картинка"/>
     </div>
 </div>
 

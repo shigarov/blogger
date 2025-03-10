@@ -181,7 +181,7 @@ public class JdbcNativePostRepository implements PostRepository {
         if (post == null) return;
 
         var title = post.getTitle();
-        var image = post.getImage();
+        var image = post.getImageFileName();
         var text = post.getText();
         var tagIds = post.getTagIds();
 
@@ -227,7 +227,7 @@ public class JdbcNativePostRepository implements PostRepository {
 
         var id = post.getId();
         var title = post.getTitle();
-        var image = post.getImage();
+        var image = post.getImageFileName();
         var text = post.getText();
         var tagIds = post.getTagIds();
 
@@ -292,7 +292,7 @@ public class JdbcNativePostRepository implements PostRepository {
                     post = new Post();
                     post.setId(postId);
                     post.setTitle(rs.getString("title"));
-                    post.setImage(rs.getString("image"));
+                    post.setImageFileName(rs.getString("image"));
                     post.setText(rs.getString("text"));
                     post.setLikes(rs.getInt("likes"));
                     postMap.put(postId, post);

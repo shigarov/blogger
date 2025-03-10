@@ -104,15 +104,15 @@ public class PostController {
     public String addPost(
             @ModelAttribute Post post,
             @RequestParam(name = "tagIds", required = false) List<Long> tagIds,
-            @RequestParam(name = "imageFile", required = false) MultipartFile file
+            @RequestParam(name = "imageFile", required = false) MultipartFile imageFile
     ) {
         // Обработка загрузки файла
-        if (file != null && !file.isEmpty()) {
-            storageService.store(file);
+        if (imageFile != null && !imageFile.isEmpty()) {
+            storageService.store(imageFile);
 
             // Устанавливаем имя файла в объект Post
-            String fileName = file.getOriginalFilename();
-            post.setImage(fileName);
+            String fileName = imageFile.getOriginalFilename();
+            post.setImageFileName(fileName);
         }
 
         if (tagIds != null) {
@@ -158,7 +158,7 @@ public class PostController {
             // Обновляем имя файла в объекте Post
             String fileName = imageFile.getOriginalFilename();
 
-            savedPost.setImage(fileName);
+            savedPost.setImageFileName(fileName);
         }
 
         // Обновляем теги

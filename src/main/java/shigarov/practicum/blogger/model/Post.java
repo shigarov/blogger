@@ -9,7 +9,7 @@ public class Post {
 
     private Long id;
     private String title;
-    private String image;
+    private String imageFileName;
     private String text;
     private Map<Long, Tag> tags = new LinkedHashMap<>();
     private int likes;
@@ -36,12 +36,12 @@ public class Post {
         this.title = title;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageFileName() {
+        return imageFileName;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImageFileName(String imageFileName) {
+        this.imageFileName = imageFileName;
     }
 
     public String getText() {
