@@ -102,10 +102,15 @@ public class PostController {
 
     @PostMapping("/posts/add")
     public String addPost(
-            @ModelAttribute Post post,
-            @RequestParam(name = "tagIds", required = false) List<Long> tagIds,
-            @RequestParam(name = "imageFile", required = false) MultipartFile imageFile
+            @RequestParam(name = "title") String title,
+            @RequestParam(name = "imageFile", required = false) MultipartFile imageFile,
+            @RequestParam(name = "text") String text,
+            @RequestParam(name = "tagIds", required = false) List<Long> tagIds
     ) {
+        Post post = new Post();
+        post.setTitle(title);
+        post.setText(text);
+
         // Обработка загрузки файла
         if (imageFile != null && !imageFile.isEmpty()) {
             // Устанавливаем имя файла в объект Post
@@ -136,9 +141,9 @@ public class PostController {
     public String updatePost(
             @PathVariable(name = "postId") Long postId,
             @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "imageFile", required = false) MultipartFile imageFile,
             @RequestParam(name = "text", required = false) String text,
-            @RequestParam(name = "tagIds", required = false) List<Long> tagIds,
-            @RequestParam(name = "imageFile", required = false) MultipartFile imageFile
+            @RequestParam(name = "tagIds", required = false) List<Long> tagIds
     ) {
         // Находим пост по ID
         Post savedPost = postService.findById(postId).orElseThrow(() -> new RuntimeException("Пост не найден"));
