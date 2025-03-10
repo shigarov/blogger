@@ -16,7 +16,7 @@ public class CommentService {
     }
 
     public Optional<Comment> findById(long id) {
-        return commentRepository.findCommentById(id);
+        return commentRepository.findById(id);
     }
 
     public void add(Comment comment) {

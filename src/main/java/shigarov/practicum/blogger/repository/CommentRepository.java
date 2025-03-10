@@ -5,7 +5,7 @@ import shigarov.practicum.blogger.model.Comment;
 import java.util.Optional;
 
 public interface CommentRepository {
-    Optional<Comment> findCommentById(long id);
+    Optional<Comment> findById(long id);
 
     void add(Comment comment);
 

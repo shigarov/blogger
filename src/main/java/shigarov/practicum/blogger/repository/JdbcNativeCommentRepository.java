@@ -22,7 +22,7 @@ public class JdbcNativeCommentRepository implements CommentRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Optional<Comment> findCommentById(long id) {
+    public Optional<Comment> findById(long id) {
         final String sql = """
                 SELECT 
                     c.id AS comment_id,
