@@ -30,8 +30,8 @@ public class PostService {
         return postRepository.findById(id);
     }
 
-    public void add(Post post) {
-        postRepository.add(post);
+    public long add(Post post) {
+        return postRepository.add(post);
     }
 
     public void update(Post post) {

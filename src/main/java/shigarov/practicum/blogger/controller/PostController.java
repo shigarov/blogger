@@ -108,8 +108,6 @@ public class PostController {
     ) {
         // Обработка загрузки файла
         if (imageFile != null && !imageFile.isEmpty()) {
-            storageService.store(imageFile);
-
             // Устанавливаем имя файла в объект Post
             String fileName = imageFile.getOriginalFilename();
             post.setImageFileName(fileName);
@@ -126,7 +124,10 @@ public class PostController {
         }
 
         // Сохраняем пост
-        postService.add(post);
+        long postId = postService.add(post);
+        // Сохраняем изображение
+        if (imageFile != null && !imageFile.isEmpty())
+            storageService.store(Long.toString(postId), imageFile);
 
         return "redirect:/posts"; // Перенаправляем на страницу со списком постов
     }
@@ -152,12 +153,8 @@ public class PostController {
 
         // Обработка загрузки нового изображения
         if (imageFile != null && !imageFile.isEmpty()) {
-            // Сохраняем новое изображение
-            storageService.store(imageFile);
-
             // Обновляем имя файла в объекте Post
             String fileName = imageFile.getOriginalFilename();
-
             savedPost.setImageFileName(fileName);
         }
 
@@ -174,6 +171,12 @@ public class PostController {
 
         // Сохраняем обновленный пост
         postService.update(savedPost);
+        // Сохраняем новое изображение
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String subDir = Long.toString(postId);
+            storageService.delete(subDir);
+            storageService.store(subDir, imageFile);
+        }
 
         return "redirect:/posts/" + savedPost.getId();
     }
@@ -187,6 +190,9 @@ public class PostController {
     @PostMapping(value = "/posts/delete/{postId}", params = "_method=delete")
     public String deletePost(@PathVariable(name = "postId") Long postId) {
         postService.deleteById(postId);
+        String subDir = Long.toString(postId);
+        storageService.delete(subDir);
+
         return "redirect:/posts";
     }
 }

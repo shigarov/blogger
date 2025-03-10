@@ -177,18 +177,18 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public void add(Post post) {
-        if (post == null) return;
+    public long add(Post post) {
+        if (post == null) return 0;
 
         var title = post.getTitle();
         var image = post.getImageFileName();
         var text = post.getText();
         var tagIds = post.getTagIds();
 
-        addPost(title, image, text, tagIds);
+        return addPost(title, image, text, tagIds);
     }
 
-    private void addPost(
+    private long addPost(
             @NonNull String title,
             @Nullable String image,
             @NonNull String text,
@@ -219,6 +219,8 @@ public class JdbcNativePostRepository implements PostRepository {
                 );
             }
         }
+
+        return postId;
     }
 
     @Override
