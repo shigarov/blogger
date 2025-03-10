@@ -170,8 +170,8 @@ public class JdbcNativePostRepository implements PostRepository {
                     p.id = ?;
                 """;
 
-        List<Post> posts = jdbcTemplate.query(sql, new PostResultSetExtractor(), postId);
-        Post post = posts.getFirst();
+        final List<Post> posts = jdbcTemplate.query(sql, new PostResultSetExtractor(), postId);
+        final Post post = posts.isEmpty() ? null : posts.getFirst();
 
         return Optional.ofNullable(post);
     }
@@ -273,6 +273,13 @@ public class JdbcNativePostRepository implements PostRepository {
 
         // Удаляем сам пост
         jdbcTemplate.update("DELETE FROM posts WHERE id = ?", postId);
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update("DELETE FROM comments");
+        jdbcTemplate.update("DELETE FROM posts_tags");
+        jdbcTemplate.update("DELETE FROM posts");
     }
 
     @Override

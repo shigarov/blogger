@@ -28,7 +28,7 @@
 
 <body>
 
-<h1>Пост</h1>
+<h1 th:text="'Пост ' + ${post.id}"/>
 
 <!-- Скрываемая форма для редактирования поста -->
 <div class="form-container" style="display: none;" id="newPostForm">

@@ -26,4 +26,6 @@ public interface PostRepository {
 
     void incrementLikes(long postId);
 
+    void deleteAll();
+
 }

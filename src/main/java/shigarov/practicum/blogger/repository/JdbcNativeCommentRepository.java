@@ -23,7 +23,7 @@ public class JdbcNativeCommentRepository implements CommentRepository {
     }
 
     public Optional<Comment> findCommentById(long id) {
-        String sql = """
+        final String sql = """
                 SELECT 
                     c.id AS comment_id,
                     c.text AS comment_text,
@@ -46,8 +46,10 @@ public class JdbcNativeCommentRepository implements CommentRepository {
                     c.id = ?
                 """;
 
-        List<Comment> comments = jdbcTemplate.query(sql, new CommentRowMapper(), id);
-        return Optional.ofNullable(comments.getFirst());
+        final List<Comment> comments = jdbcTemplate.query(sql, new CommentRowMapper(), id);
+        final Comment comment = comments.isEmpty() ? null : comments.getFirst();
+
+        return Optional.ofNullable(comment);
     }
 
     @Override

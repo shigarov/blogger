@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
+import shigarov.practicum.blogger.model.Post;
 import shigarov.practicum.blogger.model.Tag;
 
 import java.sql.ResultSet;
@@ -31,13 +32,14 @@ public class JdbcNativeTagRepository implements TagRepository {
 
     @Override
     public Optional<Tag> findById(long id) {
-        List<Tag> tags = jdbcTemplate.query(
+        final List<Tag> tags = jdbcTemplate.query(
                 "SELECT t.id, t.name FROM tags t WHERE t.id = ?",
                 new TagResultSetExtractor(),
                 id
         );
+        final Tag tag = tags.isEmpty() ? null : tags.getFirst();
 
-        return Optional.ofNullable(tags.getFirst());
+        return Optional.ofNullable(tag);
     }
 
     @Override
@@ -50,6 +52,12 @@ public class JdbcNativeTagRepository implements TagRepository {
 
     private void addTag(@NonNull String tagName) {
         jdbcTemplate.update("INSERT INTO tags (name) VALUES (?)", tagName);
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update("DELETE FROM posts_tags");
+        jdbcTemplate.update("DELETE FROM tags");
     }
 
     private static class TagResultSetExtractor implements ResultSetExtractor<List<Tag>> {
