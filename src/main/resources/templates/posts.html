@@ -27,6 +27,12 @@
         function changeTag() {
             document.getElementById("tagForm").submit();
         }
+
+        // Сбросить выделение всех пунктов множественного выбора тегов
+        function resetTagSelection() {
+            const multipleSelect = document.getElementById('multipleTagSelection');
+            multipleSelect.selectedIndex = -1;
+        }
     </script>
 </head>
 
@@ -62,13 +68,15 @@
         <!-- Список тегов с множественным выбором -->
         <br/>
         <div>
-            <label for="tagIds">Теги:</label>
-            <select id="tagIds" name="tagIds" multiple="true">
+            <label for="multipleTagSelection">Теги:</label>
+            <select id="multipleTagSelection" name="tagIds" multiple="true">
                 <option th:each="tag : ${allTags}"
                         th:value="${tag.id}"
                         th:text="${tag.name}">
                 </option>
             </select>
+            <br><br>
+            <button onclick="resetTagSelection()" type="button">Сбросить выделение тегов</button>
         </div>
 
         <!-- Кнопка отправки формы -->

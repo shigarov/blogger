@@ -162,8 +162,8 @@ public class PostController {
         }
 
         // Обновляем теги
+        savedPost.removeAllTags();
         if (tagIds != null) {
-            savedPost.removeAllTags();
             for (Long tagId : tagIds) {
                 Tag tag = tagService.findById(tagId).orElse(null);
                 if (tag != null) {

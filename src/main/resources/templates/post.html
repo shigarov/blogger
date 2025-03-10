@@ -17,6 +17,12 @@
                 form.submit(); // Отправляем форму
             }
         }
+
+        // Сбросить выделение всех пунктов множественного выбора тегов
+        function resetTagSelection() {
+            const multipleSelect = document.getElementById('multipleTagSelection');
+            multipleSelect.selectedIndex = -1;
+        }
     </script>
 </head>
 
@@ -47,21 +53,22 @@
         <div>
             <label for="text">Текст поста (строки, разделяются тегом <code>&lt;br&gt;</code>,
                 абзацы выделяются парой тегов <code>&lt;p&gt;&lt;&#47;p&gt;</code>):</label>
-            <!--<textarea id="text" name="text" rows="5" cols="40" th:text="${#strings.replace(post.text, '\n', '&#10;')}"/>-->
             <textarea id="text" name="text" rows="10" cols="100" th:text="${post.text}"/>
         </div>
 
         <!-- Список тегов с множественным выбором -->
         <br>
         <div>
-            <label for="tagIds">Теги:</label>
-            <select id="tagIds" name="tagIds" multiple>
+            <label for="multipleTagSelection">Теги:</label>
+            <select id="multipleTagSelection" name="tagIds" multiple>
                 <option th:each="tag : ${allTags}"
                         th:value="${tag.id}"
                         th:text="${tag.name}"
                         th:selected="${post.getTagIds().contains(tag.id)}">
                 </option>
             </select>
+            <br><br>
+            <button onclick="resetTagSelection()" type="button">Сбросить выделение тегов</button>
         </div>
 
         <!-- Кнопка отправки формы -->
@@ -108,15 +115,12 @@
 <div>
     <strong>Текст:</strong>
     <!--Вывод текста с абзацами и строками-->
-    <!--<div th:utext="${#strings.replace(post.text, '\n', '<br>')}"/>-->
     <div th:utext="${post.text}"/>
-    <!--<div th:utext="${htmlPostText}"/>-->
 </div>
 
 <!-- Теги поста -->
 <div>
     <strong>Теги:</strong>
-    <!--<span th:text="${post.tags}"/>-->
     <div>
         <ul>
             <li th:each="tag : ${post.tags}" th:text="${tag.name}"></li>
