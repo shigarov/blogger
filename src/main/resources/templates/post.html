@@ -47,7 +47,7 @@
             <input type="file" id="imageFile" name="imageFile" accept="image/*">
         </div>
         <!-- Поле для загрузки изображения -->
-        <br>
+        <br/>
 
         <!-- Поле для текста поста -->
         <div>
@@ -57,7 +57,7 @@
         </div>
 
         <!-- Список тегов с множественным выбором -->
-        <br>
+        <br/>
         <div>
             <label for="multipleTagSelection">Теги:</label>
             <select id="multipleTagSelection" name="tagIds" multiple>
@@ -67,17 +67,17 @@
                         th:selected="${post.getTagIds().contains(tag.id)}">
                 </option>
             </select>
-            <br><br>
+            <br/><br/>
             <button onclick="resetTagSelection()" type="button">Сбросить выделение тегов</button>
         </div>
 
         <!-- Кнопка отправки формы -->
-        <br>
+        <br/>
         <div>
             <button type="submit">Обновить пост</button>
         </div>
     </form>
-    <br><br>
+    <br/><br/>
 </div>
 
 <script>
@@ -89,14 +89,14 @@
 
 <button class="btn-add" onclick="toggleForm()">Редактировать пост</button>
 
-<br><br>
+<br><br/>
 
 <form th:action="@{/posts/delete/{postId}(postId=${post.id})}" method="post">
     <input type="hidden" name="_method" value="delete"/> <!-- Указываем метод DELETE -->
     <button type="submit" class="btn btn-danger">Удалить пост</button>
 </form>
 
-<br><br>
+<br/><br/>
 
 <div>
     <strong>Название:</strong>
@@ -173,7 +173,7 @@
     </tbody>
 </table>
 
-<br><br>
+<br/><br/>
 
 <!-- Форма для добавления нового комментария -->
 <form th:action="@{/posts/{postId}/comments/add(postId=${post.id})}" method="post">

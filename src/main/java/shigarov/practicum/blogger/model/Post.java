@@ -18,6 +18,13 @@ public class Post {
     // Конструктор без аргументов
     public Post() {}
 
+    public Post(Long id, String title, String imageFileName, String text) {
+        this.id = id;
+        this.title = title;
+        this.imageFileName = imageFileName;
+        this.text = text;
+    }
+
     // Геттеры и сеттеры ...
 
     public Long getId() {
