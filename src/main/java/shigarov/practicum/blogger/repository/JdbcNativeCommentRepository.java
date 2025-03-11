@@ -2,6 +2,8 @@ package shigarov.practicum.blogger.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
@@ -9,8 +11,10 @@ import shigarov.practicum.blogger.model.Comment;
 import shigarov.practicum.blogger.model.Post;
 import shigarov.practicum.blogger.model.Tag;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,21 +57,34 @@ public class JdbcNativeCommentRepository implements CommentRepository {
     }
 
     @Override
-    public void add(Comment comment) {
+    public long add(Comment comment) {
         if (comment == null)
-            return;
+            return 0;
 
         var text = comment.getText();
         var postId = comment.getPost().getId();
 
-        addComment(text, postId);
+        return addComment(text, postId);
     }
 
-    private void addComment(@NonNull String text, long postId) {
-        jdbcTemplate.update(
-                "INSERT INTO comments (text, post_id) VALUES (?, ?)",
-                text, postId
-        );
+    private long addComment(@NonNull String text, long postId) {
+//        jdbcTemplate.update(
+//                "INSERT INTO comments (text, post_id) VALUES (?, ?)",
+//                text, postId
+//        );
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO comments (text, post_id) VALUES (?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
+            );
+            ps.setString(1, text);
+            ps.setLong(2, postId);
+            return ps;
+        }, keyHolder);
+
+        return keyHolder.getKey().longValue();
     }
 
     @Override

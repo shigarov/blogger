@@ -45,7 +45,6 @@ public class CommentControllerIntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     private Post postOne;
-
     private Comment commentOne;
 
     @BeforeEach
@@ -61,7 +60,6 @@ public class CommentControllerIntegrationTest {
         commentOne = new Comment(1L, "Комментарий 1", postOne);
 
         postRepository.add(postOne);
-
         commentRepository.add(commentOne);
     }
 

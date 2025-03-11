@@ -135,11 +135,8 @@ public class PostControllerTest {
 
     @Test
     void testUpdatePost() throws Exception {
-        postOne.setTitle("Обновленный заголовок 1");
-        postOne.setText("Обновленный текст 1");
-
-        doNothing().when(postService).update(postOne);
         when(postService.findById(1L)).thenReturn(Optional.of(postOne));
+        doNothing().when(postService).update(postOne);
 
         mockMvc.perform(post("/posts/update/1")
                         .param("title", "Обновленный заголовок 1")

@@ -19,8 +19,8 @@ public class CommentService {
         return commentRepository.findById(id);
     }
 
-    public void add(Comment comment) {
-        commentRepository.add(comment);
+    public long add(Comment comment) {
+        return commentRepository.add(comment);
     }
 
     public void update(Comment comment) {
