@@ -68,10 +68,6 @@ public class JdbcNativeCommentRepository implements CommentRepository {
     }
 
     private long addComment(@NonNull String text, long postId) {
-//        jdbcTemplate.update(
-//                "INSERT INTO comments (text, post_id) VALUES (?, ?)",
-//                text, postId
-//        );
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
