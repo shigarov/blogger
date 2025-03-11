@@ -67,7 +67,7 @@ public class PostRepositoryTest {
     }
 
     @Test
-    public void testFindAll() {
+    public void testFindAllPosts() {
         final List<Post> foundPosts = postRepository.findAll();
 
         assertThat(foundPosts).isNotNull();
@@ -76,7 +76,7 @@ public class PostRepositoryTest {
     }
 
     @Test
-    public void testFindAllByPage() {
+    public void testFindAllPostsByPage() {
         final Pageable pageable = PageRequest.of(0, 10);
 
         final Page<Post> postsPage = postRepository.findAll(pageable);
@@ -88,7 +88,7 @@ public class PostRepositoryTest {
     }
 
     @Test
-    public void testFindAllByTag() {
+    public void testFindAllPostsByTag() {
         final Pageable pageable = PageRequest.of(0, 10);
         final long tagId = tagOne.getId();
 
@@ -101,7 +101,7 @@ public class PostRepositoryTest {
     }
 
     @Test
-    public void testFindById() {
+    public void testFindPostById() {
         final long postId = postOne.getId();
 
         Optional<Post> foundPost = postRepository.findById(postId);
@@ -152,7 +152,7 @@ public class PostRepositoryTest {
     }
 
     @Test
-    public void testIncrementLikes() {
+    public void testIncrementPostLikes() {
         final long postId = postOne.getId();
         int likes = postOne.getLikes();
 
