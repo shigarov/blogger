@@ -2,14 +2,18 @@ package shigarov.practicum.blogger.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import shigarov.practicum.blogger.model.Post;
 import shigarov.practicum.blogger.model.Tag;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -43,15 +47,28 @@ public class JdbcNativeTagRepository implements TagRepository {
     }
 
     @Override
-    public void add(Tag tag) {
+    public long add(Tag tag) {
         if (tag == null)
-            return;
+            return 0;
         var name = tag.getName();
-        addTag(name);
+        return addTag(name);
     }
 
-    private void addTag(@NonNull String tagName) {
-        jdbcTemplate.update("INSERT INTO tags (name) VALUES (?)", tagName);
+    private long addTag(@NonNull String tagName) {
+        //jdbcTemplate.update("INSERT INTO tags (name) VALUES (?)", tagName);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO tags (name) VALUES (?)",
+                    Statement.RETURN_GENERATED_KEYS
+            );
+            ps.setString(1, tagName);
+            return ps;
+        }, keyHolder);
+
+        // Возвращаем сгенерированный ID
+        return keyHolder.getKey().longValue();
     }
 
     @Override

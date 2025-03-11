@@ -24,8 +24,8 @@ public class TagService {
         return tagRepository.findAll();
     }
 
-    public void add(Tag tag) {
-        tagRepository.add(tag);
+    public long add(Tag tag) {
+        return tagRepository.add(tag);
     }
 
 }

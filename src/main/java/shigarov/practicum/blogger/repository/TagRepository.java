@@ -11,7 +11,7 @@ public interface TagRepository {
 
     Optional<Tag> findById(long id);
 
-    void add(Tag tag);
+    long add(Tag tag);
 
     void deleteAll();
 }
