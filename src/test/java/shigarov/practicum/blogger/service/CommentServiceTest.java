@@ -32,7 +32,7 @@ public class CommentServiceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        //MockitoAnnotations.openMocks(this);
 
         // Подготовка тестовых объектов
         post = new Post();
@@ -48,39 +48,37 @@ public class CommentServiceTest {
 
     @Test
     void testFindTagById() {
-//        // Подготовка данных
-//        when(commentRepository.findById(1L)).thenReturn(Optional.of(comment));
-//
-//        // Вызов метода
-//        Optional<Comment> result = commentService.findById(1L);
-//
-//        // Проверка
-//        assertTrue(result.isPresent());
-//        assertEquals(comment, result.get());
-//        verify(commentRepository, times(1)).findById(1L);
+        // Подготовка данных
+        when(commentRepository.findById(1L)).thenReturn(Optional.of(comment));
+
+        // Вызов метода
+        Optional<Comment> result = commentService.findById(1L);
+
+        // Проверка
+        assertTrue(result.isPresent());
+        assertEquals(comment, result.get());
+        verify(commentRepository, times(1)).findById(1L);
     }
 
     @Test
     void testAddComment() {
-//        // Подготовка данных
-//        String commentText = "Комментарий 2";
-//
-//        // Вызов метода
-//        commentService.add(commentText, post);
-//
-//        // Проверка
-//        verify(commentRepository, times(1)).add(commentText, post.getId());
+        // Подготовка данных
+        when(commentService.add(comment)).thenReturn(comment.getId());
+
+        // Вызов метода
+        long commentId = commentService.add(comment);
+
+        // Проверка
+        assertEquals(comment.getId(), commentId);
+        verify(commentRepository, times(1)).add(comment);
     }
 
     @Test
     void testUpdateComment() {
-//        // Подготовка данных
-//        String newCommentText = "Новый комментарий 1";
-//
-//        // Вызов метода
-//        commentService.update(comment, newCommentText);
-//
-//        // Проверка
-//        verify(commentRepository, times(1)).update(comment.getId(), newCommentText);
+        // Вызов метода
+        commentService.update(comment);
+
+        // Проверка
+        verify(commentRepository, times(1)).update(comment);
     }
 }

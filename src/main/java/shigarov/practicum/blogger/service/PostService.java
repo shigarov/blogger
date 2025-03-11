@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import shigarov.practicum.blogger.model.Post;
 import shigarov.practicum.blogger.repository.PostRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +17,10 @@ public class PostService {
 
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
+    }
+
+    public List<Post> findAll() {
+        return postRepository.findAll();
     }
 
     public Page<Post> findAll(Pageable pageable) {

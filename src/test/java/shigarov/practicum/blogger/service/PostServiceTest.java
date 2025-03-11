@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -34,8 +34,6 @@ public class PostServiceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-
         // Подготовка тестовых объектов
         postOne = new Post();
         postOne.setId(1L);
@@ -62,18 +60,36 @@ public class PostServiceTest {
 
     @Test
     void testFindAllPosts() {
-//        // Подготовка данных
-//        Pageable pageable = PageRequest.of(0, 10);
-//        Page<Post> page = new PageImpl<>(List.of(postOne, postTwo), pageable, 2);
-//        when(postRepository.findAll(pageable)).thenReturn(page);
-//
-//        // Вызов метода
-//        Page<Post> resultPage = postService.findAll(pageable);
-//
-//        // Проверка
-//        assertNotNull(resultPage);
-//        assertEquals(2, resultPage.getContent().size());
-//        verify(postRepository, times(1)).findAll(pageable);
+        // Подготовка данных
+        final List<Post> content = List.of(postOne, postTwo);
+        when(postRepository.findAll()).thenReturn(content);
+
+        // Вызов метода
+        List<Post> posts = postService.findAll();
+
+        // Проверка
+        assertNotNull(posts);
+        assertEquals(2, posts.size());
+
+        verify(postRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testFindAllPostsByPage() {
+        // Подготовка данных
+        final Pageable pageable = PageRequest.of(0, 10);
+        final List<Post> content = List.of(postOne, postTwo);
+        final Page<Post> page = new PageImpl<>(content, pageable, 2);
+
+        when(postRepository.findAll(pageable)).thenReturn(page);
+
+        // Вызов метода
+        Page<Post> postsPage = postService.findAll(pageable);
+
+        // Проверка
+        assertNotNull(postsPage);
+        assertEquals(2, postsPage.getContent().size());
+        verify(postRepository, times(1)).findAll(pageable);
     }
 
     @Test
@@ -85,7 +101,7 @@ public class PostServiceTest {
         when(postRepository.findAllByTag(pageable, tagId)).thenReturn(page);
 
         // Вызов метода
-        Page<Post> resultPage = postRepository.findAllByTag(pageable, tagId);
+        Page<Post> resultPage = postService.findAllByTag(pageable, tagId);
 
         // Проверка
         assertNotNull(resultPage);
@@ -109,38 +125,42 @@ public class PostServiceTest {
 
     @Test
     void testAddPost() {
-//        // Вызов метода
-//        postService.add(postOne);
-//
-//        // Проверка
-//        verify(postRepository, times(1)).add(postOne);
+        // Подготовка данных
+        when(postRepository.add(postOne)).thenReturn(postOne.getId());
+
+        // Вызов метода
+        long postId = postService.add(postOne);
+        assertEquals(postOne.getId(), postId);
+
+        // Проверка
+        verify(postRepository, times(1)).add(postOne);
     }
 
     @Test
     void testUpdatePost() {
-//        // Вызов метода
-//        postService.update(postOne);
-//
-//        // Проверка
-//        verify(postRepository, times(1)).update(postOne);
+        // Вызов метода
+        postService.update(postOne);
+
+        // Проверка
+        verify(postRepository, times(1)).update(postOne);
     }
 
     @Test
     void testIncrementLikes() {
-//        // Вызов метода
-//        postService.incrementLikes(1L);
-//
-//        // Проверка
-//        verify(postRepository, times(1)).incrementLikes(1L);
+        // Вызов метода
+        postService.incrementLikes(1L);
+
+        // Проверка
+        verify(postRepository, times(1)).incrementLikes(1L);
     }
 
     @Test
     void testDeletePost() {
-//        // Вызов метода
-//        postService.deleteById(1L);
-//
-//        // Проверка
-//        verify(postRepository, times(1)).deleteById(1L);
+        // Вызов метода
+        postService.deleteById(1L);
+
+        // Проверка
+        verify(postRepository, times(1)).deleteById(1L);
     }
 
 }
