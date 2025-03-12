@@ -178,16 +178,16 @@ public class JdbcNativePostRepository implements PostRepository {
 
     private Long add(@NonNull final Post post) {
         var title = post.getTitle();
-        var image = post.getImageFileName();
+        var imageFileName = post.getImageFileName();
         var text = post.getText();
         var tagIds = post.getTagIds();
 
-       return addPost(title, image, text, tagIds);
+       return addPost(title, imageFileName, text, tagIds);
     }
 
     private Long addPost(
             @NonNull String title,
-            @Nullable String image,
+            @Nullable String imageFileName,
             @NonNull String text,
             @Nullable List<Long> tagIds
     ) {
@@ -199,7 +199,7 @@ public class JdbcNativePostRepository implements PostRepository {
                     Statement.RETURN_GENERATED_KEYS
             );
             ps.setString(1, title);
-            ps.setString(2, image);
+            ps.setString(2, imageFileName);
             ps.setString(3, text);
             return ps;
         }, keyHolder);
