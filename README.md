@@ -59,15 +59,14 @@
     ```
 4. Соберите проект:
     ```bash 
-    mvn clean package
+    gradlew clean build
     ```
-5. Скопируйте архив `target/blogger.war` в папку сервера приложений
-(например, в `<tomcat-directory>/webapps`, если используется Tomcat):
+5. Запустите приложение:
     ```bash 
-    cp target/blogger.war <tomcat-directory>/webapps
+    cp java -jar build/libs/blogger-2.0-SNAPSHOT.jar
     ```
 6. Откройте браузер и перейдите по адресу:
     ```bash 
-    http://localhost:8080/blogger/posts
+    http://localhost:8080/posts
     ```
 
