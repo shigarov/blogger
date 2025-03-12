@@ -116,7 +116,8 @@ public class PostRepositoryTest {
     public void testAddPost() {
         final Post postThree = new Post(null, "Заголовок 3", null, "Текст 3");
 
-        final long postId = postRepository.add(postThree);
+        final Post addedPost = postRepository.add(postThree);
+        final long postId = addedPost.getId();
         final Post savedPost = postRepository.findById(postId).orElse(null);
 
         assertThat(savedPost).isNotNull();

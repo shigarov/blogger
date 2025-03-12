@@ -19,7 +19,7 @@ public class CommentService {
         return commentRepository.findById(id);
     }
 
-    public long add(Comment comment) {
+    public Comment add(Comment comment) {
         return commentRepository.add(comment);
     }
 

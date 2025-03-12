@@ -129,7 +129,9 @@ public class PostController {
         }
 
         // Сохраняем пост
-        long postId = postService.add(post);
+        final Post addedPost = postService.add(post);
+        final long postId = addedPost.getId();
+
         // Сохраняем изображение
         if (imageFile != null && !imageFile.isEmpty())
             storageService.store(Long.toString(postId), imageFile);

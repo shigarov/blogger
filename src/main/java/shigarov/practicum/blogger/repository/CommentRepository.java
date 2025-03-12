@@ -7,7 +7,7 @@ import java.util.Optional;
 public interface CommentRepository {
     Optional<Comment> findById(long id);
 
-    long add(Comment comment);
+    Comment add(Comment comment);
 
     void update(Comment comment);
 }

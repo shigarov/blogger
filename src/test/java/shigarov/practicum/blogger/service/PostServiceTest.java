@@ -126,10 +126,11 @@ public class PostServiceTest {
     @Test
     void testAddPost() {
         // Подготовка данных
-        when(postRepository.add(postOne)).thenReturn(postOne.getId());
+        when(postRepository.add(postOne)).thenReturn(postOne);
 
         // Вызов метода
-        long postId = postService.add(postOne);
+        final Post addedPost = postService.add(postOne);
+        final long postId = addedPost.getId();
         assertEquals(postOne.getId(), postId);
 
         // Проверка

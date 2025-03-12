@@ -63,7 +63,8 @@ public class CommentRepositoryTest {
     public void testAddComment() {
         final Comment commentTwo = new Comment(null, "Комментарий 2", postOne);
 
-        final long commentId = commentRepository.add(commentTwo);
+        final Comment addedComment = commentRepository.add(commentTwo);
+        final long commentId = addedComment.getId();
         final Comment savedComment = commentRepository.findById(commentId).orElse(null);
 
         assertThat(savedComment).isNotNull();

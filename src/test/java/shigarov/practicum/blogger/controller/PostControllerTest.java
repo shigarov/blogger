@@ -121,11 +121,13 @@ public class PostControllerTest {
 
     @Test
     void testAddPost() throws Exception {
-        when(postService.add(any(Post.class))).thenReturn(anyLong());
+        Post postThree = new Post(3L, "Заголовок 3", null, "Текст 3");
+
+        when(postService.add(any(Post.class))).thenReturn(postThree);
 
         mockMvc.perform(post("/posts/add")
-                        .param("title", "Заголовок 1")
-                        .param("text", "Текст 1")
+                        .param("title", "Заголовок 3")
+                        .param("text", "Текст 3")
                 )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/posts"));

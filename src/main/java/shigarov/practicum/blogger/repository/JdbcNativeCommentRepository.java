@@ -57,14 +57,15 @@ public class JdbcNativeCommentRepository implements CommentRepository {
     }
 
     @Override
-    public long add(Comment comment) {
-        if (comment == null)
-            return 0;
+    public Comment add(Comment comment) {
+        if (comment == null) return null;
 
         var text = comment.getText();
-        var postId = comment.getPost().getId();
+        var post = comment.getPost();
+        var postId = post.getId();
 
-        return addComment(text, postId);
+        long commentId = addComment(text, postId);
+        return new Comment(commentId, text, post);
     }
 
     private long addComment(@NonNull String text, long postId) {

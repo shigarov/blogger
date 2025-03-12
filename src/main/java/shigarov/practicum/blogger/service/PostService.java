@@ -35,7 +35,7 @@ public class PostService {
         return postRepository.findById(id);
     }
 
-    public long add(Post post) {
+    public Post add(Post post) {
         return postRepository.add(post);
     }
 

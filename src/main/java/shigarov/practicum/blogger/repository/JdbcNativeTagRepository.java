@@ -47,11 +47,13 @@ public class JdbcNativeTagRepository implements TagRepository {
     }
 
     @Override
-    public long add(Tag tag) {
-        if (tag == null)
-            return 0;
+    public Tag add(Tag tag) {
+        if (tag == null) return null;
         var name = tag.getName();
-        return addTag(name);
+
+        final long tagId = addTag(name);
+
+        return new Tag(tagId, name);
     }
 
     private long addTag(@NonNull String tagName) {

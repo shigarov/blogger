@@ -63,10 +63,11 @@ public class CommentServiceTest {
     @Test
     void testAddComment() {
         // Подготовка данных
-        when(commentService.add(comment)).thenReturn(comment.getId());
+        when(commentService.add(comment)).thenReturn(comment);
 
         // Вызов метода
-        long commentId = commentService.add(comment);
+        final Comment addedComment = commentService.add(comment);
+        final long commentId = addedComment.getId();
 
         // Проверка
         assertEquals(comment.getId(), commentId);

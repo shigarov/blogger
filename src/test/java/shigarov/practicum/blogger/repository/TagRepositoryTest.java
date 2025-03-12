@@ -68,7 +68,8 @@ public class TagRepositoryTest {
     public void testAddTag() {
         final Tag tagThree = new Tag(null, "Тег 3");
 
-        final long tagId = tagRepository.add(tagThree);
+        final Tag addedTag = tagRepository.add(tagThree);
+        final long tagId = addedTag.getId();
         final Tag savedTag = tagRepository.findById(tagId).orElse(null);
 
         assertThat(savedTag).isNotNull();

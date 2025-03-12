@@ -71,7 +71,7 @@ public class TagServiceTest {
     @Test
     void testAddTag() {
         // Подготовка данных
-        when(tagService.add(any(Tag.class))).thenReturn(anyLong());
+        when(tagService.add(any(Tag.class))).thenReturn(any(Tag.class));
 
         // Вызов метода
         tagService.add(tagOne);

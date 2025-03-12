@@ -53,7 +53,7 @@ public class CommentControllerTest {
     @Test
     void testAddComment() throws Exception {
         when(postService.findById(1L)).thenReturn(Optional.of(postOne));
-        when(commentService.add(any(Comment.class))).thenReturn(anyLong());
+        when(commentService.add(any(Comment.class))).thenReturn(any(Comment.class));
 
         mockMvc.perform(post("/posts/1/comments/add")
                         .param("commentText", "Комментарий 2")

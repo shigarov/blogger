@@ -1,7 +1,5 @@
 package shigarov.practicum.blogger.model;
 
-import org.springframework.lang.NonNull;
-
 public class Comment {
     private Long id;
     private String text;

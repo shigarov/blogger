@@ -18,7 +18,7 @@ public interface PostRepository {
 
     Optional<Post> findById(long id);
 
-    long add(Post post);
+    Post add(Post post);
 
     void update(Post post);
 
