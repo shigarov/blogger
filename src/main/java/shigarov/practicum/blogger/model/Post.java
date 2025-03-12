@@ -1,9 +1,9 @@
 package shigarov.practicum.blogger.model;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+
+import java.util.*;
 
 public class Post {
 
@@ -86,12 +86,18 @@ public class Post {
         return new ArrayList<>(tags.keySet());
     }
 
-    public void addTag(Tag tag) {
+    public void addTag(@NonNull Tag tag) {
         tags.put(tag.getId(), tag);
     }
 
     public void removeAllTags() {
         tags.clear();
+    }
+
+    public void addAllTags(@NonNull Iterable<Tag> tags) {
+        for (Tag tag : tags) {
+            addTag(tag);
+        }
     }
 
     public int getLikes() {

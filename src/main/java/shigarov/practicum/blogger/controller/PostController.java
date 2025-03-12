@@ -118,14 +118,10 @@ public class PostController {
             post.setImageFileName(fileName);
         }
 
-        if (tagIds != null) {
-            // Получаем выбранные теги по их ID и добавляем их в пост
-            for (Long tagId : tagIds) {
-                Tag tag = tagService.findById(tagId).orElse(null);
-                if (tag != null) {
-                    post.addTag(tag);
-                }
-            }
+        if (tagIds != null && !tagIds.isEmpty()) {
+            final List<Tag> tags = tagService.findAllByIds(tagIds);
+            if (tags != null)
+                post.addAllTags(tags);
         }
 
         // Сохраняем пост
@@ -151,36 +147,34 @@ public class PostController {
             @RequestParam(name = "tagIds", required = false) List<Long> tagIds
     ) {
         // Находим пост по ID
-        Post savedPost = postService.findById(postId).orElseThrow(() -> new RuntimeException("Пост не найден"));
+        Post foundPost = postService.findById(postId).orElseThrow(() -> new RuntimeException("Пост не найден"));
 
         // Обновляем заголовок
         if (title != null)
-            savedPost.setTitle(title);
+            foundPost.setTitle(title);
 
         // Обновляем текст
         if (text != null)
-            savedPost.setText(text);
+            foundPost.setText(text);
 
         // Обработка загрузки нового изображения
         if (imageFile != null && !imageFile.isEmpty()) {
             // Обновляем имя файла в объекте Post
             String fileName = imageFile.getOriginalFilename();
-            savedPost.setImageFileName(fileName);
+            foundPost.setImageFileName(fileName);
         }
 
         // Обновляем теги
-        savedPost.removeAllTags();
-        if (tagIds != null) {
-            for (Long tagId : tagIds) {
-                Tag tag = tagService.findById(tagId).orElse(null);
-                if (tag != null) {
-                    savedPost.addTag(tag);
-                }
-            }
+        foundPost.removeAllTags();
+
+        if (tagIds != null && !tagIds.isEmpty()) {
+            final List<Tag> tags = tagService.findAllByIds(tagIds);
+            if (tags != null)
+                foundPost.addAllTags(tags);
         }
 
         // Обновляем пост
-        final Post updatedPost = postService.save(savedPost);
+        final Post updatedPost = postService.save(foundPost);
 
         if (updatedPost != null) {
             // Сохраняем новое изображение
@@ -189,9 +183,11 @@ public class PostController {
                 storageService.delete(subDir);
                 storageService.store(subDir, imageFile);
             }
+        } else {
+            new RuntimeException("Пост не обновлен");
         }
 
-        return "redirect:/posts/" + savedPost.getId();
+        return "redirect:/posts/" + updatedPost.getId();
     }
 
     @PostMapping("/posts/incrementLikes/{postId}")
