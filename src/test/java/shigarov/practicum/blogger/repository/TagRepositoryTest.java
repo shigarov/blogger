@@ -40,8 +40,8 @@ public class TagRepositoryTest {
         tagOne = new Tag(1L, "Тег 1");
         tagTwo = new Tag(2L, "Тег 2");
 
-        tagRepository.add(tagOne);
-        tagRepository.add(tagTwo);
+        tagRepository.save(tagOne);
+        tagRepository.save(tagTwo);
     }
 
     @Test
@@ -65,10 +65,10 @@ public class TagRepositoryTest {
     }
 
     @Test
-    public void testAddTag() {
+    public void testAddTagWithNullId() {
         final Tag tagThree = new Tag(null, "Тег 3");
 
-        final Tag addedTag = tagRepository.add(tagThree);
+        final Tag addedTag = tagRepository.save(tagThree);
         final long tagId = addedTag.getId();
         final Tag savedTag = tagRepository.findById(tagId).orElse(null);
 
@@ -76,4 +76,18 @@ public class TagRepositoryTest {
         assertThat(savedTag.getId()).isEqualTo(tagId);
         assertThat(savedTag.getName()).isEqualTo(tagThree.getName());
     }
+
+    @Test
+    public void testAddTagWithNotNullId() {
+        final Tag tagThree = new Tag(3L, "Тег 3");
+
+        final Tag addedTag = tagRepository.save(tagThree);
+        final long tagId = addedTag.getId();
+        final Tag savedTag = tagRepository.findById(tagId).orElse(null);
+
+        assertThat(savedTag).isNotNull();
+        assertThat(savedTag.getId()).isEqualTo(tagId);
+        assertThat(savedTag.getName()).isEqualTo(tagThree.getName());
+    }
+
 }

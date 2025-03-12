@@ -56,8 +56,7 @@ public class JdbcNativeCommentRepository implements CommentRepository {
         return Optional.ofNullable(comment);
     }
 
-    @Override
-    public Comment add(Comment comment) {
+    private Comment add(@NonNull final Comment comment) {
         if (comment == null) return null;
 
         var text = comment.getText();
@@ -68,7 +67,7 @@ public class JdbcNativeCommentRepository implements CommentRepository {
         return new Comment(commentId, text, post);
     }
 
-    private long addComment(@NonNull String text, long postId) {
+    private long addComment(@NonNull final String text, @NonNull final Long postId) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -84,8 +83,7 @@ public class JdbcNativeCommentRepository implements CommentRepository {
         return keyHolder.getKey().longValue();
     }
 
-    @Override
-    public void update(Comment comment) {
+    private void update(@NonNull final Comment comment) {
         var id = comment.getId();
         var text = comment.getText();
         updateComment(id, text);
@@ -93,6 +91,31 @@ public class JdbcNativeCommentRepository implements CommentRepository {
 
     private void updateComment(long id, @NonNull String text) {
         jdbcTemplate.update("UPDATE comments SET text = ? WHERE id = ?", text, id);
+    }
+
+    private boolean commentExists(long commentId) {
+        return jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM comments WHERE id = ?", Long.class, commentId
+        ) > 0;
+    }
+
+    @Override
+    public Comment save(@NonNull final Comment comment) {
+        Long commentId = comment.getId();
+
+        if (commentId == null) {
+            commentId = add(comment).getId();
+        } else {
+            if (commentExists(commentId)) {
+                update(comment);
+            } else {
+                add(comment);
+            }
+        }
+
+        final Comment savedComment = findById(commentId).orElse(null);
+
+        return savedComment;
     }
 
     private static class CommentRowMapper implements RowMapper<Comment> {

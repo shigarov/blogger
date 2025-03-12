@@ -1,5 +1,6 @@
 package shigarov.practicum.blogger.service;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import shigarov.practicum.blogger.model.Tag;
@@ -24,8 +25,8 @@ public class TagService {
         return tagRepository.findAll();
     }
 
-    public Tag add(Tag tag) {
-        return tagRepository.add(tag);
+    public Tag save(@NonNull final Tag tag) {
+        return tagRepository.save(tag);
     }
 
 }

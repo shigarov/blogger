@@ -67,10 +67,11 @@ public class PostControllerIntegrationTest {
         postOne.addTag(tagOne);
         postTwo.addTag(tagTwo);
 
-        tagRepository.add(tagOne);
-        tagRepository.add(tagTwo);
-        postRepository.add(postOne);
-        postRepository.add(postTwo);
+        tagRepository.save(tagOne);
+        tagRepository.save(tagTwo);
+
+        postRepository.save(postOne);
+        postRepository.save(postTwo);
     }
 
     @Test

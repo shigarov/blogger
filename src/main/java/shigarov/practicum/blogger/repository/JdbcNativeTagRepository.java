@@ -46,18 +46,24 @@ public class JdbcNativeTagRepository implements TagRepository {
         return Optional.ofNullable(tag);
     }
 
+
+
     @Override
-    public Tag add(Tag tag) {
-        if (tag == null) return null;
-        var name = tag.getName();
+    public Tag save(@NonNull final Tag tag) {
+        final long tagId = add(tag);
+        final Tag savedTag = findById(tagId).orElse(null);
 
-        final long tagId = addTag(name);
-
-        return new Tag(tagId, name);
+        return savedTag;
     }
 
-    private long addTag(@NonNull String tagName) {
-        //jdbcTemplate.update("INSERT INTO tags (name) VALUES (?)", tagName);
+    private Long add(@NonNull final Tag tag) {
+        var name = tag.getName();
+        final Long tagId = addTag(name);
+
+        return tagId;
+    }
+
+    private Long addTag(@NonNull final String tagName) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {

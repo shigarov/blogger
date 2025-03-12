@@ -129,14 +129,17 @@ public class PostController {
         }
 
         // Сохраняем пост
-        final Post addedPost = postService.add(post);
-        final long postId = addedPost.getId();
+        final Post savedPost = postService.save(post);
 
-        // Сохраняем изображение
-        if (imageFile != null && !imageFile.isEmpty())
-            storageService.store(Long.toString(postId), imageFile);
+        if (savedPost != null) {
+            final long postId = savedPost.getId();
+            // Сохраняем изображение
+            if (imageFile != null && !imageFile.isEmpty())
+                storageService.store(Long.toString(postId), imageFile);
+        }
 
-        return "redirect:/posts"; // Перенаправляем на страницу со списком постов
+        // Перенаправляем на страницу со списком постов
+        return "redirect:/posts";
     }
 
     @PostMapping("/posts/update/{postId}")
@@ -176,13 +179,16 @@ public class PostController {
             }
         }
 
-        // Сохраняем обновленный пост
-        postService.update(savedPost);
-        // Сохраняем новое изображение
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String subDir = Long.toString(postId);
-            storageService.delete(subDir);
-            storageService.store(subDir, imageFile);
+        // Обновляем пост
+        final Post updatedPost = postService.save(savedPost);
+
+        if (updatedPost != null) {
+            // Сохраняем новое изображение
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String subDir = Long.toString(postId);
+                storageService.delete(subDir);
+                storageService.store(subDir, imageFile);
+            }
         }
 
         return "redirect:/posts/" + savedPost.getId();

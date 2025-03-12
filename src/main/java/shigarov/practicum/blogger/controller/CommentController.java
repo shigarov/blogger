@@ -34,7 +34,8 @@ public class CommentController {
             Comment comment = new Comment();
             comment.setText(commentText);
             comment.setPost(postOptional.get());
-            commentService.add(comment);
+
+            commentService.save(comment);
         }
 
         return "redirect:/posts/" + postId;
@@ -58,7 +59,8 @@ public class CommentController {
         if (commentOptional.isPresent()) {
             Comment comment = commentOptional.get();
             comment.setText(commentText);
-            commentService.update(comment);
+
+            commentService.save(comment);
         }
 
         return "redirect:/posts/" + postId;

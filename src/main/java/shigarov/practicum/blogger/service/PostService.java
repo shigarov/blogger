@@ -2,6 +2,7 @@ package shigarov.practicum.blogger.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import shigarov.practicum.blogger.model.Post;
@@ -23,11 +24,11 @@ public class PostService {
         return postRepository.findAll();
     }
 
-    public Page<Post> findAll(Pageable pageable) {
+    public Page<Post> findAll(@NonNull final Pageable pageable) {
         return postRepository.findAll(pageable);
     }
 
-    public Page<Post> findAllByTag(Pageable pageable, Long tagId) {
+    public Page<Post> findAllByTag(@NonNull final Pageable pageable, long tagId) {
         return postRepository.findAllByTag(pageable, tagId);
     }
 
@@ -35,19 +36,15 @@ public class PostService {
         return postRepository.findById(id);
     }
 
-    public Post add(Post post) {
-        return postRepository.add(post);
+    public Post save(@NonNull final Post post) {
+        return postRepository.save(post);
     }
 
-    public void update(Post post) {
-        postRepository.update(post);
-    }
-
-    public void incrementLikes(Long postId) {
+    public void incrementLikes(long postId) {
         postRepository.incrementLikes(postId);
     }
 
-    public void deleteById(Long postId) {
+    public void deleteById(long postId) {
         postRepository.deleteById(postId);
     }
 

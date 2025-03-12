@@ -3,6 +3,7 @@ package shigarov.practicum.blogger.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import org.springframework.lang.NonNull;
 import shigarov.practicum.blogger.model.Post;
 
 import java.util.List;
@@ -12,15 +13,13 @@ public interface PostRepository {
 
     List<Post> findAll();
 
-    Page<Post> findAll(Pageable pageable);
+    Page<Post> findAll(@NonNull final Pageable pageable);
 
-    Page<Post> findAllByTag(Pageable pageable, Long tagId);
+    Page<Post> findAllByTag(@NonNull final Pageable pageable, long tagId);
 
     Optional<Post> findById(long id);
 
-    Post add(Post post);
-
-    void update(Post post);
+    Post save(@NonNull final Post post);
 
     void deleteById(long postId);
 

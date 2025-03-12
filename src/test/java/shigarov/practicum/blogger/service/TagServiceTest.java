@@ -69,14 +69,14 @@ public class TagServiceTest {
     }
 
     @Test
-    void testAddTag() {
+    void testSaveTag() {
         // Подготовка данных
-        when(tagService.add(any(Tag.class))).thenReturn(any(Tag.class));
+        when(tagService.save(any(Tag.class))).thenReturn(any(Tag.class));
 
         // Вызов метода
-        tagService.add(tagOne);
+        tagService.save(tagOne);
 
         // Проверка
-        verify(tagRepository, times(1)).add(any(Tag.class));
+        verify(tagRepository, times(1)).save(any(Tag.class));
     }
 }

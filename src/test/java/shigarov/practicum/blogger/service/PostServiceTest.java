@@ -124,26 +124,17 @@ public class PostServiceTest {
     }
 
     @Test
-    void testAddPost() {
+    void testSavePost() {
         // Подготовка данных
-        when(postRepository.add(postOne)).thenReturn(postOne);
+        when(postRepository.save(postOne)).thenReturn(postOne);
 
         // Вызов метода
-        final Post addedPost = postService.add(postOne);
-        final long postId = addedPost.getId();
+        final Post savedPost = postService.save(postOne);
+        final long postId = savedPost.getId();
         assertEquals(postOne.getId(), postId);
 
         // Проверка
-        verify(postRepository, times(1)).add(postOne);
-    }
-
-    @Test
-    void testUpdatePost() {
-        // Вызов метода
-        postService.update(postOne);
-
-        // Проверка
-        verify(postRepository, times(1)).update(postOne);
+        verify(postRepository, times(1)).save(postOne);
     }
 
     @Test

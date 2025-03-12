@@ -99,7 +99,7 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public Page<Post> findAllByTag(@NonNull Pageable pageable, Long tagId) {
+    public Page<Post> findAllByTag(@NonNull Pageable pageable, long tagId) {
         final String postCountSql = """
                 SELECT COUNT(DISTINCT p.id) AS post_count
                 FROM posts p
@@ -108,7 +108,7 @@ public class JdbcNativePostRepository implements PostRepository {
                 WHERE t.id = ?;
                 """;
 
-        final long totalPosts = jdbcTemplate.queryForObject(postCountSql, Integer.class, tagId);
+        final long totalPosts = jdbcTemplate.queryForObject(postCountSql, Long.class, tagId);
 
         final String sql = """
                         SELECT
@@ -176,19 +176,16 @@ public class JdbcNativePostRepository implements PostRepository {
         return Optional.ofNullable(post);
     }
 
-    @Override
-    public Post add(Post post) {
-        if (post == null) return null;
-
+    private Long add(@NonNull final Post post) {
         var title = post.getTitle();
         var image = post.getImageFileName();
         var text = post.getText();
         var tagIds = post.getTagIds();
 
-        return addPost(title, image, text, tagIds);
+       return addPost(title, image, text, tagIds);
     }
 
-    private Post addPost(
+    private Long addPost(
             @NonNull String title,
             @Nullable String image,
             @NonNull String text,
@@ -208,7 +205,7 @@ public class JdbcNativePostRepository implements PostRepository {
         }, keyHolder);
 
         // Шаг 2: Получаем ID вставленного поста
-        long postId = keyHolder.getKey().longValue();
+        final Long postId = keyHolder.getKey().longValue();
 
         // Шаг 3: Если переданы tagIds, добавляем связи с тегами
         if (tagIds != null && !tagIds.isEmpty()) {
@@ -220,13 +217,10 @@ public class JdbcNativePostRepository implements PostRepository {
             }
         }
 
-        return new Post(postId, title, image, text);
+        return postId;
     }
 
-    @Override
-    public void update(Post post) {
-        if (post == null) return;
-
+    private void update(@NonNull final Post post) {
         var id = post.getId();
         var title = post.getTitle();
         var image = post.getImageFileName();
@@ -237,7 +231,7 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     private void updatePost(
-            long postId,
+            @NonNull Long postId,
             @NonNull String title,
             @Nullable String image,
             @NonNull String text,
@@ -261,6 +255,31 @@ public class JdbcNativePostRepository implements PostRepository {
                 );
             }
         }
+    }
+
+    private boolean postExists(long postId) {
+        return jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM posts WHERE id = ?", Long.class, postId
+        ) > 0;
+    }
+
+    @Override
+    public Post save(@NonNull final Post post) {
+        Long postId = post.getId();
+
+        if (postId == null) {
+            postId = add(post);
+        } else {
+            if (postExists(postId)) {
+                update(post);
+            } else {
+                add(post);
+            }
+        }
+
+        final Post savedPost = findById(postId).orElse(null);
+
+        return savedPost;
     }
 
     @Override

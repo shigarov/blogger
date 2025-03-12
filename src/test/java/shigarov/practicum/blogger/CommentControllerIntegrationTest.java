@@ -59,8 +59,8 @@ public class CommentControllerIntegrationTest {
         postOne = new Post(1L, "Заголовок 1", null, "Текст 1");
         commentOne = new Comment(1L, "Комментарий 1", postOne);
 
-        postRepository.add(postOne);
-        commentRepository.add(commentOne);
+        postRepository.save(postOne);
+        commentRepository.save(commentOne);
     }
 
     @Test

@@ -123,7 +123,7 @@ public class PostControllerTest {
     void testAddPost() throws Exception {
         Post postThree = new Post(3L, "Заголовок 3", null, "Текст 3");
 
-        when(postService.add(any(Post.class))).thenReturn(postThree);
+        when(postService.save(any(Post.class))).thenReturn(postThree);
 
         mockMvc.perform(post("/posts/add")
                         .param("title", "Заголовок 3")
@@ -132,13 +132,13 @@ public class PostControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/posts"));
 
-        verify(postService, times(1)).add(any(Post.class));
+        verify(postService, times(1)).save(any(Post.class));
     }
 
     @Test
     void testUpdatePost() throws Exception {
         when(postService.findById(1L)).thenReturn(Optional.of(postOne));
-        doNothing().when(postService).update(postOne);
+        when(postService.save(postOne)).thenReturn(postOne);
 
         mockMvc.perform(post("/posts/update/1")
                         .param("title", "Обновленный заголовок 1")
@@ -147,7 +147,7 @@ public class PostControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/posts/1"));
 
-        verify(postService, times(1)).update(postOne);
+        verify(postService, times(1)).save(postOne);
     }
 
     @Test

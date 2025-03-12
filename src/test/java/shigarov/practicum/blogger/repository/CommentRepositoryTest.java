@@ -44,8 +44,8 @@ public class CommentRepositoryTest {
         postOne = new Post(1L, "Заголовок 1", null, "Текст 1");
         commentOne = new Comment(1L, "Комментарий 1", postOne);
 
-        postRepository.add(postOne);
-        commentRepository.add(commentOne);
+        postRepository.save(postOne);
+        commentRepository.save(commentOne);
     }
 
     @Test
@@ -60,10 +60,23 @@ public class CommentRepositoryTest {
     }
 
     @Test
-    public void testAddComment() {
+    public void testAddCommentWithNullId() {
         final Comment commentTwo = new Comment(null, "Комментарий 2", postOne);
 
-        final Comment addedComment = commentRepository.add(commentTwo);
+        final Comment addedComment = commentRepository.save(commentTwo);
+        final long commentId = addedComment.getId();
+        final Comment savedComment = commentRepository.findById(commentId).orElse(null);
+
+        assertThat(savedComment).isNotNull();
+        assertThat(savedComment.getId()).isEqualTo(commentId);
+        assertThat(savedComment.getText()).isEqualTo(commentTwo.getText());
+    }
+
+    @Test
+    public void testAddCommentWithNotNullId() {
+        final Comment commentTwo = new Comment(2L, "Комментарий 2", postOne);
+
+        final Comment addedComment = commentRepository.save(commentTwo);
         final long commentId = addedComment.getId();
         final Comment savedComment = commentRepository.findById(commentId).orElse(null);
 
@@ -77,7 +90,7 @@ public class CommentRepositoryTest {
         final long commentId = commentOne.getId();
         commentOne.setText("Обновленный комментарий 1");
 
-        commentRepository.update(commentOne);
+        commentRepository.save(commentOne);
 
         final Comment updatedComment = commentRepository.findById(commentId).orElse(null);
 

@@ -60,10 +60,11 @@ public class PostRepositoryTest {
         postOne.addTag(tagOne);
         postTwo.addTag(tagTwo);
 
-        tagRepository.add(tagOne);
-        tagRepository.add(tagTwo);
-        postRepository.add(postOne);
-        postRepository.add(postTwo);
+        tagRepository.save(tagOne);
+        tagRepository.save(tagTwo);
+
+        postRepository.save(postOne);
+        postRepository.save(postTwo);
     }
 
     @Test
@@ -113,10 +114,24 @@ public class PostRepositoryTest {
     }
 
     @Test
-    public void testAddPost() {
+    public void testAddPostWithNullId() {
         final Post postThree = new Post(null, "Заголовок 3", null, "Текст 3");
 
-        final Post addedPost = postRepository.add(postThree);
+        final Post addedPost = postRepository.save(postThree);
+        final long postId = addedPost.getId();
+        final Post savedPost = postRepository.findById(postId).orElse(null);
+
+        assertThat(savedPost).isNotNull();
+        assertThat(savedPost.getId()).isEqualTo(postId);
+        assertThat(savedPost.getTitle()).isEqualTo(postThree.getTitle());
+        assertThat(savedPost.getText()).isEqualTo(postThree.getText());
+    }
+
+    @Test
+    public void testAddPostWithNotNullId() {
+        final Post postThree = new Post(3L, "Заголовок 3", null, "Текст 3");
+
+        final Post addedPost = postRepository.save(postThree);
         final long postId = addedPost.getId();
         final Post savedPost = postRepository.findById(postId).orElse(null);
 
@@ -132,7 +147,7 @@ public class PostRepositoryTest {
         postOne.setTitle("Обновленный заголовок 1");
         postOne.setText("Обновленный текст 1");
 
-        postRepository.update(postOne);
+        postRepository.save(postOne);
 
         final Post updatedPost = postRepository.findById(postId).orElse(null);
 

@@ -61,25 +61,17 @@ public class CommentServiceTest {
     }
 
     @Test
-    void testAddComment() {
+    void testSaveComment() {
         // Подготовка данных
-        when(commentService.add(comment)).thenReturn(comment);
+        when(commentService.save(comment)).thenReturn(comment);
 
         // Вызов метода
-        final Comment addedComment = commentService.add(comment);
-        final long commentId = addedComment.getId();
+        final Comment savedComment = commentService.save(comment);
+        final long commentId = savedComment.getId();
 
         // Проверка
         assertEquals(comment.getId(), commentId);
-        verify(commentRepository, times(1)).add(comment);
+        verify(commentRepository, times(1)).save(comment);
     }
 
-    @Test
-    void testUpdateComment() {
-        // Вызов метода
-        commentService.update(comment);
-
-        // Проверка
-        verify(commentRepository, times(1)).update(comment);
-    }
 }

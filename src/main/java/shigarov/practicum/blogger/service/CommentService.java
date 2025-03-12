@@ -1,5 +1,6 @@
 package shigarov.practicum.blogger.service;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import shigarov.practicum.blogger.model.Comment;
@@ -19,11 +20,7 @@ public class CommentService {
         return commentRepository.findById(id);
     }
 
-    public Comment add(Comment comment) {
-        return commentRepository.add(comment);
-    }
-
-    public void update(Comment comment) {
-        commentRepository.update(comment);
+    public Comment save(@NonNull final Comment comment) {
+        return commentRepository.save(comment);
     }
 }

@@ -53,7 +53,7 @@ public class CommentControllerTest {
     @Test
     void testAddComment() throws Exception {
         when(postService.findById(1L)).thenReturn(Optional.of(postOne));
-        when(commentService.add(any(Comment.class))).thenReturn(any(Comment.class));
+        when(commentService.save(any(Comment.class))).thenReturn(any(Comment.class));
 
         mockMvc.perform(post("/posts/1/comments/add")
                         .param("commentText", "Комментарий 2")
@@ -61,7 +61,7 @@ public class CommentControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/posts/1"));
 
-        verify(commentService, times(1)).add(any(Comment.class));
+        verify(commentService, times(1)).save(any(Comment.class));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class CommentControllerTest {
     @Test
     void testUpdateComment() throws Exception {
         when(commentService.findById(1L)).thenReturn(Optional.of(commentOne));
-        doNothing().when(commentService).update(commentOne);
+        when(commentService.save(commentOne)).thenReturn(commentOne);
 
         mockMvc.perform(post("/posts/1/comments/update/1")
                         .param("commentText", "Обновленный комментарий 1")
@@ -82,6 +82,6 @@ public class CommentControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/posts/1"));
 
-        verify(commentService, times(1)).update(commentOne);
+        verify(commentService, times(1)).save(commentOne);
     }
 }
