@@ -36,8 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 
-### All png files ###
+### Storage folders ###
 /upload-dev/
 /upload-prod/
 /upload-test/
-*.png
