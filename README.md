@@ -67,6 +67,6 @@
     ```
 6. Откройте браузер и перейдите по адресу:
     ```bash 
-    http://localhost:8080/posts
+    http://localhost:8081/posts
     ```
 

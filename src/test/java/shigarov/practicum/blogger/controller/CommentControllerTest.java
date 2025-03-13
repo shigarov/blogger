@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import shigarov.practicum.blogger.model.Comment;
 import shigarov.practicum.blogger.model.Post;
+import shigarov.practicum.blogger.populator.PostPopulator;
 import shigarov.practicum.blogger.service.CommentService;
 import shigarov.practicum.blogger.service.PostService;
 import shigarov.practicum.blogger.storage.StorageService;
@@ -40,6 +41,9 @@ public class CommentControllerTest {
 
     @MockitoBean
     private StorageService storageService;
+
+    @MockitoBean
+    private PostPopulator postPopulator;
 
     private Post postOne;
     private Comment commentOne;

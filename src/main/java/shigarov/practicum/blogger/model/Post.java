@@ -19,11 +19,17 @@ public class Post {
     public Post() {}
 
     public Post(Long id, String title, String imageFileName, String text) {
+        this(id, title, imageFileName, text, 0);
+    }
+
+    public Post(Long id, String title, String imageFileName, String text, int likes) {
         this.id = id;
         this.title = title;
         this.imageFileName = imageFileName;
         this.text = text;
+        this.likes = likes;
     }
+
 
     // Геттеры и сеттеры ...
 

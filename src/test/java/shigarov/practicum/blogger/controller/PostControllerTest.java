@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import shigarov.practicum.blogger.model.Post;
 import shigarov.practicum.blogger.model.Tag;
+import shigarov.practicum.blogger.populator.PostPopulator;
 import shigarov.practicum.blogger.service.PostService;
 import shigarov.practicum.blogger.service.TagService;
 import shigarov.practicum.blogger.storage.StorageService;
@@ -49,6 +50,9 @@ public class PostControllerTest {
 
     @MockitoBean
     private StorageService storageService;
+
+    @MockitoBean
+    private PostPopulator postPopulator;
 
     private Post postOne;
     private Post postTwo;

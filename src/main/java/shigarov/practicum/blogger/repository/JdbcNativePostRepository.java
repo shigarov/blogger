@@ -181,26 +181,29 @@ public class JdbcNativePostRepository implements PostRepository {
         var imageFileName = post.getImageFileName();
         var text = post.getText();
         var tagIds = post.getTagIds();
+        var likes = post.getLikes();
 
-       return addPost(title, imageFileName, text, tagIds);
+       return addPost(title, imageFileName, text, tagIds, likes);
     }
 
     private Long addPost(
-            @NonNull String title,
-            @Nullable String imageFileName,
-            @NonNull String text,
-            @Nullable List<Long> tagIds
+            @NonNull final String title,
+            @Nullable final String imageFileName,
+            @NonNull final String text,
+            @Nullable final List<Long> tagIds,
+            final int likes
     ) {
         // Шаг 1: Вставляем новый пост
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO posts (title, image, text) VALUES (?, ?, ?)",
+                    "INSERT INTO posts (title, image, text, likes) VALUES (?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS
             );
             ps.setString(1, title);
             ps.setString(2, imageFileName);
             ps.setString(3, text);
+            ps.setInt(4, likes);
             return ps;
         }, keyHolder);
 
