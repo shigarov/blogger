@@ -69,4 +69,7 @@
     ```bash 
     http://localhost:8081/posts
     ```
-
+7. Остановите приложение:
+   ```bash
+   curl -X POST http://localhost:8081/actuator/shutdown
+   ```

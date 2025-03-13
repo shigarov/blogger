@@ -47,7 +47,9 @@ public class BloggerWebApplication {
 
 	@PreDestroy
 	public void destroy() {
-		System.out.println("Callback triggered - @PreDestroy.");
+		if(env.acceptsProfiles(Profiles.of("dev"))) {
+			storageService.deleteAll();
+		}
 	}
 
 }

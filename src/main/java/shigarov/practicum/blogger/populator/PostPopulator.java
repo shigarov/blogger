@@ -56,8 +56,6 @@ public class PostPopulator {
     private static final int HEIGHT = 100;
 
     public void populate(final int postsCount) {
-        System.out.println("POPULATE HERE");
-
         tagsCount = tagService.findAll().size();
 
         for (int i = 1; i <= postsCount; i ++) {
