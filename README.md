@@ -63,7 +63,14 @@
     ```
 5. Запустите приложение:
     ```bash 
-    cp java -jar build/libs/blogger-2.0-SNAPSHOT.jar
+    java -jar build/libs/blogger-2.0-SNAPSHOT.jar
+    ```
+   При необходимости укажите количество постов, 
+   которые будут автоматически сгенерированы и сохранены в базу данных, 
+   чтобы продемонстрировать работоспособность приложения,
+   используя параметр `--blogger.population.postsCount`, например:
+   ```bash 
+   java -jar build/libs/blogger-2.0-SNAPSHOT.jar --blogger.population.postsCount=115
     ```
 6. Откройте браузер и перейдите по адресу:
     ```bash 

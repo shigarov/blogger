@@ -21,7 +21,7 @@ import java.util.*;
 @Controller
 public class PostController {
 
-    @Value("${upload.dir}") // Относительный путь
+    @Value("${blogger.storage.uploadDir}") // Относительный путь
     private String uploadDir;
 
     private final PostService postService;

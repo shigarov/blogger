@@ -23,7 +23,7 @@ import java.util.*;
 @Component
 public class PostPopulator {
 
-    @Value("${upload.dir}")
+    @Value("${blogger.storage.uploadDir}")
     private String location;
 
     @Autowired

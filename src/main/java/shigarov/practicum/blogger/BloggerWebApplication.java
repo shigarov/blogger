@@ -2,6 +2,7 @@ package shigarov.practicum.blogger;
 
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -34,13 +35,16 @@ public class BloggerWebApplication {
 	@Autowired
 	private StorageService storageService;
 
+	@Value("${blogger.population.postsCount:0}")
+	private int postsCount;
+
 	@EventListener(ApplicationReadyEvent.class)
 	public void initStorage() {
 		storageService.init();
 		if(env.acceptsProfiles(Profiles.of("dev"))) {
 			storageService.deleteAll();
 			PostPopulator postPopulator = context.getBeanProvider(PostPopulator.class).getObject();
-			postPopulator.populate(115);
+			postPopulator.populate(postsCount);
 		}
 		storageService.init();
 	}

@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WebConfiguration implements WebMvcConfigurer {
 
-    @Value("${upload.dir}")
+    @Value("${blogger.storage.uploadDir}")
 	private String uploadDir;
 
     @Override

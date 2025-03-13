@@ -6,10 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("storage")
 public class StorageProperties {
 
-	/**
-	 * Folder location for storing files
-	 */
-	@Value("${upload.dir}")
+	@Value("${blogger.storage.uploadDir}")
 	private String location;
 
 	public String getLocation() {
