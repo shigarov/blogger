@@ -33,7 +33,7 @@ public class TagService {
             if (tagOptional.isPresent()) {
                 tags.add(tagOptional.get());
             } else {
-                new RuntimeException("Тег не найден");
+                throw new RuntimeException("Тег не найден");
             }
         }
 
